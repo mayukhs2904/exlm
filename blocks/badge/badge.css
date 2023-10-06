@@ -1,0 +1,38 @@
+.badge-wrapper {
+  
+}
+.badge-wrapper .badge {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.badge-wrapper .badge.positive {
+  background-color: red;
+}
+
+.badge-wrapper .badge.negative {
+  background-color: red;
+}
+
+.badge-wrapper .badge.neutral {
+  background-color: grey;
+}
+
+.badge-wrapper .badge.caution {
+  background-color: black;
+}
+
+.badge-wrapper .badge .button-container {
+  padding: 0;
+  margin: 0;
+}
+
+.badge-wrapper .badge a {
+  color: #fff;
+  text-decoration: none;
+}
