@@ -1,38 +1,22 @@
-.badge-wrapper {
-  
-}
 .badge-wrapper .badge {
-    display: inline-block;
-    background-color: #007bff;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-align: center;
-    text-decoration: none;
-}
-
-.badge-wrapper .badge.positive {
-  background-color: red;
-}
-
-.badge-wrapper .badge.negative {
-  background-color: red;
-}
-
-.badge-wrapper .badge.neutral {
-  background-color: grey;
-}
-
-.badge-wrapper .badge.caution {
-  background-color: black;
-}
-
-.badge-wrapper .badge .button-container {
-  padding: 0;
-  margin: 0;
-}
-
-.badge-wrapper .badge a {
-  color: #fff;
+  background-color: var(--spectrum-blue-900);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: inline-block;
+  font-size: var(--spectrum-font-size-75);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15.6px;
+  padding: 4px 9px 5px;
   text-decoration: none;
+}
+.badge-wrapper .badge.positive {
+  background-color: var(--spectrum-green-900);
+}
+.badge-wrapper .badge.negative {
+  background-color: var(--spectrum-red-900);
+}
+.badge-wrapper .badge.neutral, .badge-wrapper .badge.caution, .badge-wrapper .badge.yellow {
+  background-color: var(--spectrum-gray-600);
 }
