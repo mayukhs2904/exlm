@@ -1,6 +1,6 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import CONTENT_TYPES from './browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -24,10 +24,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    */
   const createTags = (result, contentType) => {
     const tags = [];
-
+    const role = result?.raw?.role ? result.raw.role.replace(/,/g, ', ') : '';
     if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
-      tags.push({ icon: 'user', text: '' });
-      tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
+      tags.push({ icon: 'user', text: role || '' });
+      /* TODO: Will enable once we have the API changes ready from ExL */
+      // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
       tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });
       tags.push({ icon: result?.raw?.el_reply_status ? 'reply' : '', text: result?.raw?.el_reply_status || '' });
@@ -41,24 +42,40 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const { raw, title, excerpt, uri } = result || {};
+    const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product } = raw || {};
-    const contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
-    const product = Array.isArray(el_product) ? el_product[0] : el_product;
-    /* eslint-enable camelcase */
+    const { el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
+    let contentType;
+    if (el_type) {
+      contentType = el_type.trim();
+    } else {
+      contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+    }
+    let product;
+    if (el_solution) {
+      product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
+    } else {
+      product = Array.isArray(el_product) ? el_product[0] : el_product;
+    }
     const tags = createTags(result, contentType.toLowerCase(), placeholders);
+    const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
 
     return {
       ...browseCardDataModel,
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
+      thumbnail:
+        (raw?.video_url &&
+          (raw.video_url.includes('?')
+            ? raw.video_url.replace(/\?.*/, '?format=jpeg')
+            : `${raw.video_url}?format=jpeg`)) ||
+        '',
       product,
-      title: title || '',
-      description: excerpt || '',
+      title: parentResult?.title || title || '',
+      description: parentResult?.excerpt || excerpt || '',
       tags,
-      copyLink: uri || '',
-      viewLink: uri || '',
+      copyLink: url,
+      viewLink: url,
       viewLinkText: contentType ? placeholders[`viewLink${convertToTitleCase(contentType)}`] : '',
     };
   };
