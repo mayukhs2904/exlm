@@ -9,4 +9,4 @@ mappings:
   - /content/exlm-mayukhs/placeholders:/placeholders.json
 
 includes:
-  - /content/exlm-mayukhs/
+  - /content/exlm-mayukhs/  
