@@ -12,7 +12,7 @@ import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.
  */
 function formattedSolutionTags(inputString) {
   return inputString
-    .replace(/exl:solution\//g, '')
+    .replace(/exl-encoded:solution\//g, '')
     .split(',')
     .map((part) => part.trim());
 }
@@ -145,13 +145,11 @@ export default async function decorate(block) {
           .filter((card) => card.event.time)
           .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
       }
-
-      const lowercaseParams = solutionsList.map((parameter) => parameter.toLowerCase());
-      const regex = /[^a-zA-Z0-9().]+/g;
+      const solutionParam = solutionsList.map((parameter) => atob(parameter));
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(regex, '-'));
-        return lowercaseParams.some((parameter) => lowercaseProduct.includes(parameter.trim()));
+        const productKey = productArray.map((item) => item);
+        return solutionParam.some((parameter) => productKey.includes(parameter.trim()));
       });
 
       // Sort events by startTime in ascending order
