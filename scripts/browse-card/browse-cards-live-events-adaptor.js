@@ -1,5 +1,5 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
@@ -14,9 +14,9 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
+    const contentType = CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY;
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
-    const product = Array.isArray(productFocus) ? productFocus[0] : '';
+    const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
     const eventStartTime = new Date(`${startTime}Z`);
     const eventEndTime = new Date(`${endTime}Z`);
@@ -25,7 +25,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
       return {
         ...browseCardDataModel,
         contentType,
-        badgeTitle: CONTENT_TYPES.LIVE_EVENTS.LABEL,
+        badgeTitle: CONTENT_TYPES.LIVE_EVENT.LABEL,
         product,
         title: eventTitle || '',
         description: eventDescription || '',
@@ -34,7 +34,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
-        viewLinkText: ctaLabel || placeholders.viewLinkLiveEvent || 'Register',
+        viewLinkText: ctaLabel || placeholders.browseCardLiveEventViewLabel || 'Register',
       };
     }
     return null;
@@ -47,7 +47,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);

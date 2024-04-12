@@ -1,8 +1,9 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
@@ -10,32 +11,18 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim();
-  const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
-  const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
+  const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const [contentType, capabilities, role, level, sortBy] = configs.map((cell) => cell.textContent.trim());
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl:solution/';
-  const featureKey = 'exl:feature/';
-  const extractCapability = (input, prefix) => {
-    if (!input) {
-      return null;
-    }
-    const items = input.split(',').map((item) => item.trim());
-    const result = [];
-    for (let i = 0; i < items.length; i += 1) {
-      const item = items[i];
-      if (item.startsWith(prefix)) {
-        result.push(atob(item.substring(prefix.length)));  
-      }
-    }
-    return result.length > 0 ? result : null;
-  };
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+  const products = [];
+  const versions = [];
+  const features = [];
+  headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -44,47 +31,92 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent?.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent?.trim()}</span>
-          </div>
+        ${headingElement.innerHTML}
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
     </div>
   `);
-  // Appending header div to the block
-  block.appendChild(headerDiv);
-  await decorateIcons(headerDiv);
 
-  try {
-    await loadIms();
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
   }
 
+  // Appending header div to the block
+  block.appendChild(headerDiv);
+
+  await decorateIcons(headerDiv);
+
+  /**
+   * Removes duplicate items from an array of products/solutions (with sub-solutions)
+   * @returns {Array} - Array of unique products.
+   */
+  const removeProductDuplicates = () => {
+    const filteredProducts = [];
+    for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
+      const currentItem = products[outerIndex];
+      let isDuplicate = false;
+      for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
+        if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (!isDuplicate) {
+        filteredProducts.push(products[outerIndex]);
+      }
+    }
+    return filteredProducts;
+  };
+
+  /**
+   * Extracts capabilities from a comma-separated string and populates relevant arrays.
+   * Existence of variables declared on top: capabilities, productKey, featureKey, products, versions, features.
+   */
+  const extractCapability = () => {
+    const items = capabilities.split(',');
+    items.forEach((item) => {
+      const [type, productBase64, subsetBase64] = item.split('/');
+      if (productBase64) {
+        const decryptedProduct = atob(productBase64);
+        if (!products.includes(decryptedProduct)) {
+          products.push(decryptedProduct);
+        }
+      }
+      if (type === productKey) {
+        if (subsetBase64) versions.push(atob(subsetBase64));
+      } else if (type === featureKey) {
+        if (subsetBase64) features.push(atob(subsetBase64));
+      }
+    });
+  };
+
+  extractCapability();
+
   const param = {
-    contentType: contentType && contentType.split(','),
-    product: extractCapability(capabilities, productKey),
-    feature: extractCapability(capabilities, featureKey),
-    role: role && role.split(','),
-    level: level && level.split(','),
+    contentType: contentType && contentType.toLowerCase().split(','),
+    product: products.length ? removeProductDuplicates(products) : null,
+    feature: features.length ? [...new Set(features)] : null,
+    version: versions.length ? [...new Set(versions)] : null,
+    role: role && role.toLowerCase().split(','),
+    level: level && level.toLowerCase().split(','),
     sortCriteria,
     noOfResults,
   };
 
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
-
-  shimmerCardParent.appendChild(buildPlaceholder());
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.remove();
       if (data?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content');
@@ -92,17 +124,16 @@ export default async function decorate(block) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
           const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        shimmerCardParent.appendChild(contentDiv);
-        decorateIcons(contentDiv);
+        block.appendChild(contentDiv);
+        /* Hide Tooltip while scrolling the cards layout */
+        hideTooltipOnScroll(contentDiv);
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.remove();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });

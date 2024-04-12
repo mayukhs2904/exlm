@@ -15,16 +15,11 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
-  toClassName,
+  fetchPlaceholders,
+  readBlockConfig,
+  createOptimizedPicture,
 } from './lib-franklin.js';
-import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
+// eslint-disable-next-line import/no-cycle
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -57,6 +52,49 @@ async function loadFonts() {
   } catch (e) {
     // do nothing
   }
+}
+
+/**
+ * one trust configuration setup
+ */
+function oneTrust() {
+  window.fedsConfig = window.fedsConfig || {};
+  window.fedsConfig.privacy = window.fedsConfig.privacy || {};
+  window.fedsConfig.privacy.otDomainId = `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${
+    window.location.host.split('.').length === 3 ? '' : '-test'
+  }`;
+  window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
+}
+
+/**
+ * Process current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
 }
 
 /**
@@ -130,10 +168,26 @@ export function isBrowsePage() {
  * add a section for the left rail when on a browse page.
  */
 function addBrowseRail(main) {
+  // if there is already editable browse rail stored
+  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
+    readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section'),
+  );
+  if (browseRailSectionFound) return;
+
+  // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail', isBrowsePage());
+  leftRailSection.classList.add('browse-rail-section', isBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
+}
+
+function addBrowseBreadCrumb(main) {
+  if (!main.querySelector('.browse-breadcrumb.block')) {
+    // add new section at the top
+    const section = document.createElement('div');
+    main.prepend(section);
+    section.append(buildBlock('browse-breadcrumb', []));
+  }
 }
 
 /**
@@ -145,12 +199,47 @@ function buildAutoBlocks(main) {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
     if (isBrowsePage()) {
+      addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
   }
+}
+
+/**
+ * create shadeboxes out of sections with shade-box style
+ * @param {Element} main the main container
+ */
+function buildShadeBoxes(main) {
+  main.querySelectorAll('.section.shade-box').forEach((section) => {
+    const sbContent = [];
+    const row = [];
+    [...section.children].forEach((wrapper) => {
+      const elems = [];
+      [...wrapper.children].forEach((child) => {
+        elems.push(child);
+      });
+      wrapper.remove();
+      row.push({ elems });
+    });
+    sbContent.push(row);
+    const sb = buildBlock('shade-box', sbContent);
+    const sbWrapper = document.createElement('div');
+    sbWrapper.append(sb);
+    section.append(sbWrapper);
+    decorateBlock(sb);
+    section.classList.remove('shade-box');
+  });
+}
+
+/**
+ * Builds synthetic blocks in that rely on section metadata
+ * @param {Element} main The container element
+ */
+function buildSectionBasedAutoBlocks(main) {
+  buildShadeBoxes(main);
 }
 
 /**
@@ -161,9 +250,10 @@ function buildAutoBlocks(main) {
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
+    if (!href) return;
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
-    } else if (href && !href.startsWith('#')) {
+    } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }
@@ -175,15 +265,219 @@ export function decorateExternalLinks(main) {
 }
 
 /**
+ * Links that have urls with JSON the hash, the JSON will be translated to attributes
+ * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
+ * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * @param {HTMLElement} block
+ */
+export const decorateLinks = (block) => {
+  const links = block.querySelectorAll('a');
+  links.forEach((link) => {
+    const decodedHref = decodeURIComponent(link.getAttribute('href'));
+    const firstCurlyIndex = decodedHref.indexOf('{');
+    const lastCurlyIndex = decodedHref.lastIndexOf('}');
+    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
+      // everything between curly braces is treated as JSON string.
+      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
+      const fixedJsonString = optionsJsonStr.replace(/'/g, '"'); // JSON.parse function expects JSON strings to be formatted with double quotes
+      const parsedJSON = JSON.parse(fixedJsonString);
+      Object.entries(parsedJSON).forEach(([key, value]) => {
+        link.setAttribute(key.trim(), value);
+      });
+      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
+      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
+      link.href = decodedHref.substring(0, endIndex);
+    }
+  });
+};
+
+/**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
+}
+
+/**
+ * Check if current page is a MD Docs Article Page.
+ * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - docs (optional, default value is docs)
+ */
+export const isDocArticlePage = (type = 'docs') => {
+  const theme = getMetadata('theme');
+  return theme?.toLowerCase().trim() === type;
+};
+
+/**
+ * set attributes needed for the docs pages grid to work properly
+ * @param {Element} main the main element
+ */
+function decorateContentSections(main) {
+  const contentSections = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
+  contentSections.forEach((row, i) => {
+    if (i === 0) {
+      row.classList.add('content-section-first');
+    }
+    if (i === contentSections.length - 1) {
+      row.classList.add('content-section-last');
+    }
+  });
+
+  main.style.setProperty('--content-sections-count', contentSections.length);
+}
+
+/**
+ * see: https://github.com/adobe-experience-league/exlm-converter/pull/208
+ * @param {HTMLElement} main
+ */
+export function decorateAnchors(main) {
+  const anchorIcons = [...main.querySelectorAll(`.icon-headding-anchor`)];
+  anchorIcons.forEach((icon) => {
+    const slugNode = icon.nextSibling;
+    const slug = slugNode?.textContent?.trim();
+    if (slug) {
+      icon.parentElement.id = slug;
+      icon.remove();
+      slugNode.remove();
+    }
+  });
+}
+
+/**
+ * creates an element from html string
+ * @param {string} html
+ * @returns {HTMLElement}
+ */
+export function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstElementChild;
+}
+
+const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
+
+/**
+ * Parse attribute strings like: {color="red" class="highlight"} to object {color: "red", class: "highlight"}
+ * @param {string} attrs
+ * @returns
+ */
+const parseInlineAttributes = (attrs) => {
+  const result = {};
+  attrs
+    .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
+    .map((attr) => attr.split('='))
+    .forEach(([key, value]) => {
+      result[key] = value === undefined ? undefined : encodeHTML(value?.replace(/"/g, '') || '');
+    });
+  return result;
+};
+/**
+ * converts text with attributes to <span> elements with given attributes.
+ * eg: [text]{color="red" class="highlight"} => <span color="red" class="highlight">text</span>
+ * @param {*} inputStr
+ * @returns
+ */
+export const getDecoratedInlineHtml = (inputStr) => {
+  if (!inputStr) return inputStr;
+  const regex = /\[([^[\]]*)\]{([^}]+)}/g;
+  return inputStr.replace(regex, (match, text, attrs) => {
+    const encodedText = encodeHTML(text);
+    const attrsObj = parseInlineAttributes(attrs);
+    const validAttrs = Object.values(attrsObj).every((v) => v !== undefined);
+    if (!validAttrs) return match; // ignore expresssion that have attributes with undefined values
+    const newAttrs = Object.entries(attrsObj)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' ');
+    return `<span ${newAttrs}>${encodedText}</span>`;
+  });
+};
+
+/**
+ *
+ * @param {Node} textNode
+ */
+export function decorateInlineText(textNode) {
+  const { textContent } = textNode;
+  if (textContent.includes('[') && textContent.includes(']{')) {
+    const span = document.createElement('span');
+    span.innerHTML = getDecoratedInlineHtml(textContent);
+    window.requestAnimationFrame(() => {
+      textNode.replaceWith(...span.childNodes);
+    });
+  }
+}
+
+/**
+ * decorates the previous image element with attributes defined in the textNode
+ * @param {Node} textNode
+ */
+export function decoratePreviousImage(textNode) {
+  // if previous element is image, and textNode contains { and }, decorate the image
+  const { previousSibling, textContent } = textNode;
+  if (textContent.startsWith('{') && textContent.includes('}')) {
+    const isPrecededByPicture = previousSibling?.tagName.toLowerCase() === 'picture';
+    const isPrecededByImg = previousSibling?.tagName.toLowerCase() === 'img';
+    let picture;
+    let img;
+    if (isPrecededByPicture) {
+      picture = previousSibling;
+      img = picture.querySelector('img');
+    } else if (isPrecededByImg) {
+      img = previousSibling;
+    } else return; // only decorate if preceded by picture or img
+
+    const attrsStr = textContent.substring(1, textContent.indexOf('}'));
+    textNode.textContent = textContent.substring(textContent.indexOf('}') + 1);
+    if (img.src === 'about:error') return; // do not decorate broken images
+    const attrsObj = parseInlineAttributes(attrsStr);
+    let newPicture = picture;
+    if (attrsObj.width) {
+      // author defined width
+      const { width } = attrsObj;
+      const isNumberWithNoUnit = /^\d+$/.test(width);
+      if (isNumberWithNoUnit) {
+        newPicture = createOptimizedPicture(img.src, img.alt, false, [
+          { media: '(min-width: 400px)', width },
+          { width },
+        ]);
+      }
+      // set width, if digits only, add px, else set as is
+      newPicture.style.width = isNumberWithNoUnit ? `${width}px` : width;
+      picture.replaceWith(newPicture);
+    }
+    if (attrsObj.modal) {
+      // modal
+      newPicture.addEventListener('click', () => {
+        // eslint-disable-next-line import/no-cycle
+        const promises = [loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`), import('./image-modal.js')];
+        Promise.all(promises).then(([, mod]) => mod.default(newPicture.querySelector('img')));
+      });
+    }
+    if (img.hasAttribute('data-title')) {
+      newPicture?.querySelector('img')?.setAttribute('title', img?.getAttribute('data-title'));
+    }
+    Object.entries(attrsObj).forEach(([key, value]) => newPicture.setAttribute(key, value));
+  }
+}
+
+/**
+ * @param {HTMLElement} element
+ */
+export function decorateInlineAttributes(element) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const { currentNode } = walker;
+    decorateInlineText(currentNode);
+    decoratePreviousImage(currentNode);
+  }
 }
 
 /**
@@ -196,11 +490,15 @@ export function decorateMain(main) {
   if (!isDocPage()) {
     decorateButtons(main);
   }
+  decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
+  decorateInlineAttributes(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildSectionBasedAutoBlocks(main);
+  decorateContentSections(main);
 }
 
 /**
@@ -208,11 +506,11 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = 'en';
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCP(LCP_BLOCKS);
@@ -228,6 +526,90 @@ async function loadEager(doc) {
   }
 }
 
+export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
+
+/**
+ * get site config
+ */
+export function getConfig() {
+  if (window.exlm && window.exlm.config) {
+    return window.exlm.config;
+  }
+
+  const HOSTS = [
+    {
+      env: 'PROD',
+      cdn: 'experienceleague.adobe.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
+      env: 'STAGE',
+      cdn: 'experienceleague-stage.adobe.com',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'DEV',
+      cdn: 'experienceleague-dev.adobe.com',
+      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+    },
+  ];
+
+  const currentHost = window.location.hostname;
+  const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
+  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const cdnOrigin = `https://${cdnHost}`;
+  const lang = document.querySelector('html').lang || 'en';
+  const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+  const isProd = currentEnv?.env === 'PROD';
+  const isStage = currentEnv?.env === 'STAGE';
+  const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
+  const ims = {
+    client_id: 'ExperienceLeague',
+    environment: isProd ? 'prod' : 'stg1',
+    debug: !isProd,
+  };
+
+  let launchScriptSrc;
+  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (isStage)
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+
+  window.exlm = window.exlm || {};
+  window.exlm.config = {
+    ims,
+    currentEnv,
+    cdnOrigin,
+    cdnHost,
+    prodAssetsCdnOrigin,
+    ppsOrigin,
+    launchScriptSrc,
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
+    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
+    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
+    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    searchUrl: `${cdnOrigin}/search.html`,
+    articleUrl: `${cdnOrigin}/api/articles/`,
+    solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
+    pathsUrl: `${cdnOrigin}/api/paths`,
+    // Browse Left nav
+    browseMoreProductsLink: `/${lang}/browse`,
+    // Machine Translation
+    automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
+    // Recommended Courses
+    recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+  };
+  return window.exlm.config;
+}
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],
@@ -236,22 +618,24 @@ export const locales = new Map([
   ['it', 'it_IT'],
   ['ja', 'ja_JP'],
   ['ko', 'ko_KO'],
-  ['pt-BR', 'pt_BR'],
-  ['zh-Hans', 'zh_HANS'],
+  ['pt-br', 'pt_BR'],
+  ['zh-hans', 'zh_HANS'],
+  ['zh-hant', 'zh_HANT'],
+  ['nl', 'nl_NL'],
+  ['sv', 'sv_SE'],
 ]);
 
-let imsLoaded;
 export async function loadIms() {
-  imsLoaded =
-    imsLoaded ||
+  const { ims } = getConfig();
+  window.imsLoaded =
+    window.imsLoaded ||
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: 'ExperienceLeague_Dev',
         scope:
-          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
+          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
-        debug: false,
+        ...ims,
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
@@ -262,8 +646,54 @@ export async function loadIms() {
       };
       loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
     });
-  return imsLoaded;
+  return window.imsLoaded;
 }
+
+const loadMartech = async (headerPromise, footerPromise) => {
+  const { privacyScript, launchScriptSrc } = getConfig();
+  oneTrust();
+
+  const oneTrustPromise = loadScript(privacyScript, {
+    async: true,
+    defer: true,
+  });
+
+  const launchPromise = loadScript(launchScriptSrc, {
+    async: true,
+  });
+
+  // eslint-disable-next-line import/no-cycle
+  const libAnalyticsPromise = import('./analytics/lib-analytics.js');
+
+  Promise.all([launchPromise, libAnalyticsPromise, headerPromise, footerPromise, oneTrustPromise]).then(
+    // eslint-disable-next-line no-unused-vars
+    ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { lang } = getPathDetails();
+      const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
+      document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.adobePrivacy.showConsentPopup();
+      });
+      pageLoadModel(lang)
+        .then((data) => {
+          window.adobeDataLayer.push(data);
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Error getting pageLoadModel:', e);
+        });
+      localStorage.setItem('prevPage', pageName(lang));
+      const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
+      linkClicked.forEach((linkElement) => {
+        linkElement.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
+            linkClickModel(e);
+          }
+        });
+      });
+    },
+  );
+};
 
 /**
  * Loads everything that doesn't need to be delayed.
@@ -271,29 +701,19 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
-
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+  // disable martech if martech=off is in the query string, this is used for testing ONLY
+  if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
-
   sampleRUM('lazy');
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  sampleRUM.observe(main.querySelectorAll('picture > img'));
-
-  const context = {
-    getMetadata,
-    toClassName,
-  };
-  // eslint-disable-next-line import/no-relative-packages
-  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
-  await initConversionTracking.call(context, document);
 }
 
 /**
@@ -316,72 +736,6 @@ export function createTag(tag, attributes, html) {
     });
   }
   return el;
-}
-
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-export function htmlToElement(html) {
-  const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
-}
-
-export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main > div:nth-child(1)');
-  if (!mainDoc) return;
-
-  const prevPageMeta = document.querySelector('meta[name="prev-page"]');
-  const nextPageMeta = document.querySelector('meta[name="next-page"]');
-  const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const PREV_PAGE = 'Previous page';
-  const NEXT_PAGE = 'Next page';
-
-  if (prevPageMeta || nextPageMeta) {
-    if (prevPageMetaContent === '' && nextPageMetaContent === '') return;
-
-    const docPagination = createTag('div', { class: 'doc-pagination' });
-    const btnGotoLeft = createTag('div', { class: 'btn-goto is-left-desktop' });
-
-    const anchorLeftAttr = {
-      href: `${prevPageMetaContent}`,
-      class: 'pagination-btn',
-    };
-    const anchorLeft = createTag('a', anchorLeftAttr);
-    const spanLeft = createTag('span', '', PREV_PAGE);
-
-    anchorLeft.append(spanLeft);
-    btnGotoLeft.append(anchorLeft);
-
-    const btnGotoRight = createTag('div', {
-      class: 'btn-goto is-right-desktop',
-    });
-
-    const anchorRightAttr = {
-      href: `${nextPageMetaContent}`,
-      class: 'pagination-btn',
-    };
-    const anchorRight = createTag('a', anchorRightAttr);
-    const spanRight = createTag('span', '', NEXT_PAGE);
-
-    anchorRight.append(spanRight);
-    btnGotoRight.append(anchorRight);
-
-    if (!prevPageMeta || prevPageMetaContent === '') {
-      anchorLeft.classList.add('is-disabled');
-    }
-
-    if (!nextPageMeta || nextPageMetaContent === '') {
-      anchorRight.classList.add('is-disabled');
-    }
-
-    docPagination.append(btnGotoLeft, btnGotoRight);
-    mainDoc.append(docPagination);
-  }
 }
 
 /**
@@ -415,8 +769,6 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
   // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
-  // eslint-disable-next-line import/no-cycle
-  if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
@@ -432,81 +784,170 @@ async function loadRails() {
   }
 }
 
+function showBrowseBackgroundGraphic() {
+  if (isBrowsePage()) {
+    const main = document.querySelector('main');
+    main.classList.add('browse-background-img');
+  }
+}
+
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
+}
+
+/**
+ * Helper function that adapts the path to work on EDS and AEM rendering
+ */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
+    ? `${window.hlx.aemRoot}${edsPath}.html`
+    : edsPath;
+}
+
+export const removeExtension = (pathStr) => {
+  const parts = pathStr.split('.');
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join('.');
+};
+
+// Convert the given String to Pascal Case
+export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
+
+export function rewriteDocsPath(docsPath) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
+  if (!url.pathname.startsWith('/docs') || url.pathname.startsWith('/docs/courses/')) {
+    return docsPath; // not a docs path, return as is
+  }
+  // eslint-disable-next-line no-use-before-define
+  const { lang } = getPathDetails();
+  const language = url.searchParams.get('lang') || lang;
+  url.searchParams.delete('lang');
+  let pathname = `${language.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
+  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
+
+export async function fetchWithFallback(path, fallbackPath) {
+  const response = await fetch(path);
+  if (response.ok) return response;
+  return fetch(fallbackPath);
+}
+
+export async function fetchFragment(rePath, lang = 'en') {
+  const path = `/fragments/${lang}/${rePath}.plain.html`;
+  const fallback = `/fragments/en/${rePath}.plain.html`;
+  const response = await fetchWithFallback(path, fallback);
+  return response.text();
+}
+
+export async function fetchLanguagePlaceholders() {
+  const { lang } = getPathDetails();
+  try {
+    // Try fetching placeholders with the specified language
+    return await fetchPlaceholders(`/${lang}`);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
+    // Retry without specifying a language (using the default language)
+    try {
+      return await fetchPlaceholders('/en');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
+  }
+  return {}; // default to empty object
+}
+
+export async function getLanguageCode() {
+  if (window.languageCode) return window.languageCode;
+  window.languageCode = new Promise((resolve, reject) => {
+    const { lang } = getPathDetails();
+    fetch('/languages.json')
+      .then((response) => response.json())
+      .then((languages) => {
+        const langMap = languages.data;
+        const langObj = langMap.find((item) => item.key === lang);
+        const langCode = langObj ? langObj.value : lang;
+        window.languageCode = langCode;
+        resolve(langCode);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching language code:', error);
+        reject(error);
+      });
+  });
+  return window.languageCode;
+}
+
+async function loadDefaultModule(jsPath) {
+  try {
+    const mod = await import(jsPath);
+    if (mod.default) await mod.default();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load module for ${jsPath}`, error);
+  }
+}
+
+/**
+ * THIS IS TEMPORARY FOR SUMMIT
+ */
+function handleHomePageHashes() {
+  // home page AND #feedback hash
+  const { pathname, search = '', hash = '' } = window.location;
+  if (pathname === '/') {
+    if (hash === '#feedback' || hash === '#dashboard/profile') {
+      window.location.href = `/home${search}${hash}`;
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @param {string} placeholderKey
+ * @param {string} fallbackText
+ * @returns
+ */
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) {
+  const span = document.createElement('span');
+  span.setAttribute('data-placeholder', placeholderKey);
+  span.setAttribute('data-placeholder-fallback', fallbackText);
+  span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
+  fetchLanguagePlaceholders()
+    .then((placeholders) => {
+      span.textContent = placeholders[placeholderKey] || fallbackText;
+      span.removeAttribute('data-placeholder');
+      span.removeAttribute('data-placeholder-fallback');
+      span.style.removeProperty('--placeholder-width');
+      if (onResolved) onResolved(span);
+    })
+    .catch(() => {
+      span.textContent = fallbackText;
+    });
+  return span;
+}
+
 async function loadPage() {
+  // THIS IS TEMPORARY FOR SUMMIT.
+  if (handleHomePageHashes()) return;
+  // END OF TEMPORARY FOR SUMMIT.
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
-  loadPrevNextBtn();
+  showBrowseBackgroundGraphic();
+  loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 }
 
-const cwv = {};
-
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
-
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
-});
-
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
-
-// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
-// outside the convert function to persist them for buffering between
-// subsequent convert calls
-const CONVERSION_EVENT_TIMEOUT_MS = 100;
-let bufferTimeoutId;
-let conversionEvent;
-let tempConversionEvent;
-sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
-  // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
-    return;
-  }
-
-  if (element.tagName === 'FORM') {
-    conversionEvent = {
-      ...data,
-      event: 'Form Complete',
-    };
-
-    if (
-      conversionEvent.event === 'Form Complete' &&
-      // Check for undefined, since target can contain value 0 as well, which is falsy
-      (data.target === undefined || data.source === undefined)
-    ) {
-      // If a buffer has already been set and tempConversionEvent exists,
-      // merge the two conversionEvent objects to send to alloy
-      if (bufferTimeoutId && tempConversionEvent) {
-        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
-      } else {
-        // Temporarily hold the conversionEvent object until the timeout is complete
-        tempConversionEvent = { ...conversionEvent };
-
-        // If there is partial form conversion data,
-        // set the timeout buffer to wait for additional data
-        bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
-          tempConversionEvent = undefined;
-          conversionEvent = undefined;
-        }, CONVERSION_EVENT_TIMEOUT_MS);
-      }
-    }
-    return;
-  }
-
-  analyticsTrackConversion({ ...data });
-  tempConversionEvent = undefined;
-  conversionEvent = undefined;
-});
-
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}

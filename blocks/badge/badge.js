@@ -1,3 +1,7 @@
+/**
+ * This is obselete and should be removed when all pages have been seeded and the old badge is no longer used
+ * Once this block is no longer used in content, it will not be loaded anyway.
+ */
 export default function decorate(block) {
   const wrapper = block.closest('.badge-wrapper');
   const firstChildDiv = block.querySelector('div:nth-child(1) > div');
@@ -26,6 +30,12 @@ export default function decorate(block) {
         }
       } else {
         wrapper.innerHTML = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;
+        const pWrappedElements = wrapper.querySelectorAll('.same-p-tag');
+        pWrappedElements.forEach((element) => {
+          if (element.parentNode && element.parentNode.classList.contains('badge-wrapper')) {
+            element.parentNode.classList.add('same-p-tag');
+          }
+        });
       }
     }
   } catch (error) {

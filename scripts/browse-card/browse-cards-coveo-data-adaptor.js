@@ -1,6 +1,6 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -30,36 +30,73 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       /* TODO: Will enable once we have the API changes ready from ExL */
       // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
-      tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });
-      tags.push({ icon: result?.raw?.el_reply_status ? 'reply' : '', text: result?.raw?.el_reply_status || '' });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status ? 'view' : '',
+        text: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status || '',
+      });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status ? 'reply' : '',
+        text: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status || '',
+      });
     }
     return tags;
   };
 
   /**
+   * Removes duplicate items from an array of products/solutions (with sub-solutions)
+   * @param {Array} products - Array of products to remove duplicates from.
+   * @returns {Array} - Array of unique products.
+   */
+  const removeProductDuplicates = (products) => {
+    const filteredProducts = [];
+    for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
+      const currentItem = products[outerIndex];
+      let isDuplicate = false;
+      for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
+        if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (!isDuplicate) {
+        const product = products[outerIndex].replace(/\|/g, ' ');
+        filteredProducts.push(product);
+      }
+    }
+    return filteredProducts;
+  };
+
+  /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
+   * @param {Object} param - The param object.
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
+
+    const { el_id, el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    let product = Array.isArray(el_product) ? el_product[0] : el_product;
-    if (!product && el_solution) {
-      product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
+    let products;
+    if (el_solution) {
+      products = Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/);
+    } else if (el_product) {
+      products = Array.isArray(el_product) ? el_product : el_product.split(/,\s*/);
     }
     const tags = createTags(result, contentType.toLowerCase());
-    const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
+    let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
+    url = rewriteDocsPath(url);
+    const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase());
 
     return {
       ...browseCardDataModel,
+      id: parentResult?.el_id || el_id || '',
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       thumbnail:
@@ -68,13 +105,13 @@ const BrowseCardsCoveoDataAdaptor = (() => {
             ? raw.video_url.replace(/\?.*/, '?format=jpeg')
             : `${raw.video_url}?format=jpeg`)) ||
         '',
-      product,
+      product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
       description: parentResult?.excerpt || excerpt || '',
       tags,
       copyLink: url,
       viewLink: url,
-      viewLinkText: placeholders[`viewLink${convertToTitleCase(contentType)}`] || 'View',
+      viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
     };
   };
 
@@ -85,7 +122,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
