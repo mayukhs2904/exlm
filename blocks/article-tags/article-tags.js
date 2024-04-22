@@ -3,18 +3,22 @@ import { getMetadata } from '../../scripts/lib-franklin.js';
 
 function createTags(values) {
     let tagsHTML = '';
-    if (values.length > 0) {
         values.forEach((value) => {
           tagsHTML += `<div class="article-tags-name">${value.trim()}</div>`;
         });
-      }
     return tagsHTML;
   }
 
 export default function decorate(block) {
-  const solutions = getMetadata('coveo-solution').split(',');
-  const roles = getMetadata('role').split(',');
-  const experienceLevels = getMetadata('level').split(',');
+    const solutions = getMetadata('coveo-solution')?.split(',') || [];
+    const roles = getMetadata('role')?.split(',') || [];
+    const experienceLevels = getMetadata('level')?.split(',') || [];
+  
+    // Check if any of the lists are empty or not present
+    if (solutions.length === 0 || roles.length === 0 || experienceLevels.length === 0) {
+      // If any list is empty, don't show the block
+      return;
+    }
 
   const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
   block.innerHTML = '';
