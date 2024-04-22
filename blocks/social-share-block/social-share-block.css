@@ -15,6 +15,10 @@
     flex-wrap: wrap;
 }
 
+.social-share-view > a{
+    margin: 0px;
+}
+
 .social-share-name{
     color: var(--non-spectrum-grey-updated);
     font-size: 12px;
