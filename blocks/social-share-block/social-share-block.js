@@ -10,7 +10,7 @@ export default function decorate(block) {
   const socialLinks = {
     'Facebook': `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     'X (formerly Twitter)': `https://twitter.com/intent/tweet?url=${window.location.href}`,
-    'LinkedIn': `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
+    'LinkedIn': `https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`,
   };
 
   const socialIcons = {
