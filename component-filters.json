@@ -44,6 +44,8 @@
       "block-quote",
       "callout",
       "article-tags",
+      "author-bio",
+      "author-summary",
       "social-share-block"
     ]
   },
@@ -80,6 +82,8 @@
       "block-quote",
       "callout",
       "article-tags",
+      "author-bio",
+      "author-summary",
       "social-share-block"
     ]
   },
