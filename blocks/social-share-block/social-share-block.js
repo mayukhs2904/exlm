@@ -1,7 +1,7 @@
 import { htmlToElement } from '../../scripts/scripts.js';
-import facebookSvg from './icons/fb-social-icon.svg';
-import linkedInSvg from './icons/li-social-icon.svg';
-import twitterSvg from './icons/x-social-icon.svg';
+import { facebookSvg } from '../../icons/fb-social-icon.svg';
+import { linkedInSvg } from '../../icons/li-social-icon.svg';
+import { twitterSvg } from '../../icons/x-social-icon.svg';
 
 export default function decorate(block) {
   const socialDiv = block.firstElementChild;
