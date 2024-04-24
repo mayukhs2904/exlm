@@ -26,6 +26,8 @@
 }
 
 .social-share-item > .icon {
-    height: 20px;
-    width: 20px;
+    display: flex;
+    align-items: center;
+    height: 16px;
+    width: 16px;
 }
