@@ -16,9 +16,9 @@ export default function decorate(block) {
   };
 
   const socialIcons = {
-    Facebook: `<img src="${facebookSvg}" alt="Facebook Icon">`,
-    LinkedIn: `<img src="${linkedInSvg}" alt="LinkedIn Icon">`,
-    'X (formerly Twitter)': `<img src="${twitterSvg}" alt="Twitter Icon">`,
+    Facebook: facebookSvg,
+    LinkedIn: linkedInSvg,
+    'X (formerly Twitter)': twitterSvg,
   };
 
   const headerDiv = htmlToElement(`
@@ -41,6 +41,17 @@ export default function decorate(block) {
       </div>
     </div>
   `);
+
+  // Ensure that SVG content is directly embedded in the HTML
+  for (const network of socialNetworks) {
+    const iconSvg = socialIcons[network];
+    if (iconSvg) {
+      const iconContainer = document.createElement('div');
+      iconContainer.classList.add('social-icon');
+      iconContainer.innerHTML = iconSvg;
+      headerDiv.querySelector(`.social-share-item[data-network="${network}"]`).prepend(iconContainer);
+    }
+  }
 
   block.append(headerDiv);
 }
