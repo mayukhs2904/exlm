@@ -1,7 +1,7 @@
 import { htmlToElement } from '../../scripts/scripts.js';
-import facebookSvg from './icons/fb-social-icon.svg';
-import linkedInSvg from './icons/li-social-icon.svg';
-import twitterSvg from './icons/x-social-icon.svg';
+// import facebookSvg from './icons/fb-social-icon.svg';
+// import linkedInSvg from './icons/li-social-icon.svg';
+// import twitterSvg from './icons/x-social-icon.svg';
 
 export default function decorate(block) {
   const socialDiv = block.firstElementChild;
@@ -15,10 +15,16 @@ export default function decorate(block) {
     LinkedIn: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
   };
 
+  // const socialIcons = {
+  //   Facebook: facebookSvg,
+  //   LinkedIn: linkedInSvg,
+  //   'X (formerly Twitter)': twitterSvg,
+  // };
+
   const socialIcons = {
-    Facebook: facebookSvg,
-    LinkedIn: linkedInSvg,
-    'X (formerly Twitter)': twitterSvg,
+    Facebook: '',
+    LinkedIn: '',
+    'X (formerly Twitter)': '',
   };
 
   const headerDiv = htmlToElement(`
