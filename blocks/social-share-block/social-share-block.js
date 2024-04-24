@@ -2,25 +2,25 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import facebookSvg from '../../icons/fb-social-icon.svg';
 import linkedInSvg from '../../icons/li-social-icon.svg';
 import twitterSvg from '../../icons/x-social-icon.svg';
- 
+
 export default function decorate(block) {
   const socialDiv = block.firstElementChild;
   const socialNetworks = socialDiv.textContent.split(',').map((network) => network.trim());
- 
+
   block.textContent = '';
- 
+
   const socialLinks = {
     Facebook: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     'X (formerly Twitter)': `https://twitter.com/intent/tweet?url=${window.location.href}`,
     LinkedIn: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
   };
- 
+
   const socialIcons = {
-    Facebook: facebookSvg,
-    LinkedIn: linkedInSvg,
-    'X (formerly Twitter)': twitterSvg,
+    Facebook: `<img src="${facebookSvg}" alt="Facebook Icon">`,
+    LinkedIn: `<img src="${linkedInSvg}" alt="LinkedIn Icon">`,
+    'X (formerly Twitter)': `<img src="${twitterSvg}" alt="Twitter Icon">`,
   };
- 
+
   const headerDiv = htmlToElement(`
     <div class="social-share-block">
       <div class="social-share-title">
@@ -41,6 +41,6 @@ export default function decorate(block) {
       </div>
     </div>
   `);
- 
+
   block.append(headerDiv);
 }
