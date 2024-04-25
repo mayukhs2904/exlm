@@ -19,6 +19,27 @@ export default function decorate(block) {
     'X (formerly Twitter)': 'x-social-icon',
   };
 
+ // Wait for the document to finish loading
+document.addEventListener("DOMContentLoaded", function() {
+  // Find all meta tags with property="og:image"
+  var ogImageTags = document.querySelectorAll('meta[property="og:image"]');
+  console.log(ogImageTags,"ogimage")
+
+  // Loop through each meta tag
+  ogImageTags.forEach(function(tag) {
+      // Get the content attribute value
+      var content = tag.getAttribute('content');
+
+      console.log(content,"content");
+
+      // Check if the content contains '/default-meta-image.png'
+      if (content && content.includes('/default-meta-image.png')) {
+          // Remove the current meta tag from the document
+          tag.parentNode.removeChild(tag);
+      }
+  });
+});
+
   const headerDiv = htmlToElement(`
     <div class="social-share-block">
     <div class="social-share-title">
