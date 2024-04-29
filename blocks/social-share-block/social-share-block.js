@@ -9,7 +9,7 @@ export default function decorate(block) {
   function generateCheckboxItem(item, index, id) {
     return `
       <a href="${item.link()}" target="_blank">
-        <div class="social-share-item" id="option${id}${index + 1}" value="${item.value}" data-label="${item.title}">
+        <div class="social-share-item" id="${id}${index + 1}" value="${item.value}" data-label="${item.title}">
           <span class="icon icon-${item.icon}"></span>
           <span class="social-share-name">${item.title}</span>
         </div>
