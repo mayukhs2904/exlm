@@ -38,7 +38,7 @@ const socialLabels = [
 }));
 
 export const socialOptions = {
-  id: 'el_role',
+  id: 'social',
   name: placeholders.filterRoleLabel || 'SocialLabels',
   items: socialLabels,
   selected: 0,
