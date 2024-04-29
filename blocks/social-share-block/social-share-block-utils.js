@@ -21,8 +21,8 @@ const socialLabels = [
     icon: 'li-social-icon'
   },
   {
-    id: 'Twitter',
-    value: 'Twitter',
+    id: 'X (formerly Twitter)',
+    value: 'X (formerly Twitter)',
     title: 'X (formerly Twitter)',
     icon: 'x-social-icon'
   },
@@ -33,3 +33,11 @@ const socialLabels = [
     icon: placeholders[`filterRole${role.id}Icon`],
   }),
 }));
+
+
+export const socialOptions = {
+    id: 'el_role',
+    name: placeholders.filterRoleLabel || 'SocialLabels',
+    items: socialLabels,
+    selected: 0,
+  };
