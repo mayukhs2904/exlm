@@ -6,7 +6,7 @@ export default function decorate(block) {
 
   block.textContent = '';
 
-  function generateCheckboxItem(item, index, id) {
+  function generateSocialItem(item, index, id) {
     return `
       <a href="${item.link()}" target="_blank">
         <div class="social-share-item" id="${id}${index + 1}" value="${item.value}" data-label="${item.title}">
@@ -23,7 +23,7 @@ export default function decorate(block) {
         SHARE ON SOCIAL
       </div>
       <div class="social-share-view">
-        ${socialOptions.items.map((item, index) => generateCheckboxItem(item, index, socialOptions.id)).join('')}
+        ${socialOptions.items.map((item, index) => generateSocialItem(item, index, socialOptions.id)).join('')}
       </div>
     </div>
   `);
