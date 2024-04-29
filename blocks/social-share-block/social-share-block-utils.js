@@ -4,15 +4,9 @@ let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
-  // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
 
-/**
- * Array containing roles with associated metadata.
- * Each role object includes a id, value, title and description.
- * The title and description are fetched from language placeholders or falls back to a default description.
- */
 const socialLabels = [
   {
     id: 'Facebook',
@@ -34,8 +28,8 @@ const socialLabels = [
   },
 ].map((role) => ({
   ...role,
-  ...(placeholders[`filterRole${socialLabels.id}Title`] && { title: placeholders[`filterRole${socialLabels.id}Title`] }),
-  ...(placeholders[`filterRole${socialLabels.id}Icon`] && {
-    icon: placeholders[`filterRole${socialLabels.id}Icon`],
+  ...(placeholders[`filterRole${role.id}Title`] && { title: placeholders[`filterRole${role.id}Title`] }),
+  ...(placeholders[`filterRole${role.id}Icon`] && {
+    icon: placeholders[`filterRole${role.id}Icon`],
   }),
 }));
