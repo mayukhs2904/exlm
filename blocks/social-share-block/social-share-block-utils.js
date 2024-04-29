@@ -1,12 +1,3 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  console.error('Error fetching placeholders:', err);
-}
-
 const socialLabels = [
   {
     id: 'Facebook',
