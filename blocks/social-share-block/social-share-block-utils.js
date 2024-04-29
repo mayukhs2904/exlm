@@ -12,19 +12,22 @@ const socialLabels = [
     id: 'Facebook',
     value: 'Facebook',
     title: 'Facebook',
-    icon: 'fb-social-icon'
+    icon: 'fb-social-icon',
+    link: () => `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`
   },
   {
     id: 'LinkedIn',
     value: 'LinkedIn',
     title: 'LinkedIn',
-    icon: 'li-social-icon'
+    icon: 'li-social-icon',
+    link: () => `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`
   },
   {
     id: 'X (formerly Twitter)',
     value: 'X (formerly Twitter)',
     title: 'X (formerly Twitter)',
-    icon: 'x-social-icon'
+    icon: 'x-social-icon',
+    link: () => `https://twitter.com/intent/tweet?url=${window.location.href}`
   },
 ].map((role) => ({
   ...role,
@@ -34,10 +37,9 @@ const socialLabels = [
   }),
 }));
 
-
 export const socialOptions = {
-    id: 'el_role',
-    name: placeholders.filterRoleLabel || 'SocialLabels',
-    items: socialLabels,
-    selected: 0,
-  };
+  id: 'el_role',
+  name: placeholders.filterRoleLabel || 'SocialLabels',
+  items: socialLabels,
+  selected: 0,
+};
