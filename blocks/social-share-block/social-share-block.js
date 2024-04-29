@@ -17,17 +17,23 @@ export default function decorate(block) {
     `;
   }  
 
-  const headerDiv = htmlToElement(`
-    <div class="social-share-block" data-filter-type="${socialOptions.id}">
+  const headerDiv = (options, id) => htmlToElement(`
+    <div class="social-share-block" data-filter-type="${options.id}">
       <div class="social-share-title">
         SHARE ON SOCIAL
       </div>
       <div class="social-share-view">
-        ${socialOptions.items.map((item, index) => generateSocialItem(item, index, socialOptions.id)).join('')}
+        ${options.items.map((item, index) => generateSocialItem(item, index, id)).join('')}
       </div>
     </div>
   `);
 
-  block.append(headerDiv);
+  // Invoke headerDiv function to get the HTML element
+  const headerElement = headerDiv(socialOptions, 'social-share-block');
+  
+  // Append the generated HTML element to the block
+  block.append(headerElement);
+
+  // Decorate icons
   decorateIcons(block);
 }
