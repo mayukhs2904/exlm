@@ -10,6 +10,10 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+function getObjectById(obj, ID) {
+  return obj.find((option) => option.id === ID);
+}
+
 export default function decorate(block) {
   const socialDiv = block.firstElementChild;
   const socialNetworks = socialDiv.textContent.split(',').map((network) => network.trim());
@@ -45,12 +49,11 @@ export default function decorate(block) {
       <div class="social-share-view">
         ${socialNetworks
           .map((network) => {
-            const socialInfo = socialData.find((item) => item.id === network);
               return `
-              <a href="${socialInfo.url}" target="_blank">
+              <a href="${getObjectById(socialData, network).url}" target="_blank">
                 <div class="social-share-item">
-                  <span class="icon icon-${socialInfo.icon}"></span>
-                  <span class="social-share-name">${placeholders[socialInfo.value]}</span>
+                  <span class="icon icon-${getObjectById(socialData, network).icon}"></span>
+                  <span class="social-share-name">${placeholders[getObjectById(socialData, network).value]}</span>
                 </div>
               </a>`;
           })
