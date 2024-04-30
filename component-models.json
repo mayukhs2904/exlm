@@ -2684,15 +2684,15 @@
         "options": [
           {
             "name": "Facebook",
-            "value": "Facebook"
+            "value": "facebook"
           },
           {
             "name": "Twitter",
-            "value": "X (formerly Twitter)"
+            "value": "twitter"
           },
           {
             "name": "LinkedIn",
-            "value": "LinkedIn"
+            "value": "linkedin"
           }
         ]
       }
