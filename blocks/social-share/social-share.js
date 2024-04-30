@@ -47,12 +47,12 @@ export default function decorate(block) {
           .map((network) => {
             const socialInfo = getObjectById(socialData, network);
             if (socialInfo) {
-              const label = socialInfo.id.charAt(0).toUpperCase();
+              const label = socialInfo.id.charAt(0).toUpperCase() + socialInfo.id.slice(1);
               return `
                 <a href="${socialInfo.url}" target="_blank">
                   <div class="social-share-item">
                     <span class="icon icon-${socialInfo.icon}"></span>
-                    <span class="social-share-name">${placeholders[`socialShare${label}`]}</span>
+                    <span class="social-share-name">${placeholders['socialShare' + label]}</span>
                   </div>
                 </a>`;
             } else {
