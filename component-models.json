@@ -2673,7 +2673,7 @@
     ]
   },
   {
-    "id": "social-share-block",
+    "id": "social-share",
     "fields": [
       {
         "component": "multiselect",
