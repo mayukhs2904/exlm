@@ -1,0 +1,215 @@
+
+      <urlset xmlns="http://www.google.com/schemas/sitemap/0.84"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:coveo="http://www.coveo.com/schemas/metadata"
+              xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">
+          <url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/sample-article</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type>Article</coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <coveo-solution>Acrobat Services,Acrobat Sign,Admin</coveo-solution>
+    <role>Developer,User</role>
+    <level>Beginner,Intermediate</level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/test-article-toc</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/test-article-external</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type>Article</coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <coveo-solution>Acrobat Services,Analytics,Campaign,Commerce Intelligence,Connect,Document Cloud,Experience Cloud Services,Journey Optimizer,Learning Manager</coveo-solution>
+    <role>Developer,Leader,Admin</role>
+    <level>Beginner,Experienced</level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/test-page</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/test-1904</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/test-article</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type>Article</coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <coveo-solution>Acrobat</coveo-solution>
+    <role>Developer</role>
+    <level>Beginner</level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/carl-cameron</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/2304</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/test-2504</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/analytics</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/workfront</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/ahmed-article</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/commerce</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/mirko-article</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/marquee-test</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager/test-marquee</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type></coveo-content-type>
+    <author-type></author-type>
+    <author-name></author-name>
+    <role></role>
+    <level></level>
+  </coveo:metadata>
+</url>
+<url>
+  <loc>https://experienceleague-dev.adobe.com/en/articles/experience-manager</loc>
+  <lastmod></lastmod>
+  <changefreq>daily</changefreq>
+  <coveo:metadata>
+    <coveo-content-type>Article</coveo-content-type>
+    <author-type>External</author-type>
+    <author-name>Sharanya</author-name>
+    <coveo-solution>Audience Manager</coveo-solution>
+    <role>User</role>
+    <level>Experienced</level>
+  </coveo:metadata>
+</url>
+      </urlset>
+    
