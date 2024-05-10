@@ -20,7 +20,6 @@ import {
   readBlockConfig,
   createOptimizedPicture,
 } from './lib-franklin.js';
-// eslint-disable-next-line import/no-cycle
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
@@ -178,19 +177,27 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
+/**
+ * Extract author information from the author page.
+ * @param {HTMLElement} block
+ */
 export function extractAuthorInfo(block) {
   const authorInfo = [...block.children].map((row) => row.firstElementChild);
   return {
-    authorImage: authorInfo[0] ?? '',
-    authorName: authorInfo[1] ?? '',
-    authorTitle: authorInfo[2] ?? '',
-    authorCompany: authorInfo[3] ?? '',
-    authorDescription: authorInfo[4] ?? '',
-    authorSocialLinkText: authorInfo[5] ?? '',
-    authorSocialLinkURL: authorInfo[6] ?? '',
+    authorImage: authorInfo[0]?.querySelector('img')?.getAttribute('src'),
+    authorName: authorInfo[1]?.textContent.trim(),
+    authorTitle: authorInfo[2]?.textContent.trim(),
+    authorCompany: authorInfo[3]?.textContent.trim(),
+    authorDescription: authorInfo[4],
+    authorSocialLinkText: authorInfo[5]?.textContent.trim(),
+    authorSocialLinkURL: authorInfo[6]?.textContent.trim(),
   };
 }
 
+/**
+ * Fetch the author information from the author page.
+ * @param {HTMLAnchorElement} anchor || {string} link
+ */
 export async function fetchAuthorBio(anchor) {
   const link = anchor.href ? anchor.href : anchor;
   return fetch(link)
@@ -199,18 +206,6 @@ export async function fetchAuthorBio(anchor) {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
-      if (authorInfo.authorName) {
-        const meta = document.createElement('meta');
-        meta.name = 'author-name';
-        meta.content = authorInfo.authorName?.textContent;
-        document.head.appendChild(meta);
-      }
-      if (authorInfo.authorCompany) {
-        const meta = document.createElement('meta');
-        meta.name = 'author-type';
-        meta.content = authorInfo.authorCompany?.textContent;
-        document.head.appendChild(meta);
-      }
       return authorInfo;
     })
     .catch((error) => {
@@ -252,8 +247,6 @@ function buildAutoBlocks(main) {
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    addMiniTocForArticlesPage(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -653,7 +646,10 @@ export function getConfig() {
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
-    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    coveoSearchResultsUrl: isProd
+      ? 'https://platform.cloud.coveo.com/rest/search/v2'
+      : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
+    coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
     searchUrl: `${cdnOrigin}/search.html`,
@@ -888,23 +884,6 @@ async function loadArticles() {
   }
 }
 
-function addMiniTocForArticlesPage(main) {
-  if (isArticlePage()) {
-    const [, articleBody] = main.children;
-    if (articleBody && !articleBody.querySelector('.mini-toc')) {
-      // Dynamically add mini-toc section for articles page
-      const miniTocWrapper = htmlToElement(`
-      <div class="mini-toc">
-        <div>
-          <div></div>
-        </div>
-      </div>
-      `);
-      articleBody.appendChild(miniTocWrapper);
-    }
-  }
-}
-
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -1055,60 +1034,6 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
       if (onRejected) onRejected(span);
     });
   return span;
-}
-
-function formatPageMetaTags(inputString) {
-  return inputString
-    .replace(/exl:[^/]*\/*/g, '')
-    .split(',')
-    .map((part) => part.trim());
-}
-
-function decodePageMetaTags() {
-  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
-  const roleMeta = document.querySelector(`meta[name="role"]`);
-  const levelMeta = document.querySelector(`meta[name="level"]`);
-  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
-
-  const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
-  const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
-  const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
-  const authorBio = authorMeta ? `${window.location.origin}${authorMeta.content}` : '';
-
-  const decodedSolutions = solutions.map((solution) => {
-    // In case of sub-solutions. E.g. exl:solution/campaign/standard
-    const parts = solution.split('/');
-    const decodedParts = parts.map((part) => atob(part));
-
-    // If it's a sub-solution, create a version meta tag
-    if (parts.length > 1) {
-      const versionMeta = document.createElement('meta');
-      versionMeta.name = 'version';
-      versionMeta.content = atob(parts.slice(1).join('/'));
-      document.head.appendChild(versionMeta);
-    }
-
-    return decodedParts[0];
-  });
-  const decodedRoles = roles.map((role) => atob(role));
-  const decodedLevels = experienceLevels.map((level) => atob(level));
-
-  if (solutionMeta) {
-    solutionMeta.content = decodedSolutions.join(',');
-  }
-  if (roleMeta) {
-    roleMeta.content = decodedRoles.join(',');
-  }
-  if (levelMeta) {
-    levelMeta.content = decodedLevels.join(',');
-  }
-  if (authorMeta) {
-    authorMeta.content = authorBio;
-  }
-}
-
-if (isArticleLandingPage() || isArticlePage()) {
-  decodePageMetaTags();
 }
 
 async function loadPage() {

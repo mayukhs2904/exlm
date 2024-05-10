@@ -1118,27 +1118,8 @@
     ]
   },
   {
-    "id": "author-summary",
-    "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      }
-    ]
-  },
-  {
     "id": "article-marquee",
     "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      },
       {
         "component": "text",
         "valueType": "string",
@@ -2465,7 +2446,7 @@
         "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
-        "component": "text",
+        "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
         "value": "",
@@ -2669,6 +2650,162 @@
             "value": "h6"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "featured-authors",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authors_heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "authors_headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "authors_description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author1_bio",
+        "value": "",
+        "label": "Author 1 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_cta",
+        "value": "",
+        "label": "Author 1 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_ctaText",
+        "value": "",
+        "label": "Author 1 CTA Text",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author2_bio",
+        "value": "",
+        "label": "Author 2 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_cta",
+        "value": "",
+        "label": "Author 2 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_ctaText",
+        "value": "",
+        "label": "Author 2 CTA Text",
+        "valueType": "string"
       }
     ]
   },
