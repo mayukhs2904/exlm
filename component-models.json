@@ -251,6 +251,60 @@
     ]
   },
   {
+    "id": "inline-survey",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main title of the Inline Survey."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Element ID",
+        "description": "Element ID to be used for qualtrics survey insertion point."
+      }
+    ]
+  },
+  {
     "id": "detailed-teaser",
     "fields": [
       {
@@ -821,6 +875,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -899,8 +957,8 @@
             "value": "Intermediate"
           },
           {
-            "name": "Advanced",
-            "value": "Advanced"
+            "name": "Experienced",
+            "value": "Experienced"
           }
         ]
       },
@@ -1814,6 +1872,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1850,14 +1912,6 @@
         "label": "Link Text",
         "valueType": "string",
         "description": "Sets the text for link."
-      },
-      {
-        "component": "text",
-        "name": "link",
-        "value": "",
-        "label": "Link URL",
-        "valueType": "string",
-        "description": "Sets the text url."
       },
       {
         "component": "text",
@@ -2225,6 +2279,10 @@
         "label": "Filter by Content Type",
         "description": "Select the content type(s).",
         "options": [
+          {
+            "name": "Article",
+            "value": "article"
+          },
           {
             "name": "Courses",
             "value": "course"
@@ -2832,6 +2890,46 @@
             "value": "linkedin"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "data-and-email-consent",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "collect-data-heading",
+        "value": "",
+        "label": "Collect data heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "collect-data-description",
+        "value": "",
+        "label": "Collect data description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "email-heading",
+        "value": "",
+        "label": "Email heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "email-description",
+        "value": "",
+        "label": "Email description"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "legal",
+        "value": "",
+        "label": "Legal"
       }
     ]
   }

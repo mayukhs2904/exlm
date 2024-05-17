@@ -525,7 +525,11 @@ export function decoratePreviousImage(textNode) {
  * @param {HTMLElement} element
  */
 export function decorateInlineAttributes(element) {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const ignoredElements = ['pre', 'code', 'script', 'style'];
+  const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
+    isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+  );
   while (walker.nextNode()) {
     const { currentNode } = walker;
     decorateInlineText(currentNode);
@@ -650,6 +654,7 @@ export function getConfig() {
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
     searchUrl: `${cdnOrigin}/search.html`,
