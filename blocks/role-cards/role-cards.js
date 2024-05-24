@@ -89,59 +89,50 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
-  const updatedRoles = [];
+  let updatedRoles = []; // Changed from const to let
 
-  if (isSignedIn) {
-    const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData.role ? profileData.role : [];
+if (isSignedIn) {
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const role = profileData.role || []; // Simplified the conditional
 
-    role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
-      if (checkBox) {
-        checkBox.checked = true;
-        checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
+  role.forEach((el) => {
+    const checkBox = document.querySelector(`input[name="${el}"]`);
+    if (checkBox) {
+      checkBox.checked = true;
+      checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
+    }
+  });
+
+  updatedRoles = [...role]; // Spread operator to create a new array
+}
+
+block.querySelectorAll('.role-cards-block').forEach((card) => {
+  const checkbox = card.querySelector('input[type="checkbox"]');
+
+  card.addEventListener('click', (e) => {
+    const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+    if (e.target !== checkbox && !isLabelClicked) {
+      checkbox.checked = !checkbox.checked;
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  checkbox.addEventListener('change', async (e) => {
+    const isChecked = checkbox.checked;
+    checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
+
+    const profileKey = checkbox.getAttribute('name');
+
+    if (isChecked) {
+      if (!updatedRoles.includes(profileKey)) {
+        updatedRoles.push(profileKey);
       }
-    });
-
-    updatedRoles = role;
-  }
-
-  block.querySelectorAll('.role-cards-block').forEach((card) => {
-    const checkbox = card.querySelector('input[type="checkbox"]');
-
-    card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      const roleIndex = updatedRoles.indexOf(profileKey);
+      if (roleIndex !== -1) {
+        updatedRoles.splice(roleIndex, 1);
       }
-    });
-
-    checkbox.addEventListener('change', async(e) => {
-      const isChecked = checkbox.checked;
-      checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
-
-      // if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
-        // const profileData = await defaultProfileClient.getMergedProfile();
-        // let updatedRoles = profileData.role ? profileData.role : [];
-
-        console.log(updatedRoles,"second udpate role")
-
-        if (isChecked) {
-          console.log("enters if")
-          if (!updatedRoles.includes(profileKey)) {
-            updatedRoles.push(profileKey);
-            console.log(updatedRoles,"3rd updated role")
-          }
-        } else {
-          const roleIndex = updatedRoles.indexOf(profileKey);
-          console.log(roleIndex,"roleindex")
-          if (roleIndex !== -1) {
-            updatedRoles.splice(roleIndex, 1);
-            console.log(updatedRoles,"splice updated role")
-          }
-        }
+    }
         defaultProfileClient
         .updateProfile('role', updatedRoles)
         .then(() => sendNotice(PROFILE_UPDATED))
