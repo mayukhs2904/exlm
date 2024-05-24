@@ -128,10 +128,9 @@ export default async function decorate(block) {
             updatedRoles.push(profileKey);
           }
         } else {
-          const roleIndex = updatedRoles.indexOf(profileKey);
-          if (roleIndex !== -1) {
-            updatedRoles.splice(roleIndex, 1);
-          }
+          const newUpdatedRoles = updatedRoles.filter(role => role !== profileKey);
+          updatedRoles.length = 0;
+          updatedRoles.push(...newUpdatedRoles);
         }
         defaultProfileClient
           .updateProfile('role', updatedRoles)
