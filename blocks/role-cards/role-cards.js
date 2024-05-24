@@ -138,6 +138,7 @@ export default async function decorate(block) {
           console.log(updatedRoles,"3rd")
         }
         try {
+          console.log(updatedRoles , 'sent in api');
           await defaultProfileClient.updateProfile('role', updatedRoles);
           sendNotice(PROFILE_UPDATED);
         } catch (error) {
