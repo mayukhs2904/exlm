@@ -104,7 +104,7 @@ export default async function decorate(block) {
   }
 
   // const currentProfile = isSignedIn ? await defaultProfileClient.getMergedProfile() : null;
-
+  const updatedRoles = role;
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
@@ -122,7 +122,7 @@ export default async function decorate(block) {
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('data-name');
-        const updatedRoles = role;
+        // const updatedRoles = role;
         console.log(updatedRoles,"updatedroles")
 
         if (isChecked) {
