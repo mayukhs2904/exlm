@@ -93,9 +93,9 @@ export default async function decorate(block) {
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData.role ? profileData.role : [];
-    updatedRoles = [...role];
+    // updatedRoles = [...role];
 
-    console.log(updatedRoles,"first updatedRoles");
+    // console.log(updatedRoles,"first updatedRoles");
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
