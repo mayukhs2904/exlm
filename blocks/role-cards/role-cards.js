@@ -95,42 +95,23 @@ export default async function decorate(block) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role || [];
 
-    role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
-      if (checkBox) {
-        checkBox.checked = true;
-        checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
-      }
-    });
+    updatedRoles = [...role]; // Initialize with existing roles
 
-    updatedRoles = [...role];
-  }
+    roleCardsDiv.querySelectorAll('.role-cards-checkbox input[type="checkbox"]').forEach((checkbox) => {
+      const card = checkbox.closest('.role-cards-block');
+      checkbox.checked = updatedRoles.includes(checkbox.name);
+      card.classList.toggle('highlight', checkbox.checked);
 
-  block.querySelectorAll('.role-cards-block').forEach((card) => {
-    const checkbox = card.querySelector('input[type="checkbox"]');
-
-    card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
-
-    checkbox.addEventListener('change', async(e) => {
-      e.preventDefault();
-      const isChecked = checkbox.checked;
-      checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
-
-      if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
+      checkbox.addEventListener('change', async (e) => {
+        const isChecked = e.target.checked;
+        card.classList.toggle('highlight', isChecked);
 
         if (isChecked) {
-          if (!updatedRoles.includes(profileKey)) {
-            updatedRoles.push(profileKey);
+          if (!updatedRoles.includes(checkbox.name)) {
+            updatedRoles.push(checkbox.name);
           }
         } else {
-          const roleIndex = updatedRoles.indexOf(profileKey);
+          const roleIndex = updatedRoles.indexOf(checkbox.name);
           if (roleIndex !== -1) {
             updatedRoles.splice(roleIndex, 1);
           }
@@ -138,11 +119,12 @@ export default async function decorate(block) {
 
         try {
           await defaultProfileClient.updateProfile('role', updatedRoles);
-          sendNotice(PROFILE_UPDATED);
+          sendNotice(placeholderText('profileUpdated'));
         } catch (error) {
-          sendNotice(PROFILE_NOT_UPDATED);
+          console.error('Error updating profile:', error); // Log detailed error
+          sendNotice(placeholderText('profileNotUpdated'));
         }
-      }
+      });
     });
-  });
+  }
 }
