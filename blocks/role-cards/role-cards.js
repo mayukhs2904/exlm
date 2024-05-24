@@ -88,11 +88,14 @@ export default async function decorate(block) {
 
   block.append(roleCardsDiv);
   decorateIcons(block);
+
+  const updatedRoles = [];
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData.role ? profileData.role : [];
+    updatedRoles = role;
 
-    console.log(role,"role");
+    console.log(updatedRoles,"first updatedRoles");
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[data-name="${el}"]`);
@@ -104,7 +107,7 @@ export default async function decorate(block) {
   }
 
   // const currentProfile = isSignedIn ? await defaultProfileClient.getMergedProfile() : null;
-  const updatedRoles = role;
+  // const updatedRoles = role;
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
@@ -120,10 +123,8 @@ export default async function decorate(block) {
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
-      if (isSignedIn) {
+      // if (isSignedIn) {
         const profileKey = checkbox.getAttribute('data-name');
-        // const updatedRoles = role;
-        console.log(updatedRoles,"updatedroles")
 
         if (isChecked) {
           console.log("enters if")
@@ -143,7 +144,7 @@ export default async function decorate(block) {
         .updateProfile('role', updatedRoles)
         .then(() => sendNotice(PROFILE_UPDATED))
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-      }
+      // }
     });
   });
 }
