@@ -100,6 +100,8 @@ export default async function decorate(block) {
         checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
       }
     });
+
+    console.log(profileData,'sent after refresh called');
   }
 
   const currentProfile = await defaultProfileClient.getMergedProfile();
@@ -141,6 +143,7 @@ export default async function decorate(block) {
           console.log(updatedRoles , 'sent in api');
           await defaultProfileClient.updateProfile('role', updatedRoles);
           sendNotice(PROFILE_UPDATED);
+          console.log(updatedRoles , 'sent after api called');
         } catch (error) {
           console.log("error")
           sendNotice(PROFILE_NOT_UPDATED);
