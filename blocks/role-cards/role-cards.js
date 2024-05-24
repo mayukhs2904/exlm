@@ -105,7 +105,7 @@ export default async function decorate(block) {
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
-    card.addEventListener('click', async (e) => {
+    card.addEventListener('click', (e) => {
       const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
       if (e.target !== checkbox && !isLabelClicked) {
         checkbox.checked = !checkbox.checked;
@@ -121,28 +121,22 @@ export default async function decorate(block) {
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
         const currentProfile = await defaultProfileClient.getMergedProfile();
-        console.log(currentProfile,"currentprofile");
-        const updatedRoles = currentProfile.role;
-        
-        console.log(updatedRoles,"updatedroles") 
-
-        console.log(profileKey,"profilekey")
+        const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+        console.log(updatedRoles,"updatedroles");
 
         if (isChecked) {
-          console.log("yes checked")
+          console.log(isChecked,"ischekced");
           if (!updatedRoles.includes(profileKey)) {
             updatedRoles.push(profileKey);
           }
+          console.log(updatedRoles,"updated roles after check")
         } else {
-          console.log("not checked")
-          const newUpdatedRoles = updatedRoles.filter(role => role !== profileKey);
-          console.log(newUpdatedRoles,"newupdatedrole")
-          updatedRoles.length = 0;
-          updatedRoles.push(...newUpdatedRoles);
-          // const roleIndex = updatedRoles.indexOf(profileKey);
-          // if (roleIndex !== -1) {
-          //   updatedRoles.splice(roleIndex, 1);
-          // }
+          const roleIndex = updatedRoles.indexOf(profileKey);
+          console.log(roleIndex,"roleindex")
+          if (roleIndex !== -1) {
+            updatedRoles.splice(roleIndex, 1);
+          }
+          console.log(updatedRoles,"updated roles ater deletion")
         }
         defaultProfileClient
           .updateProfile('role', updatedRoles)
