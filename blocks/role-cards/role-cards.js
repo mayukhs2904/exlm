@@ -89,11 +89,11 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
-  const updatedRoles = [];
+  let updatedRoles = [];
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData.role ? profileData.role : [];
-    // updatedRoles = [...role];
+    updatedRoles = [...role];
 
     // console.log(updatedRoles,"first updatedRoles");
 
