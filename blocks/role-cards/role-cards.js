@@ -113,14 +113,14 @@ export default async function decorate(block) {
       }
     });
 
-    checkbox.addEventListener('change', async (e) => {
+    checkbox.addEventListener('change', (e) => {
       e.preventDefault();
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
-        const currentProfile = await defaultProfileClient.getMergedProfile();
+        const currentProfile = defaultProfileClient.getMergedProfile();
         const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
         console.log(updatedRoles,"updatedroles");
 
