@@ -88,11 +88,9 @@ export default async function decorate(block) {
 
   block.append(roleCardsDiv);
   decorateIcons(block);
-
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
-    console.log(role,"role")
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[data-name="${el}"]`);
@@ -102,6 +100,8 @@ export default async function decorate(block) {
       }
     });
   }
+
+  const currentProfile = isSignedIn ? await defaultProfileClient.getMergedProfile() : null;
 
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
@@ -115,35 +115,36 @@ export default async function decorate(block) {
     });
 
     checkbox.addEventListener('change', async (e) => {
-      e.preventDefault();
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('data-name');
-        const currentProfile = await defaultProfileClient.getMergedProfile();
-        const updatedRoles = currentProfile?.role;
-        console.log(updatedRoles,"updatedroles");
+        const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+        console.log(updatedRoles,"updatedroles")
 
         if (isChecked) {
-          console.log(isChecked,"ischekced");
+          console.log("enters if")
           if (!updatedRoles.includes(profileKey)) {
-            console.log("inside if of updated roles");
             updatedRoles.push(profileKey);
+            console.log(updatedRoles,"if if updated role")
           }
-          console.log(updatedRoles,"updated roles after check")
         } else {
           const roleIndex = updatedRoles.indexOf(profileKey);
           console.log(roleIndex,"roleindex")
           if (roleIndex !== -1) {
             updatedRoles.splice(roleIndex, 1);
+            console.log(updatedRoles,"splice updated role")
           }
-          console.log(updatedRoles,"updated roles ater deletion")
         }
-        defaultProfileClient
-          .updateProfile('role', updatedRoles)
-          .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+
+        try {
+          await defaultProfileClient.updateProfile('role', updatedRoles);
+          sendNotice(PROFILE_UPDATED);
+          currentProfile.role = updatedRoles; // Update currentProfile locally
+        } catch {
+          sendNotice(PROFILE_NOT_UPDATED);
+        }
       }
     });
   });
