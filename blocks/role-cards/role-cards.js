@@ -89,9 +89,11 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
+  let updatedRoles = [];
+
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
+    const role = profileData?.role || [];
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
@@ -100,6 +102,8 @@ export default async function decorate(block) {
         checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
       }
     });
+
+    updatedRoles = [...role];
   }
 
   block.querySelectorAll('.role-cards-block').forEach((card) => {
@@ -120,8 +124,6 @@ export default async function decorate(block) {
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
-        const currentProfile = await defaultProfileClient.getMergedProfile();
-        const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
 
         if (isChecked) {
           if (!updatedRoles.includes(profileKey)) {
@@ -133,10 +135,13 @@ export default async function decorate(block) {
             updatedRoles.splice(roleIndex, 1);
           }
         }
-        await defaultProfileClient
-          .updateProfile('role', updatedRoles)
-          .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+
+        try {
+          await defaultProfileClient.updateProfile('role', updatedRoles);
+          sendNotice(PROFILE_UPDATED);
+        } catch (error) {
+          sendNotice(PROFILE_NOT_UPDATED);
+        }
       }
     });
   });
