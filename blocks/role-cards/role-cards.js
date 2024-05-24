@@ -141,7 +141,6 @@ export default async function decorate(block) {
         try {
           await defaultProfileClient.updateProfile('role', updatedRoles);
           sendNotice(PROFILE_UPDATED);
-          currentProfile.role = updatedRoles; // Update currentProfile locally
         } catch {
           sendNotice(PROFILE_NOT_UPDATED);
         }
