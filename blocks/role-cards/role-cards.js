@@ -9,6 +9,7 @@ let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
+  // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
 
@@ -65,21 +66,21 @@ export default async function decorate(block) {
         .map(
           (card, index) => `
         <div class="role-cards-block">
-          <div class="role-cards-description">
-            <div class="role-cards-icon">
-              <span class="icon icon-${card.icon}"></span>
-              <h3>${card.title}</h3>
-            </div>
-            <p>${card.description}</p>
-          </div>
-          <div class="role-cards-selectiondefault">
-            ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
-            <span class="role-cards-checkbox">
-              <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-              <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
-            </span>
-          </div>
-        </div>`
+        <div class="role-cards-description">
+        <div class="role-cards-icon">
+        <span class="icon icon-${card.icon}"></span>
+        <h3>${card.title}</h3>
+        </div>
+        <p>${card.description}</p>
+        </div>
+        <div class="role-cards-selectiondefault">
+        ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
+        <span class="role-cards-checkbox">
+        <input name="${card.role}" type="checkbox" id="selectRole-${index}">
+        <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
+        </span>
+        </div>
+        </div>`,
         )
         .join('')}
     </div>
@@ -88,13 +89,9 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
-  let updatedRoles = [];
-
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role || [];
-
-    updatedRoles = [...role];
+    const role = profileData?.role;
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
@@ -105,10 +102,8 @@ export default async function decorate(block) {
     });
   }
 
-  roleCardsDiv.querySelectorAll('.role-cards-checkbox input[type="checkbox"]').forEach((checkbox) => {
-    const card = checkbox.closest('.role-cards-block');
-    checkbox.checked = updatedRoles.includes(checkbox.name);
-    card.classList.toggle('highlight', checkbox.checked);
+  block.querySelectorAll('.role-cards-block').forEach((card) => {
+    const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
       const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
@@ -118,27 +113,33 @@ export default async function decorate(block) {
       }
     });
 
-    checkbox.addEventListener('change', async (e) => {
-      const isChecked = e.target.checked;
-      card.classList.toggle('highlight', isChecked);
+    checkbox.addEventListener('change', (e) => {
+      e.preventDefault();
+      const isChecked = checkbox.checked;
+      checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
-      if (isChecked) {
-        if (!updatedRoles.includes(checkbox.name)) {
-          updatedRoles.push(checkbox.name);
-        }
-      } else {
-        const roleIndex = updatedRoles.indexOf(checkbox.name);
-        if (roleIndex !== -1) {
-          updatedRoles.splice(roleIndex, 1);
-        }
-      }
+      if (isSignedIn) {
+        const profileKey = checkbox.getAttribute('name');
+        const currentProfile = defaultProfileClient.getMergedProfile();
+        const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+        console.log(updatedRoles,"updated roles")
 
-      try {
-        await defaultProfileClient.updateProfile('role', updatedRoles);
-        sendNotice(PROFILE_UPDATED);
-      } catch (error) {
-        console.error('Error updating profile:', error);
-        sendNotice(PROFILE_NOT_UPDATED);
+        if (isChecked) {
+          if (!updatedRoles.includes(profileKey)) {
+            updatedRoles.push(profileKey);
+          }
+          console.log(updatedRoles,"2nd")
+        } else {
+          const roleIndex = updatedRoles.indexOf(profileKey);
+          if (roleIndex !== -1) {
+            updatedRoles.splice(roleIndex, 1);
+          }
+          console.log(updatedRoles,"3rd")
+        }
+        defaultProfileClient
+          .updateProfile('role', updatedRoles)
+          .then(() => sendNotice(PROFILE_UPDATED))
+          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
       }
     });
   });
