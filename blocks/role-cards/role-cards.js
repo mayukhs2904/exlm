@@ -136,7 +136,7 @@ export default async function decorate(block) {
           }
           console.log(updatedRoles,"3rd")
         }
-        defaultProfileClient
+        await defaultProfileClient
           .updateProfile('role', updatedRoles)
           .then(() => sendNotice(PROFILE_UPDATED))
           .catch(() => sendNotice(PROFILE_NOT_UPDATED));
