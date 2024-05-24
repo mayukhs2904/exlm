@@ -114,7 +114,7 @@ export default async function decorate(block) {
       }
     });
 
-    checkbox.addEventListener('change', async (e) => {
+    checkbox.addEventListener('change', (e) => {
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
@@ -137,13 +137,10 @@ export default async function decorate(block) {
             console.log(updatedRoles,"splice updated role")
           }
         }
-
-        try {
-          await defaultProfileClient.updateProfile('role', updatedRoles);
-          sendNotice(PROFILE_UPDATED);
-        } catch {
-          sendNotice(PROFILE_NOT_UPDATED);
-        }
+        defaultProfileClient
+        .updateProfile('role', updatedRoles)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
       }
     });
   });
