@@ -123,12 +123,17 @@ export default async function decorate(block) {
         const currentProfile = defaultProfileClient.getMergedProfile();
         const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
 
+        console.log(profileKey,"profilekey")
+
         if (isChecked) {
+          console.log("yes checked")
           if (!updatedRoles.includes(profileKey)) {
             updatedRoles.push(profileKey);
           }
         } else {
+          console.log("not checked")
           const newUpdatedRoles = updatedRoles.filter(role => role !== profileKey);
+          console.log(newUpdatedRoles,"newupdatedrole")
           updatedRoles.length = 0;
           updatedRoles.push(...newUpdatedRoles);
         }
