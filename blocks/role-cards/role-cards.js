@@ -21,6 +21,8 @@ export default async function decorate(block) {
   block.textContent = '';
   const isSignedIn = await isSignedInUser();
 
+  console.log(isSignedIn,"sign in")
+
   const roleCardsData = [
     {
       role: 'User',
@@ -90,6 +92,7 @@ export default async function decorate(block) {
   decorateIcons(block);
 
   if (isSignedIn) {
+    console.log("hiiii");
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
 
