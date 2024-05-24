@@ -128,6 +128,7 @@ export default async function decorate(block) {
         if (isChecked) {
           console.log(isChecked,"ischekced");
           if (!updatedRoles.includes(profileKey)) {
+            console.log("inside if of updated roles");
             updatedRoles.push(profileKey);
           }
           console.log(updatedRoles,"updated roles after check")
