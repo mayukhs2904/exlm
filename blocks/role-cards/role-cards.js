@@ -137,10 +137,12 @@ export default async function decorate(block) {
           }
           console.log(updatedRoles,"3rd")
         }
-        await defaultProfileClient
-          .updateProfile('role', updatedRoles)
-          .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        try {
+          await defaultProfileClient.updateProfile('role', updatedRoles);
+          sendNotice(PROFILE_UPDATED);
+        } catch (error) {
+            sendNotice(PROFILE_NOT_UPDATED);
+        }
       }
     });
   });
