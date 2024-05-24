@@ -102,47 +102,99 @@ export default async function decorate(block) {
     });
   }
 
-  const currentProfile = await defaultProfileClient.getMergedProfile();
-  const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+  // const currentProfile = await defaultProfileClient.getMergedProfile();
+  // const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
   
-  console.log(updatedRoles,"1st updated roles")
+  // console.log(updatedRoles,"1st updated roles")
 
-  block.querySelectorAll('.role-cards-block').forEach((card) => {
-    const checkbox = card.querySelector('input[type="checkbox"]');
+  // block.querySelectorAll('.role-cards-block').forEach((card) => {
+  //   const checkbox = card.querySelector('input[type="checkbox"]');
 
-    card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
+  //   card.addEventListener('click', (e) => {
+  //     const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+  //     if (e.target !== checkbox && !isLabelClicked) {
+  //       checkbox.checked = !checkbox.checked;
+  //       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+  //     }
+  //   });
 
-    checkbox.addEventListener('change', async (e) => {
-      e.preventDefault();
-      const isChecked = checkbox.checked;
-      checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
+  //   checkbox.addEventListener('change', async (e) => {
+  //     e.preventDefault();
+  //     const isChecked = checkbox.checked;
+  //     checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
-      if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
+  //     if (isSignedIn) {
+  //       const profileKey = checkbox.getAttribute('name');
 
-        if (isChecked) {
-          if (!updatedRoles.includes(profileKey)) {
-            updatedRoles.push(profileKey);
+  //       if (isChecked) {
+  //         if (!updatedRoles.includes(profileKey)) {
+  //           updatedRoles.push(profileKey);
+  //         }
+  //         console.log(updatedRoles,"2nd")
+  //       } else {
+  //         const roleIndex = updatedRoles.indexOf(profileKey);
+  //         if (roleIndex !== -1) {
+  //           updatedRoles.splice(roleIndex, 1);
+  //         }
+  //         console.log(updatedRoles,"3rd")
+  //       }
+  //       await defaultProfileClient
+  //         .updateProfile('role', updatedRoles)
+  //         .then(() => sendNotice(PROFILE_UPDATED))
+  //         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+  //     }
+  //   });
+  // });
+  (async () => {
+    try {
+      const currentProfile = await defaultProfileClient.getMergedProfile();
+      const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+    
+      console.log(updatedRoles, "1st updated roles");
+  
+      block.querySelectorAll('.role-cards-block').forEach((card) => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+  
+        card.addEventListener('click', (e) => {
+          const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+          if (e.target !== checkbox && !isLabelClicked) {
+            checkbox.checked = !checkbox.checked;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
           }
-          console.log(updatedRoles,"2nd")
-        } else {
-          const roleIndex = updatedRoles.indexOf(profileKey);
-          if (roleIndex !== -1) {
-            updatedRoles.splice(roleIndex, 1);
+        });
+  
+        checkbox.addEventListener('change', async (e) => {
+          const isChecked = checkbox.checked;
+          checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
+  
+          if (isSignedIn) {
+            const profileKey = checkbox.getAttribute('name');
+  
+            if (isChecked) {
+              if (!updatedRoles.includes(profileKey)) {
+                updatedRoles.push(profileKey);
+              }
+              console.log(updatedRoles, "2nd");
+            } else {
+              const roleIndex = updatedRoles.indexOf(profileKey);
+              if (roleIndex !== -1) {
+                updatedRoles.splice(roleIndex, 1);
+              }
+              console.log(updatedRoles, "3rd");
+            }
+  
+            try {
+              await defaultProfileClient.updateProfile({ role: updatedRoles });
+              console.log('Profile updated with roles:', updatedRoles);
+            } catch (error) {
+              console.error('Error updating profile roles:', error);
+            }
           }
-          console.log(updatedRoles,"3rd")
-        }
-        await defaultProfileClient
-          .updateProfile('role', updatedRoles)
-          .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-      }
-    });
-  });
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  })();
+  
 }
