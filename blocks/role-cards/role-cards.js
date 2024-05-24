@@ -89,6 +89,8 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
+  let updatedRoles = [];
+
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData.role ? profileData.role : [];
@@ -100,9 +102,9 @@ export default async function decorate(block) {
         checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
       }
     });
-  }
 
-  let updatedRoles = role;
+    updatedRoles = role;
+  }
 
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
