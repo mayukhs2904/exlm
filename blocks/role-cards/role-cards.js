@@ -89,13 +89,9 @@ export default async function decorate(block) {
   block.append(roleCardsDiv);
   decorateIcons(block);
 
-  // let updatedRoles = [];
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData.role ? profileData.role : [];
-    // updatedRoles = role;
-
-    // console.log(updatedRoles,"first updatedRoles");
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
@@ -108,45 +104,30 @@ export default async function decorate(block) {
 
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
-
-    card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
-
-    checkbox.addEventListener('change', async(e) => {
+    checkbox.addEventListener('change', async (e) => {
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
-      // if (isSignedIn) {
+      if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
-        const profileData = await defaultProfileClient.getMergedProfile();
-        let updatedRoles = profileData.role ? profileData.role : [];
+        let updatedRoles = profileData.role ? [...profileData.role] : [];
 
-        console.log(updatedRoles,"second udpate role")
-
-        if (isChecked) {
-          console.log("enters if")
-          if (!updatedRoles.includes(profileKey)) {
-            updatedRoles.push(profileKey);
-            console.log(updatedRoles,"3rd updated role")
-          }
-        } else {
+        if (isChecked && !updatedRoles.includes(profileKey)) {
+          updatedRoles.push(profileKey);
+        } else if (!isChecked) {
           const roleIndex = updatedRoles.indexOf(profileKey);
-          console.log(roleIndex,"roleindex")
           if (roleIndex !== -1) {
             updatedRoles.splice(roleIndex, 1);
-            console.log(updatedRoles,"splice updated role")
           }
         }
-        defaultProfileClient
-        .updateProfile('role', updatedRoles)
-        .then(() => sendNotice(PROFILE_UPDATED))
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-      // }
+
+        try {
+          await defaultProfileClient.updateProfile('role', updatedRoles);
+          sendNotice(PROFILE_UPDATED);
+        } catch {
+          sendNotice(PROFILE_NOT_UPDATED);
+        }
+      }
     });
   });
   
