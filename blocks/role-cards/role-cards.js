@@ -120,7 +120,7 @@ export default async function decorate(block) {
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
-        const currentProfile = defaultProfileClient.getProfile();
+        const currentProfile = defaultProfileClient.fetchProfile();
         const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
 
         console.log(profileKey,"profilekey")
