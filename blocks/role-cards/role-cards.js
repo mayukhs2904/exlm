@@ -90,7 +90,9 @@ export default async function decorate(block) {
   decorateIcons(block);
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
+    const role = profileData.role ? profileData.role : [];
+
+    console.log(role,"role");
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[data-name="${el}"]`);
@@ -101,7 +103,7 @@ export default async function decorate(block) {
     });
   }
 
-  const currentProfile = isSignedIn ? await defaultProfileClient.getMergedProfile() : null;
+  // const currentProfile = isSignedIn ? await defaultProfileClient.getMergedProfile() : null;
 
   block.querySelectorAll('.role-cards-block').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
@@ -120,7 +122,7 @@ export default async function decorate(block) {
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('data-name');
-        const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+        const updatedRoles = role;
         console.log(updatedRoles,"updatedroles")
 
         if (isChecked) {
