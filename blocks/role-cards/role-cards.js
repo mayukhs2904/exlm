@@ -76,7 +76,7 @@ export default async function decorate(block) {
         <div class="role-cards-selectiondefault">
         ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
         <span class="role-cards-checkbox">
-        <input name="${card.role}" type="checkbox" id="selectRole-${index}">
+        <input data-name="${card.role}" type="checkbox" id="selectRole-${index}">
         <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
         </span>
         </div>
@@ -95,7 +95,7 @@ export default async function decorate(block) {
     console.log(role,"role")
 
     role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
+      const checkBox = document.querySelector(`input[data-name="${el}"]`);
       if (checkBox) {
         checkBox.checked = true;
         checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
@@ -120,7 +120,7 @@ export default async function decorate(block) {
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
       if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
+        const profileKey = checkbox.getAttribute('data-name');
         const currentProfile = await defaultProfileClient.getMergedProfile();
         const updatedRoles = currentProfile?.role;
         console.log(updatedRoles,"updatedroles");
