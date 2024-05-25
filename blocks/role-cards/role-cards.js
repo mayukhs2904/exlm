@@ -20,6 +20,7 @@ const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 export default async function decorate(block) {
   block.textContent = '';
   const isSignedIn = await isSignedInUser();
+  console.log( block.querySelectorAll('.role-cards-block'),"role cards");
 
   console.log(isSignedIn,"sign in")
 
@@ -103,8 +104,6 @@ export default async function decorate(block) {
         checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
       }
     });
-
-    console.log(profileData,'sent after refresh called');
   }
 
   console.log( block.querySelectorAll('.role-cards-block'),"role cards");
@@ -127,33 +126,15 @@ export default async function decorate(block) {
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
 
-      // if (isSignedIn) {
+      if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
-
-        if (isChecked) {
-          if (!updatedRoles.includes(profileKey)) {
-            updatedRoles.push(profileKey);
-          }
-          console.log(updatedRoles,"2nd")
-        } else {
-          // const roleIndex = updatedRoles.indexOf(profileKey);
-          // if (roleIndex !== -1) {
-          //   updatedRoles.splice(roleIndex, 1);
-          // }
-          updatedRoles.push(profileKey);
-          console.log(updatedRoles,"3rd")
-        }
-        try {
-          console.log(updatedRoles , 'sent in api');
-          defaultProfileClient.updateProfile('role', updatedRoles);
-          sendNotice(PROFILE_UPDATED);
-          console.log(updatedRoles , 'sent after api called');
-        } catch (error) {
-          console.log("error")
-          sendNotice(PROFILE_NOT_UPDATED);
-        }
-      // }
+        updatedRoles.push(profileKey);
+        console.log(updatedRoles,"updated roles after oushing")
+        defaultProfileClient
+          .updateProfile('role', updatedRoles)
+          .then(() => sendNotice(PROFILE_UPDATED))
+          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+      }
     });
   });
-  
 }
