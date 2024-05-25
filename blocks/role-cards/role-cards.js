@@ -20,9 +20,6 @@ const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 export default async function decorate(block) {
   block.textContent = '';
   const isSignedIn = await isSignedInUser();
-  console.log( block.querySelectorAll('.role-cards-block'),"role cards");
-
-  console.log(isSignedIn,"sign in")
 
   const roleCardsData = [
     {
@@ -93,7 +90,6 @@ export default async function decorate(block) {
   decorateIcons(block);
 
   if (isSignedIn) {
-    console.log("hiiii");
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
 
@@ -106,19 +102,16 @@ export default async function decorate(block) {
     });
   }
 
-  console.log( block.querySelectorAll('.role-cards-block'),"role cards");
   block.querySelectorAll('.role-cards-block').forEach((card) => {
-    console.log(card,"card");
     const updatedRoles = [];
-    console.log(updatedRoles,"1st updated roles")
     const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
+      // const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+      // if (e.target !== checkbox && !isLabelClicked) {
         checkbox.checked = !checkbox.checked;
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
+      // }
     });
 
     checkbox.addEventListener('change', (e) => {
@@ -129,7 +122,6 @@ export default async function decorate(block) {
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
         updatedRoles.push(profileKey);
-        console.log(updatedRoles,"updated roles after oushing")
         defaultProfileClient
           .updateProfile('role', updatedRoles)
           .then(() => sendNotice(PROFILE_UPDATED))
