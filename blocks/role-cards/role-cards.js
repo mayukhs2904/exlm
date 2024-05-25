@@ -137,10 +137,11 @@ export default async function decorate(block) {
           }
           console.log(updatedRoles,"2nd")
         } else {
-          const roleIndex = updatedRoles.indexOf(profileKey);
-          if (roleIndex !== -1) {
-            updatedRoles.splice(roleIndex, 1);
-          }
+          // const roleIndex = updatedRoles.indexOf(profileKey);
+          // if (roleIndex !== -1) {
+          //   updatedRoles.splice(roleIndex, 1);
+          // }
+          updatedRoles.push(profileKey);
           console.log(updatedRoles,"3rd")
         }
         try {
