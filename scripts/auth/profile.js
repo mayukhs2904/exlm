@@ -144,8 +144,8 @@ console.log(profile,"1st progile")
             profile[key].push(arg);
             console.log(key,"4th key")
           } else {
-            // profile[key].splice(profile[key].indexOf(arg), 1);
-            // console.log(key,"5th key")
+            profile[key].splice(profile[key].indexOf(arg), 1);
+            console.log(key,"5th key")
           }
         });
       }

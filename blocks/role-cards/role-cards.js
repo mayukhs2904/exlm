@@ -107,10 +107,11 @@ export default async function decorate(block) {
     console.log(profileData,'sent after refresh called');
   }
 
-  const currentProfile = await defaultProfileClient.getMergedProfile();
-  const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
+  // const currentProfile = await defaultProfileClient.getMergedProfile();
+  // const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
 
   block.querySelectorAll('.role-cards-block').forEach(async (card) => {
+    const updatedRoles = [];
     console.log(updatedRoles,"1st updated roles")
     const checkbox = card.querySelector('input[type="checkbox"]');
 
