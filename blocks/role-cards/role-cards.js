@@ -107,10 +107,9 @@ export default async function decorate(block) {
     console.log(profileData,'sent after refresh called');
   }
 
-  // const currentProfile = await defaultProfileClient.getMergedProfile();
-  // const updatedRoles = currentProfile.role ? [...currentProfile.role] : [];
-
+  console.log( block.querySelectorAll('.role-cards-block'),"role cards");
   block.querySelectorAll('.role-cards-block').forEach((card) => {
+    console.log(card,"card");
     const updatedRoles = [];
     console.log(updatedRoles,"1st updated roles")
     const checkbox = card.querySelector('input[type="checkbox"]');
@@ -121,8 +120,6 @@ export default async function decorate(block) {
         checkbox.checked = !checkbox.checked;
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
       }
-        // checkbox.checked = !checkbox.checked;
-        // checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     checkbox.addEventListener('change', (e) => {
