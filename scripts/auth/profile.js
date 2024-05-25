@@ -125,7 +125,7 @@ class ProfileClient {
         delete profile[i];
       }
     });
-
+console.log(profile,"1st progile")
     // eslint-disable-next-line
     if (override.test(key) || replace === true) {
       profile[key] = val;
@@ -147,7 +147,7 @@ class ProfileClient {
     } else {
       profile[key] = val;
     }
-
+console.log(profile,"proile")
     await this.fetchProfile({
       method: 'PATCH',
       headers: {
