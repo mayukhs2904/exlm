@@ -116,13 +116,13 @@ export default async function decorate(block) {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
-      // const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      // if (e.target !== checkbox && !isLabelClicked) {
-      //   checkbox.checked = !checkbox.checked;
-      //   checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      // }
+      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+      if (e.target !== checkbox && !isLabelClicked) {
         checkbox.checked = !checkbox.checked;
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+        // checkbox.checked = !checkbox.checked;
+        // checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     checkbox.addEventListener('change', (e) => {
