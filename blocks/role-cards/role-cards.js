@@ -125,7 +125,7 @@ export default async function decorate(block) {
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
-    checkbox.addEventListener('change', async (e) => {
+    checkbox.addEventListener('change', (e) => {
       e.preventDefault();
       const isChecked = checkbox.checked;
       checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
@@ -148,7 +148,7 @@ export default async function decorate(block) {
         }
         try {
           console.log(updatedRoles , 'sent in api');
-          await defaultProfileClient.updateProfile('role', updatedRoles);
+          defaultProfileClient.updateProfile('role', updatedRoles);
           sendNotice(PROFILE_UPDATED);
           console.log(updatedRoles , 'sent after api called');
         } catch (error) {
