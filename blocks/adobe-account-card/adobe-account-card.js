@@ -31,8 +31,10 @@ export default async function decorate(block) {
     <div class="card-header">
       <div class="my-adobe-account">${placeholders?.myAdobeAccount || 'My Adobe Account'}</div>
       <div class="manage-adobe-account">
-        <span class="icon icon-new-tab"></span>
-        <a href="${adobeAccountLink}" target="_blank">${placeholders?.manageAdobeAccount || 'Manage Adobe account'}</a>
+        <a href="${adobeAccountLink}" target="_blank">
+          <span class="icon icon-new-tab"></span>
+          ${placeholders?.manageAdobeAccount || 'Manage Adobe account'}
+        </a>
       </div>
     </div>
     <div class="card-body">
