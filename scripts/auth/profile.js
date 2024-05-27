@@ -127,35 +127,27 @@ class ProfileClient {
         delete profile[i];
       }
     });
-console.log(profile,"1st progile")
     // eslint-disable-next-line
     if (override.test(key) || replace === true) {
       profile[key] = val;
-      console.log(key,"key")
     } else if (attriubutes.types[key] === 'array') {
       // eslint-disable-next-line
       if (profile[key] === void 0 || replace === true) {
         profile[key] = [val];
-        console.log(key,"2nd key")
       } else if (Array.isArray(profile[key]) === false) {
         profile[key] = [profile[key], val];
-        console.log("key", "3rd key")
       } else {
         (Array.isArray(val) ? val : [val]).forEach((arg) => {
           if (profile[key].includes(arg) === false) {
             profile[key].push(arg);
-            console.log(key,"4th key")
           } else {
             profile[key].splice(profile[key].indexOf(arg), 1);
-            console.log(key,"5th key")
           }
         });
       }
     } else {
       profile[key] = val;
-      console.log(key,"6th key")
     }
-console.log(profile,"proile")
     await this.fetchProfile({
       method: 'PATCH',
       headers: {
