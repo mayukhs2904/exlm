@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
@@ -11,7 +11,9 @@ try {
 }
 
 const MANAGE_ADOBE_ACCOUNT = placeholders?.manageAdobeAccount || 'Manage Adobe account';
-const PRIMARY_EMAIL = 'PRIMARY EMAIL';
+const PRIMARY_EMAIL = 'Primary email';
+
+const { adobeAccountURL } = getConfig();
 
 let email = '';
 
@@ -25,9 +27,14 @@ export default async function decorate(block) {
     block.textContent = '';
 
     const emailCardDiv = document.createRange().createContextualFragment(`
+        <div class="email-card-title">
         <div>${PRIMARY_EMAIL}</div>
-        <div>${MANAGE_ADOBE_ACCOUNT}</div>
-        <div>${email}</div>
+        <a href="${adobeAccountURL}" target="_blank">
+        <span class="icon icon-new-tab"></span>
+        ${MANAGE_ADOBE_ACCOUNT}
+        </a>
+        </div>
+        <div class="email-card-user-email">${email}</div>
     `);
 
     block.append(emailCardDiv);
