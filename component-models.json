@@ -2976,5 +2976,17 @@
         "options": []
       }
     ]
+  },
+  {
+    "id": "icon-block",
+    "fields": [
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "Centered",
+        "label": "Center this section.",
+        "description": "This will center the entire Icon Cards Block."
+      }
+    ]
   }
 ]
