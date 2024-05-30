@@ -195,6 +195,8 @@
                 "template": {
                   "filter": "icon-block",
                   "name": "Icon Block",
+                  "model": "icon-block",
+                  "style": "icon-block",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
