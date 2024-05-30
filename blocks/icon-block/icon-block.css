@@ -88,6 +88,10 @@
   }
 }
 @media (min-width: 900px) {
+  .icon-block[data-centered] {
+    display: flex;
+    max-width: 794px;
+  }
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     column-gap: 24px;
