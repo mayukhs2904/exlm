@@ -103,14 +103,6 @@ function updateUEInstrumentation() {
     });
   }
 
-  if (document.querySelector('body')) {
-    // update available sections
-    setUEFilter(main, 'main');
-    main.querySelectorAll('.section').forEach((elem) => {
-      setUEFilter(elem, 'icon-block');
-    });
-  }
-
   // ----- if signup-flow-modal pages, identified by theme
   if (document.querySelector('body[class^=signup]')) {
     // update available sections
