@@ -803,6 +803,13 @@
     "id": "curated-cards",
     "fields": [
       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allow-center",
+        "label": "Center this section.",
+        "description": "This will center the entire Icon Cards Block."
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
