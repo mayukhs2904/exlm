@@ -10,11 +10,11 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const MANAGE_ADOBE_ACCOUNT = placeholders?.manageAdobeAccount || 'Manage Adobe account';
-const PRIMARY_EMAIL = placeholders?.primaryEmail || 'Primary email';
-
 export default async function decorate(block) {
   block.textContent = '';
+  
+  const MANAGE_ADOBE_ACCOUNT = placeholders?.manageAdobeAccount || 'Manage Adobe account';
+  const PRIMARY_EMAIL = placeholders?.primaryEmail || 'Primary email';
 
   const { adobeAccountURL } = getConfig();
   const isSignedIn = await isSignedInUser();
