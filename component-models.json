@@ -2983,7 +2983,7 @@
       {
         "component": "boolean",
         "valueType": "boolean",
-        "name": "centered",
+        "name": "allow-center",
         "label": "Center this section.",
         "description": "This will center the entire Icon Cards Block."
       }
