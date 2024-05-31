@@ -278,6 +278,8 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
+                  "style": "curated-cards",
+                  "filter": "curated-cards",
                   "headingType": "h2"
                 }
               }
