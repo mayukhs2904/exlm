@@ -11,32 +11,31 @@ try {
 }
 
 const MANAGE_ADOBE_ACCOUNT = placeholders?.manageAdobeAccount || 'Manage Adobe account';
-const PRIMARY_EMAIL = 'Primary email';
+const PRIMARY_EMAIL = placeholders?.primaryEmail || 'Primary email';
 
 const { adobeAccountURL } = getConfig();
-
+const isSignedIn = await isSignedInUser();
 let email = '';
 
-const isSignedIn = await isSignedInUser();
-if(isSignedIn) {
-    const profileData = await defaultProfileClient.getMergedProfile();
-    email = profileData?.email || '';
-}
-
 export default async function decorate(block) {
-    block.textContent = '';
+  block.textContent = '';
 
-    const emailCardDiv = document.createRange().createContextualFragment(`
-        <div class="email-card-title">
-        <div>${PRIMARY_EMAIL}</div>
-        <a href="${adobeAccountURL}" target="_blank">
-        <span class="icon icon-new-tab"></span>
-        ${MANAGE_ADOBE_ACCOUNT}
-        </a>
-        </div>
-        <div class="email-card-user-email">${email}</div>
-    `);
+  if (isSignedIn) {
+    const profileData = await defaultProfileClient.getMergedProfile();
+    email = profileData?.email;
+  }
 
-    block.append(emailCardDiv);
-    decorateIcons(block);
+  const emailCardDiv = document.createRange().createContextualFragment(`
+    <div class="email-card-title">
+    <div>${PRIMARY_EMAIL}</div>
+    <a href="${adobeAccountURL}" target="_blank">
+    <span class="icon icon-new-tab"></span>
+    ${MANAGE_ADOBE_ACCOUNT}
+    </a>
+    </div>
+    <div class="email-card-user-email">${email}</div>
+  `);
+
+  block.append(emailCardDiv);
+  decorateIcons(block);
 }
