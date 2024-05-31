@@ -993,6 +993,13 @@
     "id": "marquee",
     "fields": [
       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allow-center",
+        "label": "Center this section.",
+        "description": "This will center the entire Icon Cards Block."
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
