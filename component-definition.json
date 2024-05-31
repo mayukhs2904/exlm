@@ -195,8 +195,6 @@
                 "template": {
                   "name": "Icon Block",
                   "model": "icon-block",
-                  "style": "icon-block",
-                  "filter": "icon-block",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
@@ -278,8 +276,6 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
-                  "style": "curated-cards",
-                  "filter": "curated-cards",
                   "headingType": "h2"
                 }
               }
