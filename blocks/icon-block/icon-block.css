@@ -88,14 +88,14 @@
   }
 }
 @media (min-width: 900px) {
-  .icon-block[data-centered] {
+  .icon-block[data-allow-center] {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     max-width: 794px;
     gap: 36px;
   }
-  .icon-block[data-centered] > div {
+  .icon-block[data-allow-center] > div {
     margin: 0 24px;
   }
   .icon-block {

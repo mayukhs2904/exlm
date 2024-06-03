@@ -2,17 +2,16 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  [...block.children].forEach((column) => {
-
-    const firstDiv = column.querySelector('div');
-    if (firstDiv) {
-      const parentDiv = firstDiv.parentNode;
-      const grandparentDiv = parentDiv.parentNode;
-      const firstDivValue = firstDiv.innerHTML;
-      grandparentDiv.setAttribute('data-centered', firstDivValue);
-      parentDiv.remove();
-    }
+  const toggleDiv = block.querySelector('div');
+  if (toggleDiv) {
+    const toggleDivChild = toggleDiv.firstElementChild;
+    const toggleValue = toggleDivChild.innerHTML;
+    block.setAttribute('data-allow-center', toggleValue);
+    toggleDiv.remove();
+  }
     
+  [...block.children].forEach((column) => {
+    console.log(column,"col");
     const [, headingWrapper, descriptionWrapper, linkWrapper] = column.children;
 
     descriptionWrapper.classList.add('icon-description');
