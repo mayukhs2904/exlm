@@ -3,6 +3,16 @@ import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   [...block.children].forEach((column) => {
+
+    const firstDiv = column.querySelector('div');
+    if (firstDiv) {
+      const parentDiv = firstDiv.parentNode;
+      const grandparentDiv = parentDiv.parentNode;
+      const firstDivValue = firstDiv.innerHTML;
+      grandparentDiv.setAttribute('data-centered', firstDivValue);
+      parentDiv.remove();
+    }
+    
     const [, headingWrapper, descriptionWrapper, linkWrapper] = column.children;
 
     descriptionWrapper.classList.add('icon-description');
