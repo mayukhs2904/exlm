@@ -1152,6 +1152,13 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
+  if (allContentTags.length) {
+    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allContentTags);
+    products.forEach((p) => supportedProducts.push(p));
+    window.headlessSolutionProductKey = productKey;
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+  }
+
   const div = document.createElement('div');
   div.classList.add('browse-topics');
   // default style to h2 so existing published pages are not rendered unstyled if not re-authored
@@ -1182,13 +1189,6 @@ function decorateBrowseTopics(block) {
         topicsButtonDiv.innerHTML = topicName;
         contentDiv.appendChild(topicsButtonDiv);
       });
-
-      if (allContentTags.length) {
-        const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allContentTags);
-        products.forEach((p) => supportedProducts.push(p));
-        window.headlessSolutionProductKey = productKey;
-        window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
-      }
 
     contentDiv.addEventListener('click', (e) => {
       if (e.target?.classList?.contains('browse-topics-item')) {
