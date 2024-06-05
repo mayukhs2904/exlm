@@ -16,6 +16,7 @@ import {
   getBrowseFiltersResultCount,
   getSelectedTopics,
   getParsedSolutionsQuery,
+  getParsedContentTypeQuery,
   getCoveoFacets,
   getObjectById,
   toggleSearchSuggestionsVisibility,
@@ -1153,7 +1154,7 @@ function decorateBrowseTopics(block) {
   }
 
   if (allContentTags.length) {
-    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allContentTags);
+    const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
     products.forEach((p) => supportedProducts.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;

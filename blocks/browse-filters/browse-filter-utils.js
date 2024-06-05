@@ -288,6 +288,38 @@ export const getParsedSolutionsQuery = (solutionTags) => {
   };
 };
 
+export const getParsedContentTypeQuery = (solutionTags) => {
+  const solutionInfo = solutionTags.map((tag) => {
+    const [, product, version] = tag.split('/');
+    return { product, version };
+  });
+
+  const isSubSolution = (parent, child) => child.product.includes(parent.product) && parent.product !== child.product;
+
+  const filteredSolutions = solutionInfo.filter((solution) => {
+    const hasChild = solutionInfo.some((sol) => isSubSolution(solution, sol));
+    return !hasChild;
+  });
+
+  const parsedSolutionsInfo = filteredSolutions.map((solution) => {
+    if (!solution.version) {
+      const parentSolution = solutionInfo.find((sol) => isSubSolution(sol, solution));
+      solution.version = parentSolution?.version;
+    }
+    return solution;
+  });
+
+  const query = parsedSolutionsInfo
+    .map(({ product, version }) => `(@el_contenttype="${product}"${version ? ` AND @el_version="${version}"` : ''})`)
+    .join(' OR ');
+
+  return {
+    query: parsedSolutionsInfo.length > 1 ? `(${query})` : query,
+    products: solutionInfo.map(({ product }) => product.toLowerCase()),
+    productKey,
+  };
+};
+
 export const getCoveoFacets = (type, value) => {
   const subFacets = SUB_FACET_MAP[type];
   if (!subFacets) {
