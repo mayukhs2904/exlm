@@ -1159,6 +1159,18 @@ function decorateBrowseTopics(block) {
     products.forEach((p) => supportedContentType.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+
+    const coveoFacetKey = 'headlessTypeFacet';
+    const coveoFacet = window[coveoFacetKey];
+    if (coveoFacet) {
+      const facets = getCoveoFacets(value, true);
+      facets.forEach(({ state, value: facetValue }) => {
+        coveoFacet.toggleSelect({
+          state,
+          value: facetValue,
+        });
+      });
+    }
   }
 
   const div = document.createElement('div');
