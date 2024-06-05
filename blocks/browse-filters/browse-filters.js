@@ -1137,12 +1137,13 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
 
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  const allContentTags = contentTypeContent !== '' ? formattedTags(contentTypeContent) : [];
   const supportedProducts = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
@@ -1182,6 +1183,13 @@ function decorateBrowseTopics(block) {
         contentDiv.appendChild(topicsButtonDiv);
       });
 
+      if (allContentTags.length) {
+        const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allContentTags);
+        products.forEach((p) => supportedProducts.push(p));
+        window.headlessSolutionProductKey = productKey;
+        window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+      }
+
     contentDiv.addEventListener('click', (e) => {
       if (e.target?.classList?.contains('browse-topics-item')) {
         if (e.target.classList.contains('browse-topics-item-active')) {
@@ -1217,6 +1225,7 @@ function decorateBrowseTopics(block) {
   (solutionsElement.parentNode || solutionsElement).remove();
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
+  (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
 export default async function decorate(block) {
