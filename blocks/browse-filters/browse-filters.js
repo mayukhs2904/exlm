@@ -1146,6 +1146,7 @@ function decorateBrowseTopics(block) {
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const allContentTags = contentTypeContent !== '' ? formattedTags(contentTypeContent) : [];
   const supportedProducts = [];
+  const supportedContentType = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
@@ -1155,7 +1156,7 @@ function decorateBrowseTopics(block) {
 
   if (allContentTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
-    products.forEach((p) => supportedProducts.push(p));
+    products.forEach((p) => supportedContentType.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
