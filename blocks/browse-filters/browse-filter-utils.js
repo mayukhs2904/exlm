@@ -310,7 +310,7 @@ export const getParsedContentTypeQuery = (solutionTags) => {
   });
 
   const query = parsedSolutionsInfo
-    .map(({ product, version }) => `(@el_contenttype="${product}"${version ? ` AND @el_version="${version}"` : ''})`)
+    .map(({ product, version }) => `(@el_contenttype=\\\"${product}\\\"${version ? ` AND @el_version="${version}"` : ''})`)
     .join(' OR ');
   const [parsedSolutionInfo = {}] = parsedSolutionsInfo;
   const { product: productKey = '' } = parsedSolutionInfo;

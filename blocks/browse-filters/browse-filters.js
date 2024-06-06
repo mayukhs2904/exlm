@@ -37,7 +37,7 @@ const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
-  // el_contenttype: 'headlessTypeFacet',
+  el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
@@ -94,7 +94,7 @@ const productOptions = {
 };
 
 const theme = getMetadata('theme').trim();
-const dropdownOptions = [roleOptions];
+const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
 let tagsProxy;
@@ -356,7 +356,7 @@ function handleCheckboxClick(block, el, options) {
     const { filterType } = checkbox.closest('.filter-dropdown').dataset;
     const label = checkbox?.dataset.label || '';
     const { checked: isChecked, value } = checkbox;
-    const dropDownObj = getObjectById(dropdownOptions, filterType);   
+    const dropDownObj = getObjectById(dropdownOptions, filterType);
     const { name } = dropDownObj;
     const coveoFacetKey = coveoFacetMap[dropDownObj.id];
     const coveoFacet = window[coveoFacetKey];
@@ -968,8 +968,8 @@ function handleCoveoHeadlessSearch(
 function getSelectedDropdownLabels(block, field) {
   const fieldSelectors = {
     el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
-    // el_contenttype:
-    //   '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
+    el_contenttype:
+      '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
     el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
     search: '.filter-input-search .search-input',
     topics: '.browse-topics .browse-topics-item-active',
@@ -998,7 +998,7 @@ function getSelectedDropdownLabels(block, field) {
 function generateAnalyticsFilters(block, totalCount) {
   const filterFields = {
     el_role: 'Role',
-    // el_contenttype: 'ContentType',
+    el_contenttype: 'ContentType',
     el_level: 'ExperienceLevel',
     search: 'KeywordSearch',
     topics: 'BrowseByTopic',
@@ -1144,10 +1144,9 @@ function decorateBrowseTopics(block) {
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
-  const allContentTags = contentTypeContent !== '' ? formattedTags(contentTypeContent) : [];
+  const allContentTypeTags = contentTypeContent !== '' ? formattedTags(contentTypeContent) : [];
   const supportedProducts = [];
-  const supportedContentType = [];
-
+  const supportedProducts2 = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
@@ -1155,29 +1154,16 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
-  if (allContentTags.length) {
-    const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
-    products.forEach((p) => supportedContentType.push(p));
-    // window.headlessSolutionProductKey = productKey;
-    // window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
-    
-    const coveoFacetKey = 'headlessTypeFacet';
-    setTimeout(() => {
-      const coveoFacet = window[coveoFacetKey];
-  
-      // if (coveoFacet) {
-        supportedContentType.forEach((product) => {
-          const facets = getCoveoFacets(product, true);
-          facets.forEach(({ state, value: facetValue }) => {
-            coveoFacet.toggleSelect({
-              state,
-              value: facetValue,
-            });
-          });
-        });
-      // }
-    }, 5000);
+  if (allContentTypeTags.length) {
+    const { query: newQueries, products, productKey } = getParsedContentTypeQuery(allContentTypeTags);
+    products.forEach((p) => supportedProducts2.push(p));
+    console.log(newQueries,"query")
+    window.headlessSolutionProductKey = productKey;
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${newQueries}))`;
   }
+
+  // const newQueries = `@el_contenttype=\"Tutorial\" OR @el_contenttype=\"Course\"`; 
+  // window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${newQueries}))`; 
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
