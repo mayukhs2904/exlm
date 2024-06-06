@@ -358,11 +358,11 @@ function handleCheckboxClick(block, el, options) {
     const { checked: isChecked, value } = checkbox;
     const dropDownObj = getObjectById(dropdownOptions, filterType);   
     const { name } = dropDownObj;
-    // console.log(name,"name")
+    console.log(name,"name")
     const coveoFacetKey = coveoFacetMap[dropDownObj.id];
-    // console.log(coveoFacetKey,"coveoFacetKey")
+    console.log(coveoFacetKey,"coveoFacetKey")
     const coveoFacet = window[coveoFacetKey];
-    console.log(coveoFacet,"coveoFacetttt")
+    console.log(coveoFacet,"coveoFacettt")
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
@@ -372,13 +372,18 @@ function handleCheckboxClick(block, el, options) {
       });
 
       if (coveoFacet) {
+        console.log(coveoFacet,"coveofacett in if")
         const facets = getCoveoFacets(value, true);
         console.log(facets,"facets")
         facets.forEach(({ state, value: facetValue }) => {
+          console.log(state,"state");
+          console.log(facetValue,"facetvalueee");
           coveoFacet.toggleSelect({
             state,
             value: facetValue,
           });
+          console.log(state,"after state");
+          console.log(facetValue,"after facetvalueee");
         });
       }
     } else {
@@ -1187,32 +1192,34 @@ function decorateBrowseTopics(block) {
   if (allContentTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
     products.forEach((p) => supportedContentType.push(p));
-    // console.log(supportedContentType, "supportedContentType");
+    console.log(supportedContentType, "supportedContentType");
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   
     const coveoFacetKey = 'headlessTypeFacet';
-  
     setTimeout(() => {
       const coveoFacet = window[coveoFacetKey];
-      // console.log(coveoFacet, "coveofacethghghgh");
+      console.log(coveoFacet, "coveofacethghghgh");
   
       if (coveoFacet) {
         supportedContentType.forEach((product) => {
           const facets = getCoveoFacets(product, true);
-          // console.log(facets, "facetshghgh");
+          console.log(facets, "facetshghgh");
 
           facets.forEach(({ state, value: facetValue }) => {
+            console.log(state,"state in my function")
+            console.log(facetValue,"facetvalue in my function")
             coveoFacet.toggleSelect({
               state,
               value: facetValue,
             });
+            console.log(state," toogele state in my function")
+            console.log(facetValue, "toggle facetvalue in my function")
           });
         });
       }
-    }, 10000);
+    }, 5000);
   }
-  
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
