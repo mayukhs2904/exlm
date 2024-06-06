@@ -37,7 +37,7 @@ const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
-  el_contenttype: 'headlessTypeFacet',
+  // el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
@@ -968,8 +968,8 @@ function handleCoveoHeadlessSearch(
 function getSelectedDropdownLabels(block, field) {
   const fieldSelectors = {
     el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
-    el_contenttype:
-      '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
+    // el_contenttype:
+    //   '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
     el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
     search: '.filter-input-search .search-input',
     topics: '.browse-topics .browse-topics-item-active',
@@ -998,7 +998,7 @@ function getSelectedDropdownLabels(block, field) {
 function generateAnalyticsFilters(block, totalCount) {
   const filterFields = {
     el_role: 'Role',
-    el_contenttype: 'ContentType',
+    // el_contenttype: 'ContentType',
     el_level: 'ExperienceLevel',
     search: 'KeywordSearch',
     topics: 'BrowseByTopic',
@@ -1165,10 +1165,9 @@ function decorateBrowseTopics(block) {
     setTimeout(() => {
       const coveoFacet = window[coveoFacetKey];
   
-      if (coveoFacet) {
+      // if (coveoFacet) {
         supportedContentType.forEach((product) => {
           const facets = getCoveoFacets(product, true);
-
           facets.forEach(({ state, value: facetValue }) => {
             coveoFacet.toggleSelect({
               state,
@@ -1176,7 +1175,7 @@ function decorateBrowseTopics(block) {
             });
           });
         });
-      }
+      // }
     }, 5000);
   }
 
