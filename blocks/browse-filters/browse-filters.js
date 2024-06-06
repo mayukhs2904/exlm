@@ -1151,6 +1151,9 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
+  const newQueries = `@el_contenttype=\"Tutorial\" OR @el_contenttype=\"Documentation\"`;
+  window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${newQueries}))`; 
+
   const div = document.createElement('div');
   div.classList.add('browse-topics');
   // default style to h2 so existing published pages are not rendered unstyled if not re-authored
