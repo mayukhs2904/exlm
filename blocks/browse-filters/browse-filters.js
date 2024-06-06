@@ -94,7 +94,7 @@ const productOptions = {
 };
 
 const theme = getMetadata('theme').trim();
-const dropdownOptions = [roleOptions, contentTypeOptions];
+const dropdownOptions = [roleOptions];
 
 const tags = [];
 let tagsProxy;
@@ -358,11 +358,8 @@ function handleCheckboxClick(block, el, options) {
     const { checked: isChecked, value } = checkbox;
     const dropDownObj = getObjectById(dropdownOptions, filterType);   
     const { name } = dropDownObj;
-    console.log(name,"name")
     const coveoFacetKey = coveoFacetMap[dropDownObj.id];
-    console.log(coveoFacetKey,"coveoFacetKey")
     const coveoFacet = window[coveoFacetKey];
-    console.log(coveoFacet,"coveoFacettt")
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
@@ -372,18 +369,12 @@ function handleCheckboxClick(block, el, options) {
       });
 
       if (coveoFacet) {
-        console.log(coveoFacet,"coveofacett in if")
         const facets = getCoveoFacets(value, true);
-        console.log(facets,"facets")
         facets.forEach(({ state, value: facetValue }) => {
-          console.log(state,"state");
-          console.log(facetValue,"facetvalueee");
           coveoFacet.toggleSelect({
             state,
             value: facetValue,
           });
-          console.log(state,"after state");
-          console.log(facetValue,"after facetvalueee");
         });
       }
     } else {
@@ -1156,6 +1147,7 @@ function decorateBrowseTopics(block) {
   const allContentTags = contentTypeContent !== '' ? formattedTags(contentTypeContent) : [];
   const supportedProducts = [];
   const supportedContentType = [];
+
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
@@ -1163,58 +1155,25 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
-  // if (allContentTags.length) {
-  //   const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
-  //   products.forEach((p) => supportedContentType.push(p));
-  //   console.log(supportedContentType,"supprooro")
-  //   window.headlessSolutionProductKey = productKey;
-  //   window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
-
-  //   const coveoFacetKey = 'headlessTypeFacet';
-  //   setTimeout(() => {
-  //     const coveoFacet = window[coveoFacetKey];
-  //     console.log(coveoFacet, "coveofacethghghgh");
-  
-  //     if (coveoFacet) {
-  //       const facets = getCoveoFacets(value, true);
-  //       console.log(facets, "facetshghgh");
-  
-  //       facets.forEach(({ state, value: facetValue }) => {
-  //         coveoFacet.toggleSelect({
-  //           state,
-  //           value: facetValue,
-  //         });
-  //       });
-  //     }
-  //   }, 10000); // 10 seconds delay
-  // }
-
   if (allContentTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
     products.forEach((p) => supportedContentType.push(p));
-    console.log(supportedContentType, "supportedContentType");
-    window.headlessSolutionProductKey = productKey;
-    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
-  
+    // window.headlessSolutionProductKey = productKey;
+    // window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+    
     const coveoFacetKey = 'headlessTypeFacet';
     setTimeout(() => {
       const coveoFacet = window[coveoFacetKey];
-      console.log(coveoFacet, "coveofacethghghgh");
   
       if (coveoFacet) {
         supportedContentType.forEach((product) => {
           const facets = getCoveoFacets(product, true);
-          console.log(facets, "facetshghgh");
 
           facets.forEach(({ state, value: facetValue }) => {
-            console.log(state,"state in my function")
-            console.log(facetValue,"facetvalue in my function")
             coveoFacet.toggleSelect({
               state,
               value: facetValue,
             });
-            console.log(state," toogele state in my function")
-            console.log(facetValue, "toggle facetvalue in my function")
           });
         });
       }
