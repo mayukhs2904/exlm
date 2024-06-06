@@ -356,10 +356,13 @@ function handleCheckboxClick(block, el, options) {
     const { filterType } = checkbox.closest('.filter-dropdown').dataset;
     const label = checkbox?.dataset.label || '';
     const { checked: isChecked, value } = checkbox;
-    const dropDownObj = getObjectById(dropdownOptions, filterType);
+    const dropDownObj = getObjectById(dropdownOptions, filterType);   
     const { name } = dropDownObj;
+    // console.log(name,"name")
     const coveoFacetKey = coveoFacetMap[dropDownObj.id];
+    // console.log(coveoFacetKey,"coveoFacetKey")
     const coveoFacet = window[coveoFacetKey];
+    console.log(coveoFacet,"coveoFacetttt")
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
@@ -370,6 +373,7 @@ function handleCheckboxClick(block, el, options) {
 
       if (coveoFacet) {
         const facets = getCoveoFacets(value, true);
+        console.log(facets,"facets")
         facets.forEach(({ state, value: facetValue }) => {
           coveoFacet.toggleSelect({
             state,
@@ -1154,24 +1158,61 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
+  // if (allContentTags.length) {
+  //   const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
+  //   products.forEach((p) => supportedContentType.push(p));
+  //   console.log(supportedContentType,"supprooro")
+  //   window.headlessSolutionProductKey = productKey;
+  //   window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+
+  //   const coveoFacetKey = 'headlessTypeFacet';
+  //   setTimeout(() => {
+  //     const coveoFacet = window[coveoFacetKey];
+  //     console.log(coveoFacet, "coveofacethghghgh");
+  
+  //     if (coveoFacet) {
+  //       const facets = getCoveoFacets(value, true);
+  //       console.log(facets, "facetshghgh");
+  
+  //       facets.forEach(({ state, value: facetValue }) => {
+  //         coveoFacet.toggleSelect({
+  //           state,
+  //           value: facetValue,
+  //         });
+  //       });
+  //     }
+  //   }, 10000); // 10 seconds delay
+  // }
+
   if (allContentTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedContentTypeQuery(allContentTags);
     products.forEach((p) => supportedContentType.push(p));
+    // console.log(supportedContentType, "supportedContentType");
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
-
+  
     const coveoFacetKey = 'headlessTypeFacet';
-    const coveoFacet = window[coveoFacetKey];
-    if (coveoFacet) {
-      const facets = getCoveoFacets(value, true);
-      facets.forEach(({ state, value: facetValue }) => {
-        coveoFacet.toggleSelect({
-          state,
-          value: facetValue,
+  
+    setTimeout(() => {
+      const coveoFacet = window[coveoFacetKey];
+      // console.log(coveoFacet, "coveofacethghghgh");
+  
+      if (coveoFacet) {
+        supportedContentType.forEach((product) => {
+          const facets = getCoveoFacets(product, true);
+          // console.log(facets, "facetshghgh");
+
+          facets.forEach(({ state, value: facetValue }) => {
+            coveoFacet.toggleSelect({
+              state,
+              value: facetValue,
+            });
+          });
         });
-      });
-    }
+      }
+    }, 10000);
   }
+  
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
