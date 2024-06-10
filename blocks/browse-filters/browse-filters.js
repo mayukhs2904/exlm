@@ -1139,7 +1139,9 @@ function decorateBrowseTopics(block) {
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
   const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+    (cell) => cell?.textContent?.trim() ?? '',
+  );
 
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
@@ -1154,16 +1156,11 @@ function decorateBrowseTopics(block) {
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
-  if (allContentTypeTags.length) {
-    const { query: newQueries, products, productKey } = getParsedContentTypeQuery(allContentTypeTags);
-    products.forEach((p) => supportedProducts2.push(p));
-    console.log(newQueries,"query")
-    window.headlessSolutionProductKey = productKey;
-    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${newQueries}))`;
+  if (contentTypeContent.length) {
+    const contentTypes = contentTypeContent.split(',').map((type) => type.trim());
+    const contentTypesQuery = contentTypes.map((type) => `@el_contenttype="${type}"`).join('OR');
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${contentTypesQuery}))`;
   }
-
-  // const newQueries = `@el_contenttype=\"Tutorial\" OR @el_contenttype=\"Course\"`; 
-  // window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${newQueries}))`; 
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
