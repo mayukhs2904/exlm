@@ -1,10 +1,13 @@
 .icon-block {
   display: grid;
-  min-width: 320px;
+  min-width: 250px;
   text-align: center;
   margin: 0 auto;
   gap: 32px;
   min-height: 208px;
+}
+body.profile .icon-block {
+  min-width: 320px;
 }
 .icon-block > div {
   max-width: 283px;
@@ -88,16 +91,6 @@
   }
 }
 @media (min-width: 900px) {
-  .icon-block[data-allow-center='true'] {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 794px;
-    gap: 36px;
-  }
-  .icon-block[data-allow-center='true'] > div {
-    margin: 0 24px;
-  }
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     column-gap: 24px;
