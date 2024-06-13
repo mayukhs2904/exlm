@@ -114,6 +114,7 @@ async function createOptions(container, readTimeText) {
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
+  if(readTimeText)
   container.appendChild(readTime);
 }
 

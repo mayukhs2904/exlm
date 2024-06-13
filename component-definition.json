@@ -356,7 +356,8 @@
                 "template": {
                   "name": "Article Marquee",
                   "model": "article-marquee",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png"
+                  "fileReference": "/content/dam/exlm/Community_headshot_single.png",
+                  "titleType": "h1"
                 }
               }
             }

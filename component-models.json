@@ -1227,7 +1227,6 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "h1",
         "label": "Heading Type",
         "options": [
           {
