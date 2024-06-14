@@ -72,8 +72,9 @@ function decodeArticlePageMetaTags() {
     levelMeta.content = decodedLevels.join(',');
   }
 }
-
+console.log("chl jaaaaaaaaaa")
 export default function decorate(block) {
+  console.log("ehe")
   if (window.hlx.aemRoot) {
     decodeArticlePageMetaTags();
   }
@@ -92,8 +93,12 @@ export default function decorate(block) {
   const features = getMetadata('feature');
 
   block.textContent = '';
+  console.log(solutions,"sol")
+  console.log(features,"feat")
+  console.log(roles,"roles")
+  console.log(experienceLevels,"exp")
 
-  const headerDiv = htmlToElement(`
+  const articleTags = htmlToElement(`
       <div class="article-tags-topics">
       Topics:
         ${[solutions, features]
@@ -120,5 +125,5 @@ export default function decorate(block) {
       </div>
   `);
 
-  block.append(headerDiv);
+  block.append(articleTags);
 }
