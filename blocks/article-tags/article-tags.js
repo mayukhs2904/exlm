@@ -95,6 +95,7 @@ export default function decorate(block) {
 
   const headerDiv = htmlToElement(`
       <div class="article-tags-topics">
+      Topics:
         ${[solutions, features]
           .map((values) =>
             values
@@ -106,6 +107,7 @@ export default function decorate(block) {
           .join('')}
       </div>
       <div class="article-tags-createdFor">
+      Created For:
         ${[roles, experienceLevels]
           .map((values) =>
             values
