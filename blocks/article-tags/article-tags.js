@@ -89,18 +89,13 @@ export default function decorate(block) {
 
   const roles = getMetadata('role');
   const experienceLevels = getMetadata('level');
-
-  const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
+  const features = getMetadata('feature');
 
   block.textContent = '';
 
   const headerDiv = htmlToElement(`
-    <div class="article-tags">
-      <div class="article-tags-title">
-        ${articleTagHeading.innerHTML}
-      </div>
-      <div class="article-tags-view">
-        ${[solutions, roles, experienceLevels]
+      <div class="article-tags-topics">
+        ${[solutions, features]
           .map((values) =>
             values
               .split(',')
@@ -110,7 +105,17 @@ export default function decorate(block) {
           )
           .join('')}
       </div>
-    </div>
+      <div class="article-tags-createdFor">
+        ${[roles, experienceLevels]
+          .map((values) =>
+            values
+              .split(',')
+              .filter(Boolean)
+              .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
+              .join(''),
+          )
+          .join('')}
+      </div>
   `);
 
   block.append(headerDiv);
