@@ -787,7 +787,7 @@
           }
         },
         {
-          "title": "Article Tags",
+          "title": "Tags",
           "id": "article-tags",
           "plugins": {
             "xwalk": {
