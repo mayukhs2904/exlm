@@ -1,4 +1,4 @@
-.tags {
+.article-tags {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -7,6 +7,7 @@
 .article-tags-topics, .article-tags-createdFor {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
 
