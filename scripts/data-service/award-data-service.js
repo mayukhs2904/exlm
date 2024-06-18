@@ -2,9 +2,16 @@
  * AwardDataService class for fetching data from Award Service API.
  */
 export default class AwardDataService {
+    /**
+   * Creates an instance of ADLSDataService.
+   * @param {Object} dataSource - The data source configuration for ADLS Data Service.
+   */
+  constructor(dataSource) {
+    this.dataSource = dataSource;
+  }
     async fetchDataFromSource() {
       try {
-        const urlWithParams = 'https://experienceleague.adobe.com/api/awards?page_size=1000&lang=en';
+        const urlWithParams = `${this.dataSource.url}`;
         const response = await fetch(urlWithParams, {
           method: 'GET',
         });
