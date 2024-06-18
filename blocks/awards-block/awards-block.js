@@ -1,9 +1,12 @@
 import AwardDataService from "../../scripts/data-service/award-data-service";
+import { getConfig } from '../../scripts/scripts.js';
+
+const { awardUrl} = getConfig();
 
 // Function to call fetchDataFromSource and handle the data
 async function getAwardsData() {
     const dataSource = {
-        url: 'https://experienceleague.adobe.com/api/awards?page_size=1000&lang=en',
+        url: awardUrl
       };
       const awardDataService = new AwardDataService(dataSource);
   try {
