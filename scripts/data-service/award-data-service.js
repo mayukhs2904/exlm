@@ -9,6 +9,12 @@ export default class AwardDataService {
   constructor(dataSource) {
     this.dataSource = dataSource;
   }
+
+   /**
+   * Fetches data from the configured ADLS Service.
+   *
+   * @returns {Promise<Array>} A promise that resolves with an array of data results.
+   */
     async fetchDataFromSource() {
       try {
         const urlWithParams = `${this.dataSource.url}`;
