@@ -1,26 +1,25 @@
-import AwardDataService from "../../scripts/data-service/award-data-service";
+import AwardDataService from "../../scripts/data-service/award-data-service.js";
 import { getConfig } from '../../scripts/scripts.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
-const { awardUrl} = getConfig();
+const { awardUrl } = getConfig();
 
-// Function to call fetchDataFromSource and handle the data
 async function getAwardsData() {
     const dataSource = {
         url: awardUrl
-      };
-      const awardDataService = new AwardDataService(dataSource);
-  try {
+    };
+    const awardDataService = new AwardDataService(dataSource);
     const data = await awardDataService.fetchDataFromSource();
-    if (data) {
-      console.log('Fetched data:', data);
-      // Process the data as needed
-    } else {
-      console.log('No data received');
-    }
-  } catch (error) {
-    console.error('Error fetching awards data:', error);
-  }
+    console.log("Data",data)
 }
 
-// Call the function to fetch the data
+export async function decorateBookmark(block) {
+  const isSignedIn = await isSignedInUser();
+  if (isSignedIn) {
+    const profileData = await defaultProfileClient.getMergedProfile();
+    const skills = profileData?.skills;
+    console.log(skills,"skilss")
+  }
+  block.append(awardsDiv);
+}
 getAwardsData();
