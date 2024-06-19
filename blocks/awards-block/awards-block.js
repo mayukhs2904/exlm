@@ -13,7 +13,7 @@ async function getAwardsData() {
     console.log("Data",data)
 }
 
-export async function decorateBookmark(block) {
+export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   console.log(isSignedIn,"issigned")
   if (isSignedIn) {
