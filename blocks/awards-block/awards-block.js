@@ -14,6 +14,7 @@ async function getAwardsData() {
 }
 
 export default async function decorate(block) {
+  getAwardsData();
   const isSignedIn = await isSignedInUser();
   console.log(isSignedIn,"issigned")
   if (isSignedIn) {
@@ -22,6 +23,4 @@ export default async function decorate(block) {
     const skills = profileData?.skills;
     console.log(skills,"skilss")
   }
-  block.append(awardsDiv);
 }
-getAwardsData();
