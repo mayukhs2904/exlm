@@ -15,8 +15,10 @@ async function getAwardsData() {
 
 export async function decorateBookmark(block) {
   const isSignedIn = await isSignedInUser();
+  console.log(isSignedIn,"issigned")
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
+    console.log(profileData,"profiledata")
     const skills = profileData?.skills;
     console.log(skills,"skilss")
   }
