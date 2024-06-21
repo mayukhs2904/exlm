@@ -11,7 +11,8 @@ try {
 }
 
 const COMPLETED = placeholders?.completed || 'COMPLETED';
-const NO_AWARDS_YET = placeholders?.noAwardsYet || 'No awards yet! Start exploreing experiemce league to discover what you can earn.'
+const NO_AWARDS_YET =
+  placeholders?.noAwardsYet || 'No awards yet! Start exploring Experience League to discover what you can earn.';
 
 export default async function decorate(block) {
   block.textContent = '';
@@ -26,7 +27,7 @@ export default async function decorate(block) {
           "name": "The Basics",
           "description": "Explore the basics of AEM Assets, including navigation, how assets are organized and modeled, along with basic operations such as create, update and delete.",
           "id": "ExperienceManager-U-1-2020.1.assets",
-          "award": false,
+          "award": true,
           "timestamp": "2024-06-19T06:52:42.477Z"
       },
       {
@@ -58,48 +59,61 @@ export default async function decorate(block) {
           "timestamp": "2024-06-19T06:53:25.967Z"
       }
     ];
-    const awardedSkills = skills.filter(skill => skill.award===true);
+    const awardedSkills = skills.filter((skill) => skill.award === true);
     awardDetails = awardedSkills
-      .map(skill => ({
+      .map((skill) => ({
         originalTimestamp: skill.timestamp,
         formattedTimestamp: formatTimestampToMonthYear(skill.timestamp),
         title: skill.name,
-        description: skill.description
+        description: skill.description,
       }))
       .sort((a, b) => new Date(a.originalTimestamp) - new Date(b.originalTimestamp))
       .slice(-3)
-      .map(skill => ({
+      .map((skill) => ({
         Timestamp: skill.formattedTimestamp,
         Title: skill.title,
-        Description: skill.description
+        Description: skill.description,
       }));
 
-      if(awardDetails.length){
-      const awardsBlockDiv = document.createRange().createContextualFragment(
-        `<div class="awards-block-parent">
-        ${awardDetails.map(card =>
-            `<div class="awards-block-card">
-              <div class="awards-block-details">
-              <div class="awards-block-title">${card.Title}</div>
-              <div class="awards-block-time">${COMPLETED} ${card.Timestamp}</div>
-              <div class="awards-block-description">${card.Description}</div>
-              </div>
-              <span class="icon icon-book"></span>
-            </div>`
-        ).join('')}
-      </div>`);
+    if (awardDetails.length) {
+      const awardsBlockDiv = document.createRange().createContextualFragment(generateAwardsBlock(awardDetails));
       block.append(awardsBlockDiv);
+    } else {
+      const awardsBlockEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
+      block.append(awardsBlockEmptyDiv);
     }
-    else {
-    const awardsBlockEmptyDiv = document.createRange().createContextualFragment(`
-      <div class="awards-block-no-awards">
-        ${NO_AWARDS_YET}
-      </div>
-    `);
-    block.append(awardsBlockEmptyDiv);
-    }
+
     decorateIcons(block);
-  
+
+    function generateAwardCard(card) {
+      return `
+        <div class="awards-block-card">
+          <div class="awards-block-details">
+            <div class="awards-block-title">${card.Title}</div>
+            <div class="awards-block-time">${COMPLETED} ${card.Timestamp}</div>
+            <div class="awards-block-description">${card.Description}</div>
+          </div>
+          <span class="icon icon-book"></span>
+        </div>
+      `;
+    }
+
+    function generateAwardsBlock(awardDetails) {
+      return `
+        <div class="awards-block-container">
+          ${awardDetails.map(generateAwardCard).join('')}
+        </div>
+      `;
+    }
+
+    function generateEmptyAwardsBlock() {
+      return `
+        <div class="awards-block-noAwardsYet">
+          ${NO_AWARDS_YET}
+        </div>
+      `;
+    }
+
     function formatTimestampToMonthYear(timestamp) {
       const date = new Date(timestamp);
       const options = { year: 'numeric', month: 'short' };
@@ -107,4 +121,4 @@ export default async function decorate(block) {
       const year = date.getFullYear();
       return `${formattedMonth} ${year}`;
     }
-  }
+}

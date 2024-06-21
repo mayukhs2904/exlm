@@ -1,6 +1,6 @@
-.awards-block-parent {
+.awards-block-container {
     display: grid;
-    gap: 10px;
+    gap: 16px;
     color: white;
     grid-template-columns: 1fr;
 }
@@ -10,9 +10,10 @@
     flex-direction: column;
     background-color: #E63524;
     padding: 32px 16px 16px 16px;
-    max-width: 318px;
+    width: 318px;
     height: 390px;
     justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .awards-block-title {
@@ -32,25 +33,25 @@
     font-size: 16px;
 }
 
-.awards-block-no-awards {
+.awards-block-noAwardsYet {
     color: black;
     font-size: 18px;
 }
 
 @media(min-width: 600px) {
     .awards-block-card {
-        max-width: 309px;
+        width: 309px;
     }    
-    .awards-block-parent {
+    .awards-block-container {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media(min-width: 900px) {
     .awards-block-card {
-        max-width: 259px;
+        width: 259px;
     }    
-    .awards-block-parent {
+    .awards-block-container {
         grid-template-columns: repeat(3, 1fr);
     }
 }
