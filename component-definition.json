@@ -984,7 +984,7 @@
           }
         },
         {
-          "title": "Industry block",
+          "title": "Industry Block",
           "id": "industry-block",
           "plugins": {
             "xwalk": {
