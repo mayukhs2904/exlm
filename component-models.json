@@ -3344,54 +3344,5 @@
         "label": "Description"
       }
     ]
-  },
-  {
-    "id": "industry-block",
-    "fields": [
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "selectIndustry",
-        "label": "Select Industry",
-        "options": [
-          {
-            "name": "Financial Services",
-            "value": "financialServices"
-          },
-          {
-            "name": "Healthcare",
-            "value": "healthcare"
-          },
-          {
-            "name": "High tech",
-            "value": "highTech"
-          },
-          {
-            "name": "Education",
-            "value": "education"
-          },
-          {
-            "name": "Retail",
-            "value": "retail"
-          },
-          {
-            "name": "Government",
-            "value": "government"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "manufacturing"
-          },
-          {
-            "name": "Travel and Hospitality",
-            "value": "travelAndHospitality"
-          },
-          {
-            "name": "Telecommunication",
-            "value": "telecommunication"
-          }
-        ]
-      }
-    ]
   }
 ]
