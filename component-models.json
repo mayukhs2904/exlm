@@ -662,6 +662,13 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Tab heading"
       }
     ]
   },
@@ -2539,29 +2546,6 @@
             "value": "most_popular"
           }
         ]
-      }
-    ]
-  },
-  {
-    "id": "tabs",
-    "fields": []
-  },
-  {
-    "id": "tab",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Heading"
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "content",
-        "value": "",
-        "label": "Body"
       }
     ]
   },
