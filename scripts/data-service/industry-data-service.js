@@ -22,7 +22,6 @@ export default class IndustryDataService {
         method: 'GET',
       });
       const data = await response.json();
-      console.log(data,"data")
       return data.data;
     } catch (error) {
       /* eslint-disable no-console */
