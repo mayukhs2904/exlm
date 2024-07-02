@@ -1,17 +1,17 @@
 /**
- * AwardDataService class for fetching data from Award Service API.
+ * IndustryDataService class for fetching data from Industry Service API.
  */
 export default class IndustryDataService {
   /**
-   * Creates an instance of ADLSDataService.
-   * @param {Object} dataSource - The data source configuration for ADLS Data Service.
+   * Creates an instance of IndustryDataService.
+   * @param {Object} dataSource - The data source configuration for Industry Data Service.
    */
   constructor(dataSource) {
     this.dataSource = dataSource;
   }
 
   /**
-   * Fetches data from the configured ADLS Service.
+   * Fetches data from the configured Industry Service.
    *
    * @returns {Promise<Array>} A promise that resolves with an array of data results.
    */
@@ -22,7 +22,8 @@ export default class IndustryDataService {
         method: 'GET',
       });
       const data = await response.json();
-      return data;
+      console.log(data,"data")
+      return data.data;
     } catch (error) {
       /* eslint-disable no-console */
       console.error('Error fetching data', error);
