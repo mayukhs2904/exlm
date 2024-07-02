@@ -4,7 +4,6 @@ import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import IndustryDataService from '../../scripts/data-service/industry-data-service.js';
-// import loadJWT from '../auth/jwt.js';
 
 let placeholders = {};
 try {
@@ -115,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleIndustryCardsDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
     defaultProfileClient
@@ -125,18 +124,16 @@ export default async function decorate(block) {
   defaultProfileClient
     .getMergedProfile()
     .then(async (data) => {
-      console.log(data,"dattaaaa")
       if (data.industryInterests?.length) {
         const selectedOption = data.industryInterests;
-        if (selectedOption) {
-          selectIndustryDropDown.updateDropdownValue(selectedOption);
-        } else {
-          selectIndustryDropDown.updateDropdownValue('selectindustry');
-        }
+        selectIndustryDropDown.updateDropdownValue(selectedOption);
+      }
+      else {
+          selectIndustryDropDown.updateDropdownValue('Select Industry');
       }
     })
     .catch(() => {
-      selectIndustryDropDown.updateDropdownValue('selectindustry');
+      selectIndustryDropDown.updateDropdownValue('Select Industry');
     });
 
   decorateIcons(block);
