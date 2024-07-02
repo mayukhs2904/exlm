@@ -116,13 +116,13 @@ export default async function decorate(block) {
   block.append(roleIndustryCardsDiv);
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions);
-  selectIndustryDropDown.handleOnChange(async() => {
+  selectIndustryDropDown.handleOnChange(async(option) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     console.log(profileData,"profiledata")
-    const industrySelection = profileData.industryInterests;
+    const industrySelection = option;
     console.log(industrySelection,"industrySelection");
     defaultProfileClient
-      .updateProfile('industryInterests', industrySelection, true)
+      .updateProfile('industryInterests', industrySelection, true);
   });
 
   // loadJWT().then(async () => {
