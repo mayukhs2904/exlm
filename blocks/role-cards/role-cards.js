@@ -126,11 +126,10 @@ export default async function decorate(block) {
     .then(async (data) => {
       if (data.industryInterests?.length) {
         const selectedOption = data.industryInterests;
-        if (selectedOption) {
-          selectIndustryDropDown.updateDropdownValue(selectedOption);
-        } else {
-          selectIndustryDropDown.updateDropdownValue('Select Industry abc');
-        }
+        selectIndustryDropDown.updateDropdownValue(selectedOption);
+      }
+      else {
+        selectIndustryDropDown.updateDropdownValue('Select Industry abc');
       }
     })
     .catch(() => {
