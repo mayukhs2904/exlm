@@ -1,8 +1,10 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import IndustryDataService from '../../scripts/data-service/industry-data-service.js';
+// import loadJWT from '../auth/jwt.js';
 
 let placeholders = {};
 try {
@@ -12,27 +14,28 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const options = [
-  {
-    value: 'Beginner',
-    title: placeholders.profileExpLevelBeginner || 'Beginner',
-  },
-  {
-    value: 'Intermediate',
-    title: placeholders.profileExpLevelIntermediate || 'Intermediate',
-  },
-  {
-    value: 'Advanced',
-    title: placeholders.profileExpLevelExperienced || 'Experienced',
-  },
-];
-
+const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 
+const handleIndustryService = async () => {
+  const dataSource = {
+    url: industryUrl,
+  };
+  const industryService = new IndustryDataService(dataSource);
+  const industryOptions = await industryService.fetchDataFromSource();
+  return industryOptions;
+};
+
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
+  const industryOptions = await handleIndustryService();
+  industryOptions.data.map(industry=>
+    {
+      industry.value=industry.Name;
+      industry.title=industry.Name;
+    });
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
  
   const roleCardsData = [
@@ -74,13 +77,15 @@ export default async function decorate(block) {
     },
   ];
 
-  const roleCardsDiv = document.createRange().createContextualFragment(`
-    <div class="role-industry-holder">
-      <div class="role-industry-heading">
-        <div class="role-industry-title">${roleAndIndustryTitle.innerHTML}</div>
-        <div class="role-industry-description">${roleAndIndustryDescription.innerHTML}</div>
+  const roleIndustryCardsDiv = document.createRange().createContextualFragment(`
+    <div class="industry-selection-holder">
+      <div class="industry-selection-heading">
+        <div class="industry-selection-title">${roleAndIndustryTitle.innerHTML}</div>
+        <div class="industry-selection-description">${roleAndIndustryDescription.innerHTML}</div>
       </div>
-      
+      <form class="industry-selection-dropdown">
+        <label for="industry">Choose the best match for your industry (optional)</label>
+      </form>
     </div>
     <div class="role-cards-holder">
     ${roleCardsData
@@ -108,42 +113,40 @@ export default async function decorate(block) {
 `);
 
   block.textContent = '';
-  block.append(roleCardsDiv);
+  block.append(roleIndustryCardsDiv);
 
-  const cardDropdown = new Dropdown(roleCardsDiv,'',options);
-  cardDropdown.handleOnChange(async (level) => {
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions.data);
+  selectIndustryDropDown.handleOnChange(async() => {
     const profileData = await defaultProfileClient.getMergedProfile();
-    const { solutionLevels = [] } = profileData;
-    const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
-    newSolutionItems.push(`${id}:${level}`);
+    console.log(profileData,"profiledata")
+    const industrySelection = profileData.industryInterests;
+    console.log(industrySelection,"industrySelection");
     defaultProfileClient
-      .updateProfile('solutionLevels', newSolutionItems, true)
-      .then(() => sendNotice(PROFILE_UPDATED))
-      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+      .updateProfile('industryInterests', industrySelection, true)
   });
 
-  loadJWT().then(async () => {
-    defaultProfileClient
-      .getMergedProfile()
-      .then(async (data) => {
-        if (data.solutionLevels?.length) {
-          const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
-            `${solutionLevelInfo}`.includes(id),
-          );
-          if (currentSolutionLevel) {
-            const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
-            if (selectedOption) {
-              cardDropdown.updateDropdownValue(selectedOption);
-            }
-          } else {
-            cardDropdown.updateDropdownValue('Beginner');
-          }
-        }
-      })
-      .catch(() => {
-        cardDropdown.updateDropdownValue('Beginner');
-      });
-  });
+  // loadJWT().then(async () => {
+  //   defaultProfileClient
+  //     .getMergedProfile()
+  //     .then(async (data) => {
+  //       if (data.solutionLevels?.length) {
+  //         const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+  //           `${solutionLevelInfo}`.includes(id),
+  //         );
+  //         if (currentSolutionLevel) {
+  //           const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
+  //           if (selectedOption) {
+  //             cardDropdown.updateDropdownValue(selectedOption);
+  //           }
+  //         } else {
+  //           cardDropdown.updateDropdownValue('Beginner');
+  //         }
+  //       }
+  //     })
+  //     .catch(() => {
+  //       selectIndustryDropDown.updateDropdownValue('SelectIndustry');
+  //     });
+  // });
 
   decorateIcons(block);
 

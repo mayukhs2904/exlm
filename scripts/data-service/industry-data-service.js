@@ -1,7 +1,7 @@
 /**
  * AwardDataService class for fetching data from Award Service API.
  */
-export default class AwardDataService {
+export default class IndustryDataService {
   /**
    * Creates an instance of ADLSDataService.
    * @param {Object} dataSource - The data source configuration for ADLS Data Service.
