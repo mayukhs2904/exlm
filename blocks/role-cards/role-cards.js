@@ -117,6 +117,7 @@ export default async function decorate(block) {
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
+    console.log(industrySelection,"industry selection handle")
     defaultProfileClient
       .updateProfile('industryInterests', industrySelection, true);
   });
@@ -124,16 +125,20 @@ export default async function decorate(block) {
   defaultProfileClient
     .getMergedProfile()
     .then(async (data) => {
+      console.log("hello data")
       if (data.industryInterests?.length) {
         const selectedOption = data.industryInterests;
+        console.log(selectedOption,"selectedoptn")
         selectIndustryDropDown.updateDropdownValue(selectedOption);
       }
       else {
-        selectIndustryDropDown.updateDropdownValue('Select Industry abc');
+        console.log("Else of")
+        selectIndustryDropDown.updateDropdownValue('Select Industry');
       }
     })
     .catch(() => {
-      selectIndustryDropDown.updateDropdownValue('Select Industry hehe');
+      console.log("ctach")
+      selectIndustryDropDown.updateDropdownValue('Select Industry');
     });
 
   decorateIcons(block);
