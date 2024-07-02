@@ -2,6 +2,7 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import Dropdown from '../../scripts/dropdown/dropdown.js';
 
 let placeholders = {};
 try {
@@ -10,6 +11,21 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+const options = [
+  {
+    value: 'Beginner',
+    title: placeholders.profileExpLevelBeginner || 'Beginner',
+  },
+  {
+    value: 'Intermediate',
+    title: placeholders.profileExpLevelIntermediate || 'Intermediate',
+  },
+  {
+    value: 'Advanced',
+    title: placeholders.profileExpLevelExperienced || 'Experienced',
+  },
+];
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
@@ -64,20 +80,7 @@ export default async function decorate(block) {
         <div class="role-industry-title">${roleAndIndustryTitle.innerHTML}</div>
         <div class="role-industry-description">${roleAndIndustryDescription.innerHTML}</div>
       </div>
-      <div class="select-industry">
-        <label for="industry">Choose the best match for your industry (optional)</label>
-        <select name="industry" id="industry">
-        <option value="financialServices">Financial Services</option>
-        <option value="healthcare">Healthcare</option>
-        <option value="highTech">High tech</option>
-        <option value="education">Education</option>
-        <option value="retail">Retail</option>
-        <option value="government">Government</option>
-        <option value="manufacturing">Manufacturing</option>
-        <option value="travelAndHospitality">Travel and Hospitality</option>
-        <option value="telecommunication">Telecommunication</option>
-        </select>
-      </div>
+      
     </div>
     <div class="role-cards-holder">
     ${roleCardsData
@@ -106,6 +109,42 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(roleCardsDiv);
+
+  const cardDropdown = new Dropdown(roleCardsDiv,'',options);
+  cardDropdown.handleOnChange(async (level) => {
+    const profileData = await defaultProfileClient.getMergedProfile();
+    const { solutionLevels = [] } = profileData;
+    const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
+    newSolutionItems.push(`${id}:${level}`);
+    defaultProfileClient
+      .updateProfile('solutionLevels', newSolutionItems, true)
+      .then(() => sendNotice(PROFILE_UPDATED))
+      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+  });
+
+  loadJWT().then(async () => {
+    defaultProfileClient
+      .getMergedProfile()
+      .then(async (data) => {
+        if (data.solutionLevels?.length) {
+          const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+            `${solutionLevelInfo}`.includes(id),
+          );
+          if (currentSolutionLevel) {
+            const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
+            if (selectedOption) {
+              cardDropdown.updateDropdownValue(selectedOption);
+            }
+          } else {
+            cardDropdown.updateDropdownValue('Beginner');
+          }
+        }
+      })
+      .catch(() => {
+        cardDropdown.updateDropdownValue('Beginner');
+      });
+  });
+
   decorateIcons(block);
 
   if (isSignedIn) {
