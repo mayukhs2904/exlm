@@ -118,10 +118,26 @@ export default async function decorate(block) {
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
-    selectIndustryDropDown.updateDropdownValue(industrySelection);
     defaultProfileClient
       .updateProfile('industryInterests', industrySelection, true);
   });
+
+  defaultProfileClient
+    .getMergedProfile()
+    .then(async (data) => {
+      console.log(data,"dattaaaa")
+      if (data.industryInterests?.length) {
+        const selectedOption = data.industryInterests;
+        if (selectedOption) {
+          selectIndustryDropDown.updateDropdownValue(selectedOption);
+        } else {
+          selectIndustryDropDown.updateDropdownValue('selectindustry');
+        }
+      }
+    })
+    .catch(() => {
+      selectIndustryDropDown.updateDropdownValue('selectindustry');
+    });
 
   decorateIcons(block);
 
