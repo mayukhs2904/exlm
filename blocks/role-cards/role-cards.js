@@ -115,7 +115,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleIndustryCardsDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions.data);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions);
   selectIndustryDropDown.handleOnChange(async() => {
     const profileData = await defaultProfileClient.getMergedProfile();
     console.log(profileData,"profiledata")
