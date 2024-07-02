@@ -117,36 +117,11 @@ export default async function decorate(block) {
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select', industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
-    const profileData = await defaultProfileClient.getMergedProfile();
-    console.log(profileData,"profiledata")
     const industrySelection = option;
-    console.log(industrySelection,"industrySelection");
+    selectIndustryDropDown.updateDropdownValue(industrySelection);
     defaultProfileClient
       .updateProfile('industryInterests', industrySelection, true);
   });
-
-  // loadJWT().then(async () => {
-  //   defaultProfileClient
-  //     .getMergedProfile()
-  //     .then(async (data) => {
-  //       if (data.solutionLevels?.length) {
-  //         const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
-  //           `${solutionLevelInfo}`.includes(id),
-  //         );
-  //         if (currentSolutionLevel) {
-  //           const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
-  //           if (selectedOption) {
-  //             cardDropdown.updateDropdownValue(selectedOption);
-  //           }
-  //         } else {
-  //           cardDropdown.updateDropdownValue('Beginner');
-  //         }
-  //       }
-  //     })
-  //     .catch(() => {
-  //       selectIndustryDropDown.updateDropdownValue('SelectIndustry');
-  //     });
-  // });
 
   decorateIcons(block);
 
