@@ -31,7 +31,7 @@ const handleIndustryService = async () => {
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const industryOptions = await handleIndustryService();
-  industryOptions.data.map(industry=>
+  industryOptions.map(industry=>
     {
       industry.value=industry.Name;
       industry.title=industry.Name;
