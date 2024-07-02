@@ -114,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleIndustryCardsDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select yyyyy' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
     defaultProfileClient
@@ -129,12 +129,12 @@ export default async function decorate(block) {
         if (selectedOption) {
           selectIndustryDropDown.updateDropdownValue(selectedOption);
         } else {
-          selectIndustryDropDown.updateDropdownValue('Select Industry');
+          selectIndustryDropDown.updateDropdownValue('Select Industry abc');
         }
       }
     })
     .catch(() => {
-      selectIndustryDropDown.updateDropdownValue('Select Industry');
+      selectIndustryDropDown.updateDropdownValue('Select Industry hehe');
     });
 
   decorateIcons(block);
