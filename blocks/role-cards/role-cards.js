@@ -16,9 +16,9 @@ const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile cha
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 
 export default async function decorate(block) {
-  block.textContent = '';
   const isSignedIn = await isSignedInUser();
-
+  const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
+ 
   const roleCardsData = [
     {
       role: 'User',
@@ -59,41 +59,52 @@ export default async function decorate(block) {
   ];
 
   const roleCardsDiv = document.createRange().createContextualFragment(`
-      <div class="">
-        
+    <div class="role-industry-holder">
+      <div class="role-industry-heading">
+        <div class="role-industry-title">${roleAndIndustryTitle.innerHTML}</div>
+        <div class="role-industry-description">${roleAndIndustryDescription.innerHTML}</div>
       </div>
-      <div class="industry-container">
-        <label for="cars">Choose a car:</label>
-        <select name="cars" id="cars">
-        <option value="volvo">Volvo</option>
-        <option value="saab">Saab</option>
-        <option value="opel">Opel</option>
-        <option value="audi">Audi</option>
+      <div class="select-industry">
+        <label for="industry">Choose the best match for your industry (optional)</label>
+        <select name="industry" id="industry">
+        <option value="financialServices">Financial Services</option>
+        <option value="healthcare">Healthcare</option>
+        <option value="highTech">High tech</option>
+        <option value="education">Education</option>
+        <option value="retail">Retail</option>
+        <option value="government">Government</option>
+        <option value="manufacturing">Manufacturing</option>
+        <option value="travelAndHospitality">Travel and Hospitality</option>
+        <option value="telecommunication">Telecommunication</option>
         </select>
       </div>
-      ${roleCardsData
-        .map(
-          (card, index) => `
-        <div class="role-cards-item">
-        <div class="role-cards-description">
-        <div class="role-cards-title">
-        <span class="icon icon-${card.icon}"></span>
-        <h3>${card.title}</h3>
-        </div>
-        <p>${card.description}</p>
-        </div>
-        <div class="role-cards-default-selection">
-        ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
-        <span class="role-cards-checkbox">
-        <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-        <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
-        </span>
-        </div>
-        </div>`,
-        )
-        .join('')}
-  `);
+    </div>
+    <div class="role-cards-holder">
+    ${roleCardsData
+      .map(
+        (card, index) => `
+            <div class="role-cards-item">
+              <div class="role-cards-description">
+                <div class="role-cards-title">
+                  <span class="icon icon-${card.icon}"></span>
+                  <h3>${card.title}</h3>
+                </div>
+                <p>${card.description}</p>
+              </div>
+              <div class="role-cards-default-selection">
+                ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
+                <span class="role-cards-checkbox">
+                  <input name="${card.role}" type="checkbox" id="selectRole-${index}">
+                  <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
+                </span>
+              </div>
+            </div>`
+      )
+      .join('')}
+  </div>
+`);
 
+  block.textContent = '';
   block.append(roleCardsDiv);
   decorateIcons(block);
 

@@ -1,9 +1,88 @@
 /* mobile */
-.role-cards-wrapper{
-    padding: 24px 0;
+.role-cards {
+    display: flex;
+    flex-direction: column;
 }
 
-.role-cards {
+body.profile .role-industry-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+body.profile .role-industry-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.role-industry-heading {
+    text-align: center;
+} 
+
+body.profile .role-industry-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+}
+
+.role-industry-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+}
+
+body.profile .role-industry-description {
+    font-size: 16px;
+    color: #222222;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.role-industry-description {
+    font-style: normal;
+}
+
+body.profile .select-industry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.select-industry select::after{
+    padding-left: 30px;
+}
+
+.select-industry {
+    display: none;
+}
+
+.select-industry label {
+    font-size: 15px;
+    color: #464646;
+    font-weight: 500;
+}
+
+/* .select-industry option {
+    font-size: 17px;
+    color: #222222;
+    font-weight: 500;
+} */
+
+.select-industry select {
+    /* background: #FDFDFD 0% 0% no-repeat padding-box; */
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #B1B1B1;
+    border-radius: 5px;
+    font-size: 17px;
+    color: #222222;
+    font-weight: 500;
+}
+
+.role-cards-holder {
+    margin-top: 24px;
     display: grid;
     gap: 24px;
     grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -71,17 +150,22 @@ body.profile .role-cards .role-cards-description h3 {
 }
 /* tablet */
 @media (min-width: 600px) {
-    .role-cards {
+    .role-cards-holder {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
+    body.profile .role-industry-holder {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 
 /* desktop */
 @media (min-width: 900px) {
-    body.profile .role-cards {
+    body.profile .role-cards-holder {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
