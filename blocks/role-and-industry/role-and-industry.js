@@ -136,13 +136,15 @@ export default async function decorate(block) {
   //     selectIndustryDropDown.updateDropdownValue('Select Industry');
   //   });
 
+  decorateIcons(block);
+
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
+    const industryInterest= profileData?.industryInterests;
 
-    if (profileData.industryInterests?.length) {
-      const selectedOption = data.industryInterests;
-      selectIndustryDropDown.updateDropdownValue(selectedOption);
+    if (industryInterest) {
+      selectIndustryDropDown.updateDropdownValue(industryInterest);
     }
     else {
       selectIndustryDropDown.updateDropdownValue('Select Industry');
@@ -184,5 +186,4 @@ export default async function decorate(block) {
       }
     });
   });
-  decorateIcons(block);
 }
