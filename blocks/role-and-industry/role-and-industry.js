@@ -30,11 +30,11 @@ const handleIndustryService = async () => {
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const industryOptions = await handleIndustryService();
-  industryOptions.map(industry=>
-    {
-      industry.value=industry.Name;
-      industry.title=industry.Name;
-    });
+  const updatedIndustryOptions = industryOptions.map(industry => ({
+    ...industry,
+    value: industry.Name,
+    title: industry.Name
+  }));
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
  
   const roleCardsData = [
@@ -114,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , updatedIndustryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
     defaultProfileClient
