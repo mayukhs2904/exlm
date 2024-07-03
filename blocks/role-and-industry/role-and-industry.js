@@ -114,6 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
+  if(isSignedIn){
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
@@ -139,7 +140,7 @@ export default async function decorate(block) {
       console.log("catch")
       selectIndustryDropDown.updateDropdownValue('Select Industry');
     });
-
+}
   decorateIcons(block);
 
   if (isSignedIn) {
