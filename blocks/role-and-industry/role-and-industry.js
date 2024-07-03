@@ -116,12 +116,11 @@ export default async function decorate(block) {
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   if(isSignedIn){
-  selectIndustryDropDown.handleOnChange(async(option) => {
-    const industrySelection = option;
-    defaultProfileClient
-      .updateProfile('industryInterests', industrySelection, true);
-  });
-}
+    selectIndustryDropDown.handleOnChange((industrySelection) => {
+      defaultProfileClient
+        .updateProfile('industryInterests', industrySelection, true);
+    });
+  }
   // defaultProfileClient
   //   .getMergedProfile()
   //   .then(async (data) => {
@@ -142,7 +141,7 @@ export default async function decorate(block) {
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
-    const industryInterest= profileData?.industryInterests;
+    const industryInterest = profileData?.industryInterests;
 
     if (industryInterest) {
       selectIndustryDropDown.updateDropdownValue(industryInterest);
