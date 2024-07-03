@@ -106,11 +106,9 @@ function updateUEInstrumentation() {
         setUEFilter(elem, 'tab-section');
       });
     }
-    // update available blocks for article sections
-    const articleSection = main.querySelector('.article-section');
-    if (articleSection) {
-      setUEFilter(articleSection, 'article-section');
-    }
+    main.querySelectorAll('.section:not(.article-content-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
+      setUEFilter(elem, 'article-tags');
+    });
     return;
   }
 

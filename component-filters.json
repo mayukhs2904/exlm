@@ -13,7 +13,7 @@
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section", "article-section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section"]
   },
   {
     "id": "main-profile",
@@ -171,12 +171,6 @@
       "inline-survey",
       "featured-content",
       "note"
-    ]
-  },
-  {
-    "id": "article-section",
-    "components": [
-      "article-tags"
     ]
   },
   {
