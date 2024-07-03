@@ -31,10 +31,10 @@ export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const industryOptions = await handleIndustryService();
   industryOptions.map(industry=>
-    {
-      industry.value=industry.Name;
-      industry.title=industry.Name;
-    });
+  {
+    industry.value=industry.Name;
+    industry.title=industry.Name;
+  });
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
  
   const roleCardsData = [
@@ -117,6 +117,7 @@ export default async function decorate(block) {
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
+    console.log(industrySelection,"option")
     defaultProfileClient
       .updateProfile('industryInterests', industrySelection, true);
   });
@@ -126,13 +127,16 @@ export default async function decorate(block) {
     .then(async (data) => {
       if (data.industryInterests?.length) {
         const selectedOption = data.industryInterests;
+        console.log(selectedOption,"selectedoptn")
         selectIndustryDropDown.updateDropdownValue(selectedOption);
       }
       else {
+        console.log("else")
         selectIndustryDropDown.updateDropdownValue('Select Industry');
       }
     })
     .catch(() => {
+      console.log("catch")
       selectIndustryDropDown.updateDropdownValue('Select Industry');
     });
 
