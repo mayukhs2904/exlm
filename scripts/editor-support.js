@@ -106,6 +106,11 @@ function updateUEInstrumentation() {
         setUEFilter(elem, 'tab-section');
       });
     }
+    // update available blocks for article sections
+    const articleSection = main.querySelector('.article-section');
+    if (articleSection) {
+      setUEFilter(articleSection, 'article-section');
+    }
     return;
   }
 
