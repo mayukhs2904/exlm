@@ -114,38 +114,47 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  if(isSignedIn){
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
-  selectIndustryDropDown.handleOnChange(async(option) => {
-    const industrySelection = option;
-    console.log(industrySelection,"option")
-    defaultProfileClient
-      .updateProfile('industryInterests', industrySelection, true);
-  });
+  // if(isSignedIn){
+  // const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
+  // selectIndustryDropDown.handleOnChange(async(option) => {
+  //   const industrySelection = option;
+  //   console.log(industrySelection,"option")
+  //   defaultProfileClient
+  //     .updateProfile('industryInterests', industrySelection, true);
+  // });
 
-  defaultProfileClient
-    .getMergedProfile()
-    .then(async (data) => {
-      if (data.industryInterests?.length) {
-        const selectedOption = data.industryInterests;
-        console.log(selectedOption,"selectedoptn")
-        selectIndustryDropDown.updateDropdownValue(selectedOption);
-      }
-      else {
-        console.log("else")
-        selectIndustryDropDown.updateDropdownValue('Select Industry');
-      }
-    })
-    .catch(() => {
-      console.log("catch")
-      selectIndustryDropDown.updateDropdownValue('Select Industry');
-    });
-}
-  decorateIcons(block);
+  // defaultProfileClient
+  //   .getMergedProfile()
+  //   .then(async (data) => {
+  //     if (data.industryInterests?.length) {
+  //       const selectedOption = data.industryInterests;
+  //       console.log(selectedOption,"selectedoptn")
+  //       selectIndustryDropDown.updateDropdownValue(selectedOption);
+  //     }
+  //     else {
+  //       console.log("else")
+  //       selectIndustryDropDown.updateDropdownValue('Select Industry');
+  //     }
+  //   })
+  //   .catch(() => {
+  //     console.log("catch")
+  //     selectIndustryDropDown.updateDropdownValue('Select Industry');
+  //   });
+// }
 
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
+
+    if (profileData.industryInterests?.length) {
+      const selectedOption = data.industryInterests;
+      console.log(selectedOption,"selectedoptn")
+      selectIndustryDropDown.updateDropdownValue(selectedOption);
+    }
+    else {
+      console.log("else")
+      selectIndustryDropDown.updateDropdownValue('Select Industry');
+    }
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
@@ -174,6 +183,14 @@ export default async function decorate(block) {
       checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
 
       if (isSignedIn) {
+        const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
+        selectIndustryDropDown.handleOnChange(async(option) => {
+          const industrySelection = option;
+          console.log(industrySelection,"option")
+          defaultProfileClient
+            .updateProfile('industryInterests', industrySelection, true);
+        });
+
         const profileKey = checkbox.getAttribute('name');
         updatedRoles.push(profileKey);
         defaultProfileClient
@@ -183,4 +200,6 @@ export default async function decorate(block) {
       }
     });
   });
+  
+  decorateIcons(block);
 }
