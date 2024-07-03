@@ -132,7 +132,7 @@ export default async function decorate(block) {
 
     if (industryInterest) {
       console.log("updat");
-      selectIndustryDropDown.updateDropdownValue(industryInterest);
+      selectIndustryDropDown.updateDropdownValue(industryInterest[0]);
     }
     else {
       console.log("else");
