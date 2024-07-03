@@ -114,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'select the industry' , industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
   if(isSignedIn){
     selectIndustryDropDown.handleOnChange((industrySelection) => {
       console.log(industrySelection,"selection")
@@ -134,10 +134,6 @@ export default async function decorate(block) {
       const selectedOption = industryInterest;
       console.log(selectedOption,"selectedoptn")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
-    }
-    else {
-      console.log("else");
-      selectIndustryDropDown.updateDropdownValue('Select Industry');
     }
 
     role.forEach((el) => {
