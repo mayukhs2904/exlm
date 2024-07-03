@@ -13,7 +13,7 @@
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section", "article-section"]
   },
   {
     "id": "main-profile",
@@ -107,7 +107,7 @@
     ]
   },
   {
-    "id": "section-article-tags",
+    "id": "article-section",
     "components": ["article-tags"]
   },
   {
