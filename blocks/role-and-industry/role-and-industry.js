@@ -83,7 +83,7 @@ export default async function decorate(block) {
         <div class="industry-selection-description">${roleAndIndustryDescription.innerHTML}</div>
       </div>
       <form class="industry-selection-dropdown">
-        <label for="industry">Choose the best match for your industry (optional)</label>
+        <label for="industry">${placeholders?.selectIndustry || 'Choose the best match for your industry (optional)'}</label>
       </form>
     </div>
     <div class="role-cards-holder">
@@ -114,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
     defaultProfileClient
