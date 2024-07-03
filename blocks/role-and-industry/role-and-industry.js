@@ -76,7 +76,7 @@ export default async function decorate(block) {
     },
   ];
 
-  const roleIndustryCardsDiv = document.createRange().createContextualFragment(`
+  const roleAndIndustryDiv = document.createRange().createContextualFragment(`
     <div class="industry-selection-holder">
       <div class="industry-selection-heading">
         <div class="industry-selection-title">${roleAndIndustryTitle.innerHTML}</div>
@@ -112,7 +112,7 @@ export default async function decorate(block) {
 `);
 
   block.textContent = '';
-  block.append(roleIndustryCardsDiv);
+  block.append(roleAndIndustryDiv);
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   selectIndustryDropDown.handleOnChange(async(option) => {

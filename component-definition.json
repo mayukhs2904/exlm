@@ -905,7 +905,7 @@
             }
           }
         },
-        {
+       {
           "title": "User Profile Card",
           "id": "user-profile-card",
           "plugins": {

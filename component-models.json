@@ -3369,56 +3369,21 @@
     ]
   },
   {
-    "id": "role-cards",
+    "id": "role-and-industry",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Role and Industry",
-        "description": "Role and Industry heading"
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "h3",
-        "label": "Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
+        "label": "Role and Industry Heading"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Select the roles",
-        "description": "select the roles"
+        "label": "Role and Industry Description"
       }
     ]
   }

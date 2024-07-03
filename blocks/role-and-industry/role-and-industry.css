@@ -1,67 +1,67 @@
 /* mobile */
-.role-cards {
+.role-and-industry {
     display: flex;
     flex-direction: column;
 }
 
-body.profile .industry-selection-holder {
+body.profile .role-and-industry .industry-selection-holder {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 20px;
 }
 
-body.profile .industry-selection-heading {
+body.profile .role-and-industry .industry-selection-heading {
     display: flex;
     flex-direction: column;
     gap: 16px;
     text-align: left;
 }
 
-.industry-selection-heading {
+.role-and-industry .industry-selection-heading {
     text-align: center;
 } 
 
-body.profile .industry-selection-title {
+body.profile .role-and-industry .industry-selection-title {
     font-size: 22px;
     font-weight: 700;
     color: #000;
 }
 
-.industry-selection-title {
+.role-and-industry .industry-selection-title {
     font-size: 28px;
     font-weight: 700;
     color: #000;
 }
 
-body.profile .industry-selection-description {
+body.profile .role-and-industry .industry-selection-description {
     font-size: 16px;
     color: #222222;
     font-style: italic;
     font-weight: 500;
 }
 
-.industry-selection-description {
+.role-and-industry .industry-selection-description {
     font-style: normal;
 }
 
-body.profile .industry-selection-dropdown {
+body.profile .role-and-industry .industry-selection-dropdown {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.industry-selection-dropdown {
+.role-and-industry .industry-selection-dropdown {
     display: none;
 }
 
-.industry-selection-dropdown label {
+.role-and-industry .industry-selection-dropdown label {
     font-size: 15px;
     color: #464646;
     font-weight: 500;
 }
 
-.role-cards-holder {
+.role-and-industry .role-cards-holder {
     margin-top: 24px;
     display: grid;
     gap: 24px;
@@ -69,24 +69,24 @@ body.profile .industry-selection-dropdown {
     grid-template-columns: 1fr;
 }
 
-.role-cards .role-cards-title {
+.role-and-industry .role-cards-title {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
 }
 
-.role-cards .role-cards-checkbox input {
+.role-and-industry .role-cards-checkbox input {
     width: 14px;
     margin: 0px;
     accent-color: var(--non-spectrum-navy-blue);
 }
 
-.role-cards .role-cards-checkbox label {
+.role-and-industry .role-cards-checkbox label {
     font-size: 14px;
 } 
 
-.role-cards .role-cards-item {
+.role-and-industry .role-cards-item {
     background-color: var(--spectrum-gray-50);
     border: 1px solid #D6D6D6;
     border-radius: 4px;
@@ -97,46 +97,46 @@ body.profile .industry-selection-dropdown {
     cursor: pointer;
 }
 
-.role-cards .role-cards-checkbox {
+.role-and-industry .role-cards-checkbox {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-.role-cards .role-cards-description h3 {
+.role-and-industry .role-cards-description h3 {
     margin: 0px;
     font-size: 18px;
     line-height: 22px;
 }
 
-.role-cards .role-cards-description p {
+.role-and-industry .role-cards-description p {
     font-size: 14px;
     line-height: 17px;
 }
 
-.role-cards-item.role-cards-highlight  {
+.role-and-industry .role-cards-item.role-cards-highlight  {
     border: 1px solid var(--spectrum-blue-600);
 }
 
-.role-cards .role-cards-default-selection p {
+.role-and-industry .role-cards-default-selection p {
     margin: 0px 0px 10px 0px;
     min-height: 18px;
     font-size: 14px;
     line-height: 17px;
 }
 
-body.profile .role-cards .role-cards-description h3 {
+body.profile .role-and-industry .role-cards-description h3 {
     margin-top: 0px;
 }
 /* tablet */
 @media (min-width: 600px) {
-    .role-cards-holder {
+    .role-and-industry .role-cards-holder {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
-    body.profile .industry-selection-holder {
+    body.profile .role-and-industry .industry-selection-holder {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -145,14 +145,14 @@ body.profile .role-cards .role-cards-description h3 {
 
 /* desktop */
 @media (min-width: 900px) {
-    body.profile .role-cards-holder {
+    body.profile .role-and-industry .role-cards-holder {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-rows: 1fr;
     }
     
-    body.profile .role-cards .role-cards-title {
+    body.profile .role-and-industry .role-cards-title {
         display: flex;
         flex-direction: column;
         margin-bottom: 8px;
