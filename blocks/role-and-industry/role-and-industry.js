@@ -113,40 +113,29 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(roleAndIndustryDiv);
+  decorateIcons(block);
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   if(isSignedIn){
     selectIndustryDropDown.handleOnChange((industrySelection) => {
+      console.log(industrySelection,"selection")
       defaultProfileClient
         .updateProfile('industryInterests', industrySelection, true);
     });
   }
-  // defaultProfileClient
-  //   .getMergedProfile()
-  //   .then(async (data) => {
-  //     if (data.industryInterests?.length) {
-  //       const selectedOption = data.industryInterests;
-  //       selectIndustryDropDown.updateDropdownValue(selectedOption);
-  //     }
-  //     else {
-  //       selectIndustryDropDown.updateDropdownValue('Select Industry');
-  //     }
-  //   })
-  //   .catch(() => {
-  //     selectIndustryDropDown.updateDropdownValue('Select Industry');
-  //   });
-
-  decorateIcons(block);
 
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
+    console.log(industryInterest,"interest")
 
     if (industryInterest) {
+      console.log("updat");
       selectIndustryDropDown.updateDropdownValue(industryInterest);
     }
     else {
+      console.log("else");
       selectIndustryDropDown.updateDropdownValue('Select Industry');
     }
 
