@@ -107,6 +107,10 @@
     ]
   },
   {
+    "id": "section-article-tags",
+    "components": ["article-tags"]
+  },
+  {
     "id": "section-author-bio",
     "components": ["author-bio"]
   },
