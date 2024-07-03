@@ -106,9 +106,9 @@ function updateUEInstrumentation() {
         setUEFilter(elem, 'tab-section');
       });
     }
-    main.querySelectorAll('.section:not(.article-content-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
-      setUEFilter(elem, 'article-tags');
-    });
+    // main.querySelectorAll('.section:not(.article-content-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
+    //   setUEFilter(elem, 'article-tags');
+    // });
     return;
   }
 
