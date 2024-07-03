@@ -114,7 +114,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
+  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'select the industry' , industryOptions);
   if(isSignedIn){
     selectIndustryDropDown.handleOnChange((industrySelection) => {
       console.log(industrySelection,"selection")
