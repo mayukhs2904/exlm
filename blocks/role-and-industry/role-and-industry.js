@@ -115,12 +115,13 @@ export default async function decorate(block) {
   block.append(roleAndIndustryDiv);
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
+  if(isSignedIn){
   selectIndustryDropDown.handleOnChange(async(option) => {
     const industrySelection = option;
     defaultProfileClient
       .updateProfile('industryInterests', industrySelection, true);
   });
-
+}
   // defaultProfileClient
   //   .getMergedProfile()
   //   .then(async (data) => {
