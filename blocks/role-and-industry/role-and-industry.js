@@ -113,7 +113,6 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(roleAndIndustryDiv);
-  decorateIcons(block);
 
   const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), '' , industryOptions);
   if(isSignedIn){
@@ -177,4 +176,6 @@ export default async function decorate(block) {
       }
     });
   });
+
+  decorateIcons(block);
 }
