@@ -30,13 +30,13 @@ const handleIndustryService = async () => {
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const industryOptions = await handleIndustryService();
-  industryOptions.map(industry=>
-  {
-    industry.value=industry.Name;
-    industry.title=industry.Name;
-  });
+  const updatedIndustryOptions = industryOptions.map((industry) => ({
+    ...industry,
+    value: industry.Name,
+    title: industry.Name
+  }));
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
- 
+
   const roleCardsData = [
     {
       role: 'User',
@@ -83,7 +83,9 @@ export default async function decorate(block) {
         <div class="industry-selection-description">${roleAndIndustryDescription.innerHTML}</div>
       </div>
       <form class="industry-selection-dropdown">
-        <label for="industry">${placeholders?.selectIndustry || 'Choose the best match for your industry (optional)'}</label>
+        <label for="industry">${
+          placeholders?.selectIndustry || 'Choose the best match for your industry (optional)'
+        }</label>
       </form>
     </div>
     <div class="role-cards-holder">
@@ -105,7 +107,7 @@ export default async function decorate(block) {
                   <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
                 </span>
               </div>
-            </div>`
+            </div>`,
       )
       .join('')}
   </div>
@@ -114,12 +116,14 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  const selectIndustryDropDown = new Dropdown(block.querySelector('.industry-selection-dropdown'), 'Select Industry' , industryOptions);
-  if(isSignedIn){
+  const selectIndustryDropDown = new Dropdown(
+    block.querySelector('.industry-selection-dropdown'),
+    'Select Industry',
+    updatedIndustryOptions,
+  );
+  if (isSignedIn) {
     selectIndustryDropDown.handleOnChange((industrySelection) => {
-      console.log(industrySelection,"selection")
-      defaultProfileClient
-        .updateProfile('industryInterests', industrySelection, true);
+      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
   }
 
@@ -127,12 +131,9 @@ export default async function decorate(block) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
-    console.log(industryInterest,"interest")
 
     if (industryInterest) {
-      console.log("updat");
       const selectedOption = industryInterest;
-      console.log(selectedOption,"selectedoptn")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
