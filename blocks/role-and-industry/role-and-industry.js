@@ -136,6 +136,7 @@ export default async function decorate(block) {
 
     if (industryInterest) {
       const selectedOption = industryInterest[0];
+      console.log(selectedOption,"hbhhbhhb")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
