@@ -114,7 +114,6 @@ export default async function decorate(block) {
 
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
-    console.log(industryOptions,"options")
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
       value: industry.Name,
@@ -126,18 +125,25 @@ export default async function decorate(block) {
       updatedIndustryOptions,
     );
     selectIndustryDropDown.handleOnChange((selectedIndustry) => {
-      const industrySelection = [];
-      industrySelection.push(selectedIndustry);
-      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      if (Array.isArray(selectedIndustry)) {
+        const industrySelection = [];
+        industrySelection.push(selectedIndustry);
+        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      } else if (typeof selectedIndustry === 'string') {
+        const industrySelection = selectedIndustry;
+        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      }
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
 
-    if (industryInterest) {
-      const selectedOption = industryInterest[0];
-      console.log(selectedOption,"hbhhbhhb")
+    if ((Array.isArray(industryInterest) && industryInterest.length > 0) ||
+    (typeof industryInterest === 'string' && industryInterest.trim() !== '')) {
+      const selectedOption = Array.isArray(industryInterest)
+        ? industryInterest[0]
+        : industryInterest.trim();
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
