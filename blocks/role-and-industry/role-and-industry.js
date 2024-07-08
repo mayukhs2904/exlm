@@ -20,9 +20,6 @@ const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 async function fetchIndustryOptions() {
   try {
     const response = await fetch(industryUrl);
-    if (!response.ok) {
-      throw new Error('Network response was not ok ' + response.statusText);
-    }
     const data = await response.json();
     return data;
   } catch (error) {
@@ -33,21 +30,7 @@ async function fetchIndustryOptions() {
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
-  const industryOptions = await fetchIndustryOptions();
-  const updatedIndustryOptions = (industryOptions.data).map((industry) => ({
-    ...industry,
-    value: industry.Name,
-    title: industry.Name
-  }));
-  // const updatedIndustryOptions = [
-  //   { value: 'Select', title: 'Select Industry' },
-  //   ...(industryOptions.data).map((industry) => ({
-  //     ...industry,
-  //     value: industry.Name,
-  //     title: industry.Name,
-  //   }))
-  // ];
-
+  const updatedIndustryOptions=[];
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
@@ -134,7 +117,14 @@ export default async function decorate(block) {
     `${placeholders?.select || 'Select'}`,
     updatedIndustryOptions,
   );
+
   if (isSignedIn) {
+    const industryOptions = await fetchIndustryOptions();
+    updatedIndustryOptions = industryOptions.data.map((industry) => ({
+      ...industry,
+      value: industry.Name,
+      title: industry.Name,
+    }));
     selectIndustryDropDown.handleOnChange((industrySelection) => {
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
