@@ -174,6 +174,7 @@ export default async function decorate(block) {
     const industryInterest = profileData?.industryInterests;
 
     if (industryInterest) {
+      console.log(industryInterest,"interest")
       const selectedOption = industryInterest;
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
