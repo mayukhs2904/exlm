@@ -30,7 +30,12 @@ async function fetchIndustryOptions() {
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
-  const updatedIndustryOptions=[];
+  const industryOptions = await fetchIndustryOptions();
+  const updatedIndustryOptions = industryOptions.data.map((industry) => ({
+    ...industry,
+    value: industry.Name,
+    title: industry.Name,
+  }));
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
@@ -112,21 +117,11 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  if(isSignedIn){
-    const industryOptions = await fetchIndustryOptions();
-    updatedIndustryOptions = industryOptions.data.map((industry) => ({
-      ...industry,
-      value: industry.Name,
-      title: industry.Name,
-    }));
-  }
-
   const selectIndustryDropDown = new Dropdown(
     block.querySelector('.industry-selection-dropdown'),
     `${placeholders?.select || 'Select'}`,
     updatedIndustryOptions,
   );
-
   if (isSignedIn) {
     selectIndustryDropDown.handleOnChange((industrySelection) => {
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
