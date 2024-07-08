@@ -31,18 +31,12 @@ async function fetchIndustryOptions() {
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
-
-  let updatedIndustryOptions = [];
-  
-  if (isSignedIn) {
-    const industryOptions = await fetchIndustryOptions();
-    updatedIndustryOptions = industryOptions.data.map((industry) => ({
-      ...industry,
-      value: industry.Name,
-      title: industry.Name,
-    }))
-  };
-
+  const industryOptions = await fetchIndustryOptions();
+  const updatedIndustryOptions = industryOptions.data.map((industry) => ({
+    ...industry,
+    value: industry.Name,
+    title: industry.Name,
+  }));
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
@@ -125,35 +119,34 @@ export default async function decorate(block) {
   block.append(roleAndIndustryDiv);
 
   const selectIndustryDropDown = new Dropdown(
-      block.querySelector('.industry-selection-dropdown'),
-      `${placeholders?.select || 'Select'}`,
-      updatedIndustryOptions,
-    );
-  
-    if (isSignedIn) {
+    block.querySelector('.industry-selection-dropdown'),
+    `${placeholders?.select || 'Select'}`,
+    updatedIndustryOptions,
+  );
+  if (isSignedIn) {
+    selectIndustryDropDown.handleOnChange((industrySelection) => {
+      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+    });
+  }
 
-      selectIndustryDropDown.handleOnChange((industrySelection) => {
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      });
+  if (isSignedIn) {
+    const profileData = await defaultProfileClient.getMergedProfile();
+    const role = profileData?.role;
+    const industryInterest = profileData?.industryInterests;
 
-
-      const profileData = await defaultProfileClient.getMergedProfile();
-      const role = profileData?.role;
-      const industryInterest = profileData?.industryInterests;
-  
-      if (industryInterest) {
-        const selectedOption = industryInterest;
-        selectIndustryDropDown.updateDropdownValue(selectedOption);
-      }
-  
-      role.forEach((el) => {
-        const checkBox = document.querySelector(`input[name="${el}"]`);
-        if (checkBox) {
-          checkBox.checked = true;
-          checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
-        }
-      });
+    if (industryInterest) {
+      const selectedOption = industryInterest;
+      selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
+
+    role.forEach((el) => {
+      const checkBox = document.querySelector(`input[name="${el}"]`);
+      if (checkBox) {
+        checkBox.checked = true;
+        checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
+      }
+    });
+  }
 
   block.querySelectorAll('.role-cards-item').forEach((card) => {
     const updatedRoles = [];
