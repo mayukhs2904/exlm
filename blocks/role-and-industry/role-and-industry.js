@@ -133,12 +133,16 @@ export default async function decorate(block) {
   }
 
   if (isSignedIn) {
+    console.log(isSignedIn,"sign in")
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
+    console.log(industryInterest,"before industry")
 
     if (industryInterest) {
+      console.log(industryInterest,"industryinterest")
       const selectedOption = industryInterest;
+      console.log(selectedOption,"selectedoptn")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
