@@ -39,6 +39,14 @@ export default async function decorate(block) {
     value: industry.Name,
     title: industry.Name
   }));
+  // const updatedIndustryOptions = [
+  //   { value: 'Select', title: 'Select Industry' },
+  //   ...(industryOptions.data).map((industry) => ({
+  //     ...industry,
+  //     value: industry.Name,
+  //     title: industry.Name,
+  //   }))
+  // ];
 
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
@@ -123,7 +131,7 @@ export default async function decorate(block) {
 
   const selectIndustryDropDown = new Dropdown(
     block.querySelector('.industry-selection-dropdown'),
-    'Select Industry',
+    'Select',
     updatedIndustryOptions,
   );
   if (isSignedIn) {
