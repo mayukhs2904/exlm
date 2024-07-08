@@ -114,6 +114,7 @@ export default async function decorate(block) {
 
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
+    console.log(industryOptions,"options")
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
       value: industry.Name,
