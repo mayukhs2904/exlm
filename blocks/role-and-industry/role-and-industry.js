@@ -124,7 +124,9 @@ export default async function decorate(block) {
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((industrySelection) => {
+    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
+      const industrySelection = [];
+      industrySelection.push(selectedIndustry);
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
 
