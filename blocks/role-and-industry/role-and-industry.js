@@ -31,12 +31,7 @@ async function fetchIndustryOptions() {
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
-  // const industryOptions = await fetchIndustryOptions();
-  // const updatedIndustryOptions = industryOptions.data.map((industry) => ({
-  //   ...industry,
-  //   value: industry.Name,
-  //   title: industry.Name,
-  // }));
+
   let updatedIndustryOptions = [];
   
   if (isSignedIn) {
@@ -130,35 +125,35 @@ export default async function decorate(block) {
   block.append(roleAndIndustryDiv);
 
   const selectIndustryDropDown = new Dropdown(
-    block.querySelector('.industry-selection-dropdown'),
-    `${placeholders?.select || 'Select'}`,
-    updatedIndustryOptions,
-  );
+      block.querySelector('.industry-selection-dropdown'),
+      `${placeholders?.select || 'Select'}`,
+      updatedIndustryOptions,
+    );
+  
+    if (isSignedIn) {
 
-  if (isSignedIn) {
-    selectIndustryDropDown.handleOnChange((industrySelection) => {
-    console.log(industrySelection,"selection");
-      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-    });
+      selectIndustryDropDown.handleOnChange((industrySelection) => {
+        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      });
 
-    const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
-    const industryInterest = profileData?.industryInterests;
 
-    if (industryInterest) {
-      console.log(industryInterest,"interest")
-      const selectedOption = industryInterest;
-      selectIndustryDropDown.updateDropdownValue(selectedOption);
-    }
-
-    role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
-      if (checkBox) {
-        checkBox.checked = true;
-        checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
+      const profileData = await defaultProfileClient.getMergedProfile();
+      const role = profileData?.role;
+      const industryInterest = profileData?.industryInterests;
+  
+      if (industryInterest) {
+        const selectedOption = industryInterest;
+        selectIndustryDropDown.updateDropdownValue(selectedOption);
       }
-    });
-  }
+  
+      role.forEach((el) => {
+        const checkBox = document.querySelector(`input[name="${el}"]`);
+        if (checkBox) {
+          checkBox.checked = true;
+          checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
+        }
+      });
+    }
 
   block.querySelectorAll('.role-cards-item').forEach((card) => {
     const updatedRoles = [];
