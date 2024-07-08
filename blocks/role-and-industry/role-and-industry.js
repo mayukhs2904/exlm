@@ -47,7 +47,7 @@ export default async function decorate(block) {
       title: industry.Name,
     }))
   };
-  
+
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
@@ -137,6 +137,7 @@ export default async function decorate(block) {
 
   if (isSignedIn) {
     selectIndustryDropDown.handleOnChange((industrySelection) => {
+    console.log(industrySelection,"selection");
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
 
