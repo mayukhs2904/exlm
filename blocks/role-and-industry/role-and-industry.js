@@ -112,6 +112,15 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
+  if(isSignedIn){
+    const industryOptions = await fetchIndustryOptions();
+    updatedIndustryOptions = industryOptions.data.map((industry) => ({
+      ...industry,
+      value: industry.Name,
+      title: industry.Name,
+    }));
+  }
+
   const selectIndustryDropDown = new Dropdown(
     block.querySelector('.industry-selection-dropdown'),
     `${placeholders?.select || 'Select'}`,
@@ -119,12 +128,6 @@ export default async function decorate(block) {
   );
 
   if (isSignedIn) {
-    const industryOptions = await fetchIndustryOptions();
-    updatedIndustryOptions = industryOptions.data.map((industry) => ({
-      ...industry,
-      value: industry.Name,
-      title: industry.Name,
-    }));
     selectIndustryDropDown.handleOnChange((industrySelection) => {
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
