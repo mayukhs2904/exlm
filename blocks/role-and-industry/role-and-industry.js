@@ -131,7 +131,7 @@ export default async function decorate(block) {
 
   const selectIndustryDropDown = new Dropdown(
     block.querySelector('.industry-selection-dropdown'),
-    'Select',
+    `${placeholders?.select || 'Select'}`,
     updatedIndustryOptions,
   );
   if (isSignedIn) {
