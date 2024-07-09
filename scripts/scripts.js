@@ -307,15 +307,10 @@ function addMiniToc(main) {
   );
   const tocSection = document.createElement('div');
   tocSection.classList.add('mini-toc-section');
-  tocSection.append(buildBlock('mini-toc', []));
-  const contentContainer = document.createElement('div');
-  contentContainer.classList.add('content-container');
-  if (document.querySelector('.article-marquee')) {
-    const articleMarquee = document.querySelector('.article-marquee');
-    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
-  } else {
-    main.prepend(tocSection);
-  }
+  const miniTocBlock = buildBlock('mini-toc', []);
+  tocSection.append(miniTocBlock);
+  miniTocBlock.style.display = 'none';
+  main.append(tocSection);
 }
 
 /**
@@ -812,7 +807,7 @@ export function getConfig() {
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
-    industryUrl: 'https://experienceleague.adobe.com/api/industries?page_size=200&sort=Order&lang=en',
+    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
@@ -1068,8 +1063,8 @@ export async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
-      if (document.querySelector('.mini-toc.block')) {
-        document.querySelector('.mini-toc.block').style.display = null;
+      if (document.querySelector('.mini-toc')) {
+        document.querySelector('.mini-toc').style.display = null;
       }
       document
         .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
@@ -1195,6 +1190,13 @@ async function loadDefaultModule(jsPath) {
     // eslint-disable-next-line no-console
     console.log(`failed to load module for ${jsPath}`, error);
   }
+}
+
+export function isFeatureEnabled(name) {
+  return getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(name);
 }
 
 /**
@@ -1332,11 +1334,22 @@ async function loadPage() {
   showBrowseBackgroundGraphic();
 
   if (isDocArticlePage()) {
+    // wrap main content in a div - UGP-11165
+    const main = document.querySelector('main');
+    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+    const mainContent = document.createElement('div');
+    // insert mainContent as first child of main
+    main.prepend(mainContent);
+    mainSections.forEach((section) => {
+      mainContent.append(section);
+    });
+
+    // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
+    // discoverability
     const params = new URLSearchParams(window.location.search);
     const hasDiscoverability = Boolean(params.get('discoverability'));
-
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
     }

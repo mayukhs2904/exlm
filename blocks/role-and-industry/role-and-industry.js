@@ -139,11 +139,11 @@ export default async function decorate(block) {
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
 
-    if ((Array.isArray(industryInterest) && industryInterest.length > 0) ||
-    (typeof industryInterest === 'string' && industryInterest.trim() !== '')) {
-      const selectedOption = Array.isArray(industryInterest)
-        ? industryInterest[0]
-        : industryInterest.trim();
+    if (
+      (Array.isArray(industryInterest) && industryInterest.length > 0) ||
+      (typeof industryInterest === 'string' && industryInterest.trim() !== '')
+    ) {
+      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
