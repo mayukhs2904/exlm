@@ -159,11 +159,16 @@ export default async function decorate(block) {
   block.querySelectorAll('.role-cards-item').forEach((card) => {
     const updatedRoles = [];
     const checkbox = card.querySelector('input[type="checkbox"]');
+    console.log(checkbox,"checkbox")
 
     card.addEventListener('click', (e) => {
+      console.log("entered card click")
+      console.log(e,"E")
       const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
+      console.log(isLabelClicked,"islabel")
       if (e.target !== checkbox && !isLabelClicked) {
         checkbox.checked = !checkbox.checked;
+        console.log(checkbox.checked,"checked")
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
@@ -175,7 +180,9 @@ export default async function decorate(block) {
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
+        console.log(profileKey,"profilekey")
         updatedRoles.push(profileKey);
+        console.log(updatedRoles,"updatedroles")
         defaultProfileClient
           .updateProfile('role', updatedRoles)
           .then(() => sendNotice(PROFILE_UPDATED))
