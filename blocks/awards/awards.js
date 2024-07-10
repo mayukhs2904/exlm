@@ -83,7 +83,7 @@ export default async function decorate(block) {
         const awardsDiv = document.createRange().createContextualFragment(generateAwardsBlock(items));
         wrapper.innerHTML = '';
         wrapper.append(awardsDiv);
-        decorateIcons(blockEl); 
+        decorateIcons(blockEl);
       };
       block.innerHTML = `<div class="awards-holder"></div>`;
       // eslint-disable-next-line no-new
