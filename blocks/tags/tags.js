@@ -62,7 +62,7 @@ export default function decorate(block) {
       <div class="article-tags-topics-heading">
       ${TOPICS}
       </div>
-        ${[extractedValues].map(createTagsHTML).join('')}
+        ${[features].map(createTagsHTML).join('')}
       </div>
       <div class="article-tags-createdFor">
       <div class="article-tags-createdFor-heading">
