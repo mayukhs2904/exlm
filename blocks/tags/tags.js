@@ -11,9 +11,11 @@ try {
 
 const TOPICS = placeholders?.topics || 'TOPICS:';
 const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
+const PRODUCT = placeholders?.product || 'PRODUCT:';
 
 export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
+  console.log(coveosolutions,"covesol")
   const solutions = [
     ...new Set(
       coveosolutions.split(';').map((item) => {
@@ -22,8 +24,20 @@ export default function decorate(block) {
       }),
     ),
   ].join(',');
+  console.log(solutions,"sol")
 
   const features = getMetadata('feature');
+  console.log(features,"feature")
+  const extractedValues = features
+  .split(',')
+  .map(item => {
+    const parts = item.split('exl:feature/')[1].trim();
+    const splitParts = parts.split('/');
+    return splitParts.length > 1 ? splitParts[1] : '';
+  })
+  .filter(Boolean) // Remove empty values
+  .join(',');
+  console.log(extractedValues,"featuresnew")
   const roles = getMetadata('role');
   const experienceLevels = getMetadata('level');
 
@@ -38,11 +52,17 @@ export default function decorate(block) {
   block.textContent = '';
 
   const articleTags = document.createRange().createContextualFragment(`
+      <div class="article-tags-product">
+      <div class="article-tags-product-heading">
+      ${PRODUCT}
+      </div>
+        ${[solutions].map(createTagsHTML).join('')}
+      </div>
       <div class="article-tags-topics">
       <div class="article-tags-topics-heading">
       ${TOPICS}
       </div>
-        ${[solutions, features].map(createTagsHTML).join('')}
+        ${[extractedValues].map(createTagsHTML).join('')}
       </div>
       <div class="article-tags-createdFor">
       <div class="article-tags-createdFor-heading">
