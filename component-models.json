@@ -2420,7 +2420,7 @@
         "component": "text",
         "valueType": "string",
         "name": "heading",
-        "value": "",
+        "value": "Heading abc",
         "label": "Heading",
         "description": "Sets the heading."
       },
