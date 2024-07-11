@@ -610,7 +610,7 @@
                   "model": "featured-content",
                   "content_cta": "Read Article",
                   "classes": ["adobe", "left"],
-                  "linkText": "Read hello"
+                  "linkText": "Read Article"
                 }
               }
             }
