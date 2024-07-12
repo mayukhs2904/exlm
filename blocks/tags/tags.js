@@ -15,7 +15,6 @@ const PRODUCT = placeholders?.product || 'PRODUCT:';
 
 export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
-  console.log(coveosolutions,"covesol")
   const solutions = [
     ...new Set(
       coveosolutions.split(';').map((item) => {
@@ -24,20 +23,8 @@ export default function decorate(block) {
       }),
     ),
   ].join(',');
-  console.log(solutions,"sol")
 
   const features = getMetadata('feature');
-  console.log(features,"feature")
-  const extractedValues = features
-  .split(',')
-  .map(item => {
-    const parts = item.split('exl:feature/')[1].trim();
-    const splitParts = parts.split('/');
-    return splitParts.length > 1 ? splitParts[1] : '';
-  })
-  .filter(Boolean) // Remove empty values
-  .join(',');
-  console.log(extractedValues,"featuresnew")
   const roles = getMetadata('role');
   const experienceLevels = getMetadata('level');
 
@@ -51,26 +38,44 @@ export default function decorate(block) {
 
   block.textContent = '';
 
-  const articleTags = document.createRange().createContextualFragment(`
-      <div class="article-tags-product">
+  const articleTags = document.createDocumentFragment();
+
+  if (solutions) {
+    const productSection = document.createElement('div');
+    productSection.classList.add('article-tags-product');
+    productSection.innerHTML = `
       <div class="article-tags-product-heading">
-      ${PRODUCT}
+        ${PRODUCT}
       </div>
-        ${[solutions].map(createTagsHTML).join('')}
-      </div>
-      <div class="article-tags-topics">
+      ${createTagsHTML(solutions)}
+    `;
+    articleTags.appendChild(productSection);
+  }
+
+  if (features) {
+    const topicsSection = document.createElement('div');
+    topicsSection.classList.add('article-tags-topics');
+    topicsSection.innerHTML = `
       <div class="article-tags-topics-heading">
-      ${TOPICS}
+        ${TOPICS}
       </div>
-        ${[features].map(createTagsHTML).join('')}
-      </div>
-      <div class="article-tags-createdFor">
+      ${createTagsHTML(features)}
+    `;
+    articleTags.appendChild(topicsSection);
+  }
+
+  const createdForContent = [roles, experienceLevels].filter(Boolean).map(createTagsHTML).join('');
+  if (createdForContent) {
+    const createdForSection = document.createElement('div');
+    createdForSection.classList.add('article-tags-createdFor');
+    createdForSection.innerHTML = `
       <div class="article-tags-createdFor-heading">
-      ${CREATED_FOR}
+        ${CREATED_FOR}
       </div>
-        ${[roles, experienceLevels].map(createTagsHTML).join('')}
-      </div>
-  `);
+      ${createdForContent}
+    `;
+    articleTags.appendChild(createdForSection);
+  }
 
   block.append(articleTags);
 }
