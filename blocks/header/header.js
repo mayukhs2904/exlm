@@ -397,10 +397,14 @@ const buildNavItems = async (ul, level = 0) => {
 
   [...ul.children]
     .filter((option) => {
-      console.log(option.querySelector('a')?.textContent?.toLowerCase());
-      return option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives';
+      const text = option.querySelector('a')?.textContent?.toLowerCase().trim();
+      console.log('Filtering option:', text);
+      return text !== 'perspectives';
     })
-    .forEach(decorateNavItem);
+    .forEach((option) => {
+      console.log('Decorating option:', option.querySelector('a')?.textContent?.toLowerCase().trim());
+      decorateNavItem(option);
+    });
 };
 
 /**
