@@ -11,11 +11,7 @@
   gap: 8px;
 }
 
-<<<<<<< HEAD
-.article-tags-product-heading , .article-tags-topics-heading, .article-tags-createdFor-heading {
-=======
 .article-tags-product-heading, .article-tags-topics-heading, .article-tags-createdFor-heading {
->>>>>>> 52ea98b165bf63bcc263b1f868c62d1094587394
   font-size: var(--spectrum-body-size-xs);
   font-weight: 700;
 }
