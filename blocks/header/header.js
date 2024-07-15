@@ -396,10 +396,10 @@ const buildNavItems = async (ul, level = 0) => {
   }
 
   [...ul.children]
-    .filter(
-      (option) =>
-        option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives' || isFeatureEnabled('perspectives'),
-    )
+    .filter((option) => {
+      console.log(option.querySelector('a')?.textContent?.toLowerCase());
+      return option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives';
+    })
     .forEach(decorateNavItem);
 };
 
