@@ -29,8 +29,10 @@ if (isSignedIn) {
   adobeDisplayName = profileData?.displayName || '';
   email = profileData?.email || '';
   industry = profileData?.industryInterests || '';
+  console.log(industry,"industry")
   const profileRoles = profileData?.role || [];
   const profileInterests = profileData?.interests || [];
+  console.log(interests,"interests")
 
   if (profileRoles.length > 0) {
     roles = profileRoles.join('&nbsp;&nbsp;');
@@ -47,7 +49,9 @@ if (isSignedIn) {
   const communityProfileDetails = await defaultProfileClient.fetchCommunityProfileDetails();
   communityUserName = communityProfileDetails?.username || '';
   communityUserTitle = communityProfileDetails?.title || '';
+  console.log(communityUserTitle,"title");
   communityUserLocation = communityProfileDetails?.location || '';
+  console.log(communityUserLocation,"location")
 }
 
 export const adobeAccountDOM = `<div class="profile-row adobe-account">
