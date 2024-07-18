@@ -28,11 +28,12 @@ if (isSignedIn) {
   const profileData = await defaultProfileClient.getMergedProfile();
   adobeDisplayName = profileData?.displayName || '';
   email = profileData?.email || '';
+  console.log(email,"email")
   industry = profileData?.industryInterests || '';
   console.log(industry,"industry")
   const profileRoles = profileData?.role || [];
   const profileInterests = profileData?.interests || [];
-  console.log(interests,"interests")
+  console.log(profileInterests,"interests")
 
   if (profileRoles.length > 0) {
     roles = profileRoles.join('&nbsp;&nbsp;');
@@ -45,13 +46,14 @@ if (isSignedIn) {
   const ppsProfileData = await defaultProfileClient.getPPSProfile();
   profilePicture = ppsProfileData?.images?.['100'] || '';
   company = ppsProfileData?.company || '';
+  console.log(company,"company")
 
   const communityProfileDetails = await defaultProfileClient.fetchCommunityProfileDetails();
   communityUserName = communityProfileDetails?.username || '';
   communityUserTitle = communityProfileDetails?.title || '';
-  console.log(communityUserTitle,"title");
+  // console.log(communityUserTitle,"title");
   communityUserLocation = communityProfileDetails?.location || '';
-  console.log(communityUserLocation,"location")
+  // console.log(communityUserLocation,"location")
 }
 
 export const adobeAccountDOM = `<div class="profile-row adobe-account">
