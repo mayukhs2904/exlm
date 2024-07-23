@@ -3,7 +3,8 @@ import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
-  const { adobeAccountDOM, communityAccountDOM, additionalProfileInfoDOM } = await generateProfileDOM();
+  const profileFlags = ['exlProfile', 'communityProfile'];
+  const { adobeAccountDOM, communityAccountDOM, additionalProfileInfoDOM } = await generateProfileDOM(profileFlags);
 
   const userProfileDOM = document.createRange().createContextualFragment(`
     <div class="user-profile-card-box">

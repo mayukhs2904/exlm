@@ -157,7 +157,6 @@ export default async function decorate(block) {
   }
 
   block.querySelectorAll('.role-cards-item').forEach((card) => {
-    const updatedRoles = [];
     const checkbox = card.querySelector('input[type="checkbox"]');
     console.log(checkbox,"checkbox")
 
@@ -179,12 +178,15 @@ export default async function decorate(block) {
       checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
 
       if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
-        console.log(profileKey,"profilekey")
-        updatedRoles.push(profileKey);
-        console.log(updatedRoles,"updatedroles")
+        const updatedRoles = [];
+        roleCardsData.forEach((roleCard) => {
+          const roleCardCheckbox = block.querySelector(`input[name="${roleCard.role}"]`);
+          if (roleCardCheckbox.checked) {
+            updatedRoles.push(roleCard.role);
+          }
+        });
         defaultProfileClient
-          .updateProfile('role', updatedRoles)
+          .updateProfile('role', updatedRoles, true)
           .then(() => sendNotice(PROFILE_UPDATED))
           .catch(() => sendNotice(PROFILE_NOT_UPDATED));
       }

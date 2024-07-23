@@ -1,40 +1,57 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 
-export const fetchProfileData = async () => {
+const EXL_PROFILE = 'exlProfile';
+const COMMUNITY_PROFILE = 'communityProfile';
+
+export const fetchProfileData = async (profileFlags) => {
   const isSignedIn = await isSignedInUser();
   if (!isSignedIn) {
     return null;
   }
 
-  const profileData = await defaultProfileClient.getMergedProfile();
-  const ppsProfileData = await defaultProfileClient.getPPSProfile();
-  const communityProfileDetails = await defaultProfileClient.fetchCommunityProfileDetails();
+  let profileData = {};
+  let ppsProfileData = {};
+  let communityProfileDetails = {};
+
+  if (profileFlags.includes(EXL_PROFILE)) {
+    profileData = await defaultProfileClient.getMergedProfile();
+    ppsProfileData = await defaultProfileClient.getPPSProfile();
+  }
+
+  if (profileFlags.includes(COMMUNITY_PROFILE)) {
+    communityProfileDetails = await defaultProfileClient.fetchCommunityProfileDetails();
+  }
 
   return {
-    adobeDisplayName: profileData?.displayName || '',
-    email: profileData?.email || '',
-    industry: profileData?.industryInterests || '',
-    roles: profileData?.role || [],
-    interests: profileData?.interests || [],
-    profilePicture: ppsProfileData?.images?.['100'] || '',
-    company: ppsProfileData?.company || '',
-    communityUserName: communityProfileDetails?.username || '',
-    communityUserTitle: communityProfileDetails?.title || '',
-    communityUserLocation: communityProfileDetails?.location || ''
+    ...(profileFlags.includes(EXL_PROFILE) && {
+      adobeDisplayName: profileData?.displayName || '',
+      email: profileData?.email || '',
+      industry: profileData?.industryInterests || '',
+      roles: profileData?.role || [],
+      interests: profileData?.interests || [],
+      profilePicture: ppsProfileData?.images?.['100'] || '',
+      company: ppsProfileData?.company || '',
+    }),
+    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
+      communityUserName: communityProfileDetails?.username || '',
+      communityUserTitle: communityProfileDetails?.title || '',
+      communityUserLocation: communityProfileDetails?.location || '',
+    }),
   };
 };
 
-export const generateProfileDOM = async () => {
+export const generateProfileDOM = async (profileFlags) => {
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
 
   const { adobeAccountURL, communityAccountURL } = getConfig();
-  const profileData = await fetchProfileData();
+  const profileData = await fetchProfileData(profileFlags);
 
   if (!profileData) {
     return ''; // Return empty string or a message indicating the user is not signed in.
@@ -50,7 +67,7 @@ export const generateProfileDOM = async () => {
     company,
     communityUserName,
     communityUserTitle,
-    communityUserLocation
+    communityUserLocation,
   } = profileData;
 
   const adobeAccountDOM = `<div class="profile-row adobe-account">
@@ -125,7 +142,8 @@ export const generateProfileDOM = async () => {
           }
           ${
             industry &&
-            ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
+            ((Array.isArray(industry) && industry.length > 0) ||
+              (typeof industry === 'string' && industry.trim() !== ''))
               ? `<div class="user-industry"><span class="heading">${
                   placeholders?.myIndustry || 'My Industry'
                 }: </span><span>${industry}</span></div>`
@@ -142,11 +160,11 @@ export const generateProfileDOM = async () => {
           }
         </div>
       </div>
-    </div>`;
+  </div>`;
 
   return {
     adobeAccountDOM,
     communityAccountDOM,
-    additionalProfileInfoDOM
+    additionalProfileInfoDOM,
   };
 };
