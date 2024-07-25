@@ -2,13 +2,13 @@ body.profile {
   background-color: var(--background-color);
 }
 
-/* body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper {
-  text-align: center;
-} */
-
-body.profile .section .default-content-wrapper {
+body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper p {
   text-align: center;
 }
+
+/* body.profile .section *:last-child p {
+  text-align: center;
+} */
 
 body.profile .section.profile-rail-section {
   display: none;
