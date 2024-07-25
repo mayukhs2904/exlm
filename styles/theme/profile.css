@@ -2,7 +2,7 @@ body.profile {
   background-color: var(--background-color);
 }
 
-body.profile .section .product-experience-level-wrapper + .default-content-wrapper {
+body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper {
   text-align: center;
 }
 
