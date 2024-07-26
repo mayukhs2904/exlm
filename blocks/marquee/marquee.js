@@ -18,11 +18,11 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
-function getSignInButton(signInText) {
+function getSignInButton(signInText, ctaLink2) {
   const secondCta = document.createElement('div');
   const link = document.createElement('a');
   link.classList.add('signin');
-  link.setAttribute('href', '#');
+  link.setAttribute('href', ctaLink2); //add link here
   link.setAttribute('title', signInText);
   link.textContent = signInText;
   secondCta.append(link);
@@ -32,8 +32,9 @@ function getSignInButton(signInText) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, linkType, confSignInText] =
+  const [img, eyebrow, title, longDescr, firstCta, linkType, confSignInText, ctaLink2] =
     block.querySelectorAll(':scope div > div');
+    console.log(ctaLink2)
 
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
@@ -42,7 +43,7 @@ export default async function decorate(block) {
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // build sign in button if not in yet and button text is set
-  const secondCta = signInText && getSignInButton(signInText);
+  const secondCta = signInText && getSignInButton(signInText, ctaLink2);
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
