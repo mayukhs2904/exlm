@@ -50,20 +50,22 @@ export default async function decorate(block) {
         </div>
         <div class="profile-user-card">
         <div class="profile-user-card-left">
-        <img class="profile-image"/>
-        <div class="profile-info">
-            <h3 class="profile-name"></h3>
-            <div class="profile-tag">@</div>
-            <div class="profile-org"></div>
+        <div class="profile-image">
+        ${profilePicture}
         </div>
-        <div class="profile-title"><strong>TITLE:</strong></div>
-        <div class="profile-location"><strong>LOCATION:</strong></div>
+        <div class="profile-info">
+            <h3 class="profile-name">${adobeDisplayName}</h3>
+            <div class="profile-tag">${communityUserName}</div>
+            <div class="profile-org">${company}</div>
+        </div>
+        <div class="profile-title"><strong>TITLE:${communityUserTitle}</strong></div>
+        <div class="profile-location"><strong>LOCATION:${communityUserLocation}</strong></div>
 
         </div>
         <div class="profile-user-card-right">
-        <div class="profile-role"><strong>MY ROLE:</strong></div>
-        <div class="profile-industry"><strong>MY INDUSTRY:</strong></div>
-        <div class="profile-interests"><strong>MY INTERESTS:</strong></div>
+        <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
+        <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
+        <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
         <button>View profile settings</button>
 
         </div>
