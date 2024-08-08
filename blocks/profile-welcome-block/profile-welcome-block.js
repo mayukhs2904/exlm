@@ -26,6 +26,13 @@ const {
 
   console.log(adobeDisplayName,"name")
   console.log(industry,"indusrrry")
+  console.log(roles,"role")
+  console.log(interests,"interests")
+  console.log(profilePicture,"pic")
+  console.log(company,"company")
+  console.log(communityUserName,"communityUserName")
+  console.log(communityUserTitle,"communityUserTitle")
+  console.log(communityUserLocation,"communityUserLocation")
 
 export default async function decorate(block) {
     const [profileEyebrowText, profileHeading, profileDescription, profileCtaType, profileCtaText, profileCtaLink, incompleteProfileText] = block.querySelectorAll(':scope div > div');
