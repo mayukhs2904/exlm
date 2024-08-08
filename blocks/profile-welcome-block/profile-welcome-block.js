@@ -14,7 +14,6 @@ const profileData = await fetchProfileData(profileFlags);
 
 const {
     adobeDisplayName,
-    email,
     industry,
     roles,
     interests,
@@ -26,6 +25,7 @@ const {
   } = profileData;
 
   console.log(adobeDisplayName,"name")
+  console.log(industry,"indusrrry")
 
 export default async function decorate(block) {
     const [profileEyebrowText, profileHeading, profileDescription, profileCtaType, profileCtaText, profileCtaLink, incompleteProfileText] = block.querySelectorAll(':scope div > div');
@@ -33,13 +33,13 @@ export default async function decorate(block) {
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
         <div class="profile-curated-card-eyebrowText">
-        ${profileEyebrowText}
+        ${profileEyebrowText.textContent}
         </div>
         <div class="profile-curated-card-profileHeading>
-        ${profileHeading}
+        ${profileHeading.textContent}
         </div>
         <div class="profile-curated-card-profileDescription">
-        ${profileDescription}
+        ${profileDescription.textContent}
         </div>
         <div class="profile-user-card">
         <div class="profile-user-card-left">
