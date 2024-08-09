@@ -9,21 +9,17 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(...buttons) {
-    return buttons
-    .map((div) => {
-        console.log(div,"div")
-      const a = div.querySelector('a');
-      if (a) {
-        console.log(a,"a")
+function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
+    const a = div.querySelector('a');
+    if (a) {
         a.classList.add('button');
-        // if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-        // if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+        if (profileCtaType==='secondary') a.classList.add('secondary');
+        if (profileCtaType==='primary') a.classList.add('primary');
+        a.setAttribute('href',profileCtaLink);
+        a.textContent = profileCtaText;
         return a.outerHTML;
-      }
-      return '';
-    })
-    .join('');  
+    }
+    return '';
 }
 
 const profileFlags = ['exlProfile', 'communityProfile'];
@@ -42,9 +38,7 @@ const {
   } = profileData;
 
 export default async function decorate(block) {
-    const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] = block.querySelectorAll(':scope div > div');
-
-    console.log(profileCta,"ctaaaaaa")
+    const [profileEyebrowText, profileHeading, profileDescription, profileCtaType, profileCtaText, profileCtaLink, incompleteProfileText] = block.querySelectorAll(':scope div > div');
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
@@ -75,7 +69,7 @@ export default async function decorate(block) {
                 <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
                 <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
                 <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
-                <div class="profile-cta">${decorateButton(profileCta)}</div>
+                <div class="profile-cta">${decorateButton(profileCtaType, profileCtaText, profileCtaLink)}</div>
             </div>    
        </div>
     `);
