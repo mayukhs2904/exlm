@@ -10,17 +10,27 @@ try {
 }
 
 function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
-    const a = div.querySelector('a');
-    if (a) {
+    // Create a new anchor element
+    const a = document.createElement('a');
+    
+    // Check if the link is provided
+    if (profileCtaLink) {
         a.classList.add('button');
-        if (profileCtaType==='secondary') a.classList.add('secondary');
-        if (profileCtaType==='primary') a.classList.add('primary');
-        a.setAttribute('href',profileCtaLink);
+        
+        // Add class based on the profileCtaType
+        if (profileCtaType === 'secondary') a.classList.add('secondary');
+        if (profileCtaType === 'primary') a.classList.add('primary');
+        
+        // Set the href attribute and text content
+        a.setAttribute('href', profileCtaLink);
         a.textContent = profileCtaText;
+
+        // Return the HTML string of the anchor element
         return a.outerHTML;
     }
     return '';
 }
+
 
 const profileFlags = ['exlProfile', 'communityProfile'];
 const profileData = await fetchProfileData(profileFlags);
