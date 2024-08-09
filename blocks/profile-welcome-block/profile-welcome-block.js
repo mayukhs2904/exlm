@@ -79,7 +79,7 @@ export default async function decorate(block) {
                 <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
                 <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
                 <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
-                <div class="profile-cta">${decorateButton(profileCtaType, profileCtaText, profileCtaLink)}</div>
+                <div class="profile-cta">${decorateButton(profileCtaType, profileCtaText.textContent, profileCtaLink.textContent)}</div>
             </div>    
        </div>
     `);
