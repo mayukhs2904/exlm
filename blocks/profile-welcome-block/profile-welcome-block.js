@@ -9,18 +9,22 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-// function decorateButton(profileCta) {
-//     const a = div.querySelector('a');
-//     if (a) {
-//     a.classList.add('button');
-//     if(profileCtaLink == 'secondary')
-//         a.classList.add('secondary');
-//     else
-//         a.classList.add('primary');
-//     return a.outerHTML;
-//     }
-//   return '';      
-// }
+function decorateButton(...buttons) {
+    return buttons
+    .map((div) => {
+        console.log(div,"div")
+      const a = div.querySelector('a');
+      if (a) {
+        console.log(a,"a")
+        a.classList.add('button');
+        // if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+        // if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+        return a.outerHTML;
+      }
+      return '';
+    })
+    .join('');  
+}
 
 const profileFlags = ['exlProfile', 'communityProfile'];
 const profileData = await fetchProfileData(profileFlags);
@@ -71,7 +75,7 @@ export default async function decorate(block) {
                 <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
                 <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
                 <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
-          
+                <div class="profile-cta">${decorateButton(profileCta)}</div>
             </div>    
        </div>
     `);
