@@ -9,22 +9,18 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButtons(...buttons) {
-    return buttons
-      .map((div, index) => {
-        if (div) {
-          const a = div.querySelector('a');
-          if (a) {
-            a.classList.add('button');
-            if (index === 0) a.classList.add('secondary');
-            if (index === 1) a.classList.add('primary');
-            return a.outerHTML;
-          }
-        }
-        return '';
-      })
-      .join('');
-}
+// function decorateButton(profileCta) {
+//     const a = div.querySelector('a');
+//     if (a) {
+//     a.classList.add('button');
+//     if(profileCtaLink == 'secondary')
+//         a.classList.add('secondary');
+//     else
+//         a.classList.add('primary');
+//     return a.outerHTML;
+//     }
+//   return '';      
+// }
 
 const profileFlags = ['exlProfile', 'communityProfile'];
 const profileData = await fetchProfileData(profileFlags);
@@ -41,18 +37,10 @@ const {
     communityUserLocation,
   } = profileData;
 
-  console.log(adobeDisplayName,"name")
-  console.log(industry,"indusrrry")
-  console.log(roles,"role")
-  console.log(interests,"interests")
-  console.log(profilePicture,"pic")
-  console.log(company,"company")
-  console.log(communityUserName,"communityUserName")
-  console.log(communityUserTitle,"communityUserTitle")
-  console.log(communityUserLocation,"communityUserLocation")
-
 export default async function decorate(block) {
-    const [profileEyebrowText, profileHeading, profileDescription, profileCtaType, profileCtaText, profileCtaLink, incompleteProfileText] = block.querySelectorAll(':scope div > div');
+    const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] = block.querySelectorAll(':scope div > div');
+
+    console.log(profileCta,"ctaaaaaa")
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
@@ -83,7 +71,7 @@ export default async function decorate(block) {
                 <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
                 <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
                 <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
-                 <div class='profile-cta'>${decorateButtons(profileCtaText)}</div>
+          
             </div>    
        </div>
     `);
