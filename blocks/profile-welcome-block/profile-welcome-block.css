@@ -2,6 +2,11 @@
     display: flex;
 }
 
+.profile-curated-card,
+.profile-user-card {
+  flex: 1;
+}
+
 .profile-welcome-block .profile-curated-card {
     display: flex;
     flex-direction: column;
