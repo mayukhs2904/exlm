@@ -68,7 +68,7 @@ export default async function decorate(block) {
             <div class="profile-user-card-left">
               <div class="profile-user-card-avatar-company-info">
                 <div class="profile-user-card-avatar">
-                  <img src=${profilePicture} />
+                  <img width="64" height="64" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />
                 </div>
                 <div class="profile-user-card-info">
                     <h3 class="profile-user-card-name">${adobeDisplayName}</h3>
