@@ -1,5 +1,5 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { fetchProfileData } from '../../scripts/profile/profile.js'
+import { fetchProfileData } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -10,80 +10,94 @@ try {
 }
 
 function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
-    // Create a new anchor element
-    const a = document.createElement('a');
-    
-    // Check if the link is provided
-    if (profileCtaLink) {
-        a.classList.add('button');
-        
-        // Add class based on the profileCtaType
-        if (profileCtaType === 'secondary') a.classList.add('secondary');
-        if (profileCtaType === 'primary') a.classList.add('primary');
-        
-        // Set the href attribute and text content
-        a.setAttribute('href', profileCtaLink);
-        a.textContent = profileCtaText;
-
-        // Return the HTML string of the anchor element
-        return a.outerHTML;
-    }
-    return '';
+  const a = document.createElement('a');
+  if (profileCtaLink) {
+    a.classList.add('button');
+    if (profileCtaType === 'secondary') a.classList.add('secondary');
+    if (profileCtaType === 'primary') a.classList.add('primary');
+    a.setAttribute('href', profileCtaLink);
+    a.textContent = profileCtaText;
+    return a.outerHTML;
+  }
+  return '';
 }
-
 
 const profileFlags = ['exlProfile', 'communityProfile'];
 const profileData = await fetchProfileData(profileFlags);
 
 const {
-    adobeDisplayName,
-    industry,
-    roles,
-    interests,
-    profilePicture,
-    company,
-    communityUserName,
-    communityUserTitle,
-    communityUserLocation,
-  } = profileData;
+  adobeDisplayName,
+  industry,
+  roles,
+  interests,
+  profilePicture,
+  company,
+  communityUserName,
+  communityUserTitle,
+  communityUserLocation,
+} = profileData;
+
+const industryText = industry ? industry : 'Unknown';
+const interestsText = interests ? interests : 'Unknown';
+const hasInterests = interests && interests.length > 0;
 
 export default async function decorate(block) {
-    const [profileEyebrowText, profileHeading, profileDescription, profileCtaType, profileCtaText, profileCtaLink, incompleteProfileText] = block.querySelectorAll(':scope div > div');
+  const [
+    profileEyebrowText,
+    profileHeading,
+    profileDescription,
+    profileCtaType,
+    profileCtaText,
+    profileCtaLink,
+    incompleteProfileText,
+  ] = block.querySelectorAll(':scope div > div');
 
-    const profileWelcomeBlock = document.createRange().createContextualFragment(`
+  const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
-            <div class="profile-curated-card-eyebrowText">
+            <div class="profile-curated-card-eyebrowtext">
             ${profileEyebrowText.textContent}
             </div>
-            <div class="profile-curated-card-profileHeading">
+            <div class="profile-curated-card-heading">
             ${profileHeading.textContent}
             </div>
-            <div class="profile-curated-card-profileDescription">
+            <div class="profile-curated-card-description">
             ${profileDescription.textContent}
             </div>
         </div>
         <div class="profile-user-card">
             <div class="profile-user-card-left">
-                <div class="profile-image">
+                <div class="profile-user-card-avatar">
                 <img src=${profilePicture} />
                 </div>
-                <div class="profile-info">
-                    <h3 class="profile-name">${adobeDisplayName}</h3>
-                    <div class="profile-tag">${communityUserName}</div>
-                    <div class="profile-org">${company}</div>
+                <div class="profile-user-card-info">
+                    <h3 class="profile-user-card-name">${adobeDisplayName}</h3>
+                    ${communityUserName ? `<div class="profile-user-card-tag">${communityUserName}</div>` : ''}
+                    <div class="profile-user-card-org">${company}</div>
                 </div>
-                <div class="profile-title"><strong>TITLE:${communityUserTitle}</strong></div>
-                <div class="profile-location"><strong>LOCATION:${communityUserLocation}</strong></div>
+                ${
+                    hasInterests
+                      ? `
+                          <div class="profile-user-card-title">${placeholders?.title?.toUpperCase() || 'TITLE:'} ${communityUserTitle}</div>
+                          <div class="profile-user-card-location">${placeholders?.location?.toUpperCase() || 'LOCATION:'} ${communityUserLocation}</div>
+                        `
+                      : `
+                          <div class="profile-user-card-incomplete">${incompleteProfileText.textContent}</div>
+                        `
+                  }
             </div>
             <div class="profile-user-card-right">
-                <div class="profile-role"><strong>MY ROLE:${roles}</strong></div>
-                <div class="profile-industry"><strong>MY INDUSTRY:${industry}</strong></div>
-                <div class="profile-interests"><strong>MY INTERESTS:${interests}</strong></div>
-                <div class="profile-cta">${decorateButton(profileCtaType, profileCtaText.textContent, profileCtaLink.textContent)}</div>
+                <div class="profile-user-card-role">${placeholders?.myRole?.toUpperCase() || 'MY ROLE:'}${roles}</div>
+                <div class="profile-user-card-industry">${placeholders?.myIndustry?.toUpperCase() || 'MY INDUSTRY:'}${industryText}</div>
+                <div class="profile-user-card-interests">${placeholders?.myInterests?.toUpperCase() || 'MY INTERESTS:'}${interestsText}</div>
+                <div class="profile-user-card-cta">${decorateButton(
+                  profileCtaType,
+                  profileCtaText.textContent,
+                  profileCtaLink.textContent,
+                )}</div>
             </div>    
        </div>
     `);
-    
-    block.textContent = '';
-    block.append(profileWelcomeBlock);
+
+  block.textContent = '';
+  block.append(profileWelcomeBlock);
 }
