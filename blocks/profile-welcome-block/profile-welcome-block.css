@@ -1,0 +1,26 @@
+.profile-welcome-block {
+    display: flex;
+}
+
+.profile-welcome-block .profile-curated-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-welcome-block .profile-user-card {
+    display: flex;
+}
+
+.profile-user-card .profile-user-card-left{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-user-card .profile-user-card-right{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-user-card-left .profile-user-card-avatar-company-info {
+    display: flex;
+}

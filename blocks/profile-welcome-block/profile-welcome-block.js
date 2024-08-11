@@ -37,8 +37,8 @@ const {
   communityUserLocation,
 } = profileData;
 
-const industryText = industry ? industry : 'Unknown';
-const interestsText = interests ? interests : 'Unknown';
+const industryText = industry.length > 0 ? industry : 'Unknown';
+const interestsText = interests.length > 0 ? interests.join('&nbsp;&nbsp;') : 'Unknown';
 const hasInterests = interests && interests.length > 0;
 
 export default async function decorate(block) {
@@ -66,29 +66,41 @@ export default async function decorate(block) {
         </div>
         <div class="profile-user-card">
             <div class="profile-user-card-left">
+              <div class="profile-user-card-avatar-company-info">
                 <div class="profile-user-card-avatar">
-                <img src=${profilePicture} />
+                  <img src=${profilePicture} />
                 </div>
                 <div class="profile-user-card-info">
                     <h3 class="profile-user-card-name">${adobeDisplayName}</h3>
                     ${communityUserName ? `<div class="profile-user-card-tag">${communityUserName}</div>` : ''}
                     <div class="profile-user-card-org">${company}</div>
-                </div>
+                </div> 
+              </div> 
                 ${
-                    hasInterests
-                      ? `
-                          <div class="profile-user-card-title">${placeholders?.title?.toUpperCase() || 'TITLE:'} ${communityUserTitle}</div>
-                          <div class="profile-user-card-location">${placeholders?.location?.toUpperCase() || 'LOCATION:'} ${communityUserLocation}</div>
+                  hasInterests
+                    ? `
+                          <div class="profile-user-card-title">${
+                            placeholders?.title?.toUpperCase() || 'TITLE: '
+                          } ${communityUserTitle}</div>
+                          <div class="profile-user-card-location">${
+                            placeholders?.location?.toUpperCase() || 'LOCATION: '
+                          } ${communityUserLocation}</div>
                         `
-                      : `
+                    : `
                           <div class="profile-user-card-incomplete">${incompleteProfileText.textContent}</div>
                         `
-                  }
+                }
             </div>
             <div class="profile-user-card-right">
-                <div class="profile-user-card-role">${placeholders?.myRole?.toUpperCase() || 'MY ROLE:'}${roles}</div>
-                <div class="profile-user-card-industry">${placeholders?.myIndustry?.toUpperCase() || 'MY INDUSTRY:'}${industryText}</div>
-                <div class="profile-user-card-interests">${placeholders?.myInterests?.toUpperCase() || 'MY INTERESTS:'}${interestsText}</div>
+                <div class="profile-user-card-role">${placeholders?.myRole?.toUpperCase() || 'MY ROLE: '}${roles.join(
+                  '&nbsp;&nbsp;',
+                )}</div>
+                <div class="profile-user-card-industry">${
+                  placeholders?.myIndustry?.toUpperCase() || 'MY INDUSTRY: '
+                }${industryText}</div>
+                <div class="profile-user-card-interests">${
+                  placeholders?.myInterests?.toUpperCase() || 'MY INTERESTS: '
+                }${interestsText}</div>
                 <div class="profile-user-card-cta">${decorateButton(
                   profileCtaType,
                   profileCtaText.textContent,
