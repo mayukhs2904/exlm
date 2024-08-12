@@ -29,10 +29,10 @@
 
 .profile-welcome-block .profile-user-card {
     display: flex;
-    border: 1px solid lightslategrey;
-    background: lightslategray;
+    border: 1px solid var(--spectrum-gray-50);
+    background: var(--spectrum-gray-50);
     gap: 10px;
-    padding: 10px;
+    padding: 30px;
 }
 
 .profile-user-card .profile-user-card-left{
@@ -48,7 +48,7 @@
 
 .profile-user-card-left .profile-user-card-avatar-company-info {
     display: flex;
-    justify-content: space-between;
+    gap: 4px;
 }
 
 .profile-user-card-left, .profile-user-card-right {
