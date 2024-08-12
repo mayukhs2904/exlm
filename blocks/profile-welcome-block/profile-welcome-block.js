@@ -10,6 +10,7 @@ try {
 }
 
 function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
+  console.log(profileCtaType,"funcn")
   const a = document.createElement('a');
   if (profileCtaLink) {
     a.classList.add('button');
@@ -52,6 +53,8 @@ export default async function decorate(block) {
     profileCtaLink,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
+
+  console.log(profileCtaType,"progilectt")
 
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
