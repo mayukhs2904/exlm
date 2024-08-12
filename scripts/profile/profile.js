@@ -26,6 +26,7 @@ export const fetchProfileData = async (profileFlags) => {
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
       adobeDisplayName: profileData?.displayName || '',
+      adobeFirstName: profileData?.first_name || '',
       email: profileData?.email || '',
       industry: profileData?.industryInterests || '',
       roles: profileData?.role || [],

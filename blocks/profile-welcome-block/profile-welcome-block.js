@@ -27,6 +27,7 @@ const profileData = await fetchProfileData(profileFlags);
 
 const {
   adobeDisplayName,
+  adobeFirstName,
   industry,
   roles,
   interests,
@@ -55,13 +56,13 @@ export default async function decorate(block) {
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
             <div class="profile-curated-card-eyebrowtext">
-            ${profileEyebrowText.textContent}
+              ${profileEyebrowText.textContent}
             </div>
             <div class="profile-curated-card-heading">
-            ${profileHeading.textContent}
+              ${profileHeading.textContent.replace('{adobeIMS.first_name}', adobeFirstName)}
             </div>
             <div class="profile-curated-card-description">
-            ${profileDescription.textContent}
+              ${profileDescription.textContent}
             </div>
         </div>
         <div class="profile-user-card">
