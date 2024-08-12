@@ -10,16 +10,11 @@ try {
 }
 
 function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
-  console.log(profileCtaType,"funcn")
   const a = document.createElement('a');
   if (profileCtaLink) {
     a.classList.add('button');
-    if (profileCtaType === 'secondary') {a.classList.add('secondary');
-      console.log("enter secon")
-    }
-    if (profileCtaType === 'primary') {a.classList.add('primary');
-      console.log("enter proima")
-    }
+    if (profileCtaType === 'secondary') a.classList.add('secondary');
+    if (profileCtaType === 'primary') a.classList.add('primary');
     a.setAttribute('href', profileCtaLink);
     a.textContent = profileCtaText;
     return a.outerHTML;
@@ -57,8 +52,6 @@ export default async function decorate(block) {
     profileCtaLink,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
-
-  console.log(profileCtaType,"progilectt")
 
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
