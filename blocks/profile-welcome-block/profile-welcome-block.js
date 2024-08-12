@@ -14,8 +14,12 @@ function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
   const a = document.createElement('a');
   if (profileCtaLink) {
     a.classList.add('button');
-    if (profileCtaType === 'Secondary') a.classList.add('secondary');
-    if (profileCtaType === 'Primary') a.classList.add('primary');
+    if (profileCtaType === 'secondary') {a.classList.add('secondary');
+      console.log("enter secon")
+    }
+    if (profileCtaType === 'primary') {a.classList.add('primary');
+      console.log("enter proima")
+    }
     a.setAttribute('href', profileCtaLink);
     a.textContent = profileCtaText;
     return a.outerHTML;
@@ -109,7 +113,7 @@ export default async function decorate(block) {
                   placeholders?.myInterests || 'MY INTERESTS: '
                 }</span>${interestsText}</div>
                 <div class="profile-user-card-cta">${decorateButton(
-                  profileCtaType,
+                  profileCtaType.textContent,
                   profileCtaText.textContent,
                   profileCtaLink.textContent,
                 )}</div>
