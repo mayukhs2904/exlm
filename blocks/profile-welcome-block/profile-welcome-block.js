@@ -84,12 +84,11 @@ export default async function decorate(block) {
                 ${
                   hasInterests
                     ? `
-                          <div class="profile-user-card-title">${
-                            placeholders?.title?.toUpperCase() || 'TITLE: '
-                          } ${communityUserTitle}</div>
-                          <div class="profile-user-card-location">${
-                            placeholders?.location?.toUpperCase() || 'LOCATION: '
-                          } ${communityUserLocation}</div>
+                          <div class="profile-user-card-title">
+                          <span class="heading">${placeholders?.title || 'TITLE: '}</span>${communityUserTitle}</div>
+                          <div class="profile-user-card-location"><span class="heading">${
+                            placeholders?.location || 'LOCATION: '
+                          }</span>${communityUserLocation}</div>
                         `
                     : `
                           <div class="profile-user-card-incomplete">${incompleteProfileText.textContent}</div>
@@ -97,15 +96,15 @@ export default async function decorate(block) {
                 }
             </div>
             <div class="profile-user-card-right">
-                <div class="profile-user-card-role">${placeholders?.myRole?.toUpperCase() || 'MY ROLE: '}${roles.join(
-                  '&nbsp;&nbsp;',
-                )}</div>
-                <div class="profile-user-card-industry">${
-                  placeholders?.myIndustry?.toUpperCase() || 'MY INDUSTRY: '
-                }${industryText}</div>
-                <div class="profile-user-card-interests">${
-                  placeholders?.myInterests?.toUpperCase() || 'MY INTERESTS: '
-                }${interestsText}</div>
+                <div class="profile-user-card-role"><span class="heading">${
+                  placeholders?.myRole || 'MY ROLE: '
+                }</span>${roles.join('&nbsp;&nbsp;')}</div>
+                <div class="profile-user-card-industry"><span class="heading">${
+                  placeholders?.myIndustry || 'MY INDUSTRY: '
+                }</span>${industryText}</div>
+                <div class="profile-user-card-interests"><span class="heading">${
+                  placeholders?.myInterests || 'MY INTERESTS: '
+                }</span>${interestsText}</div>
                 <div class="profile-user-card-cta">${decorateButton(
                   profileCtaType,
                   profileCtaText.textContent,
