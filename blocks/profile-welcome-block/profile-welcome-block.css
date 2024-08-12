@@ -13,7 +13,7 @@
 }
 
 .profile-curated-card .profile-curated-card-heading {
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 700;
 }
 
@@ -29,8 +29,10 @@
 
 .profile-welcome-block .profile-user-card {
     display: flex;
-    border: 1px solid gray;
-    background: gray;
+    border: 1px solid lightslategrey;
+    background: lightslategray;
+    gap: 10px;
+    padding: 10px;
 }
 
 .profile-user-card .profile-user-card-left{
