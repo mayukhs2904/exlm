@@ -30,6 +30,10 @@
     display: flex;
 }
 
+.profile-user-card-left, .profile-user-card-right {
+    flex: 1;
+}
+
 .profile-user-card-avatar {
     width: 64px;
     min-width: 64px;
