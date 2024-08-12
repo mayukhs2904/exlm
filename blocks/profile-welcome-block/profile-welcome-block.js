@@ -76,7 +76,7 @@ export default async function decorate(block) {
                 }
                 </div>
                 <div class="profile-user-card-info">
-                    <h3 class="profile-user-card-name">${adobeDisplayName}</h3>
+                    <div class="profile-user-card-name">${adobeDisplayName}</div>
                     ${communityUserName ? `<div class="profile-user-card-tag">${communityUserName}</div>` : ''}
                     <div class="profile-user-card-org">${company}</div>
                 </div> 
