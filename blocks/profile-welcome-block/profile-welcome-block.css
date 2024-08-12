@@ -7,7 +7,7 @@
 }
 
 .profile-curated-card .profile-curated-card-eyebrowtext {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .profile-curated-card .profile-curated-card-description {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 400;
 }
 
@@ -29,15 +29,15 @@
 .profile-welcome-block .profile-user-card {
     display: flex;
     border: 1px solid gray;
+    border-radius: 4px;
     background: var(--spectrum-gray-50);
-    gap: 10px;
+    gap: 60px;
     padding: 30px;
 }
 
 .profile-user-card .profile-user-card-left{
     display: flex;
     flex-direction: column;
-    gap: 20px;
 }
 
 .profile-user-card .profile-user-card-right{
@@ -105,14 +105,13 @@
 }
 
 .profile-user-card-cta > a.button {
-    font-size: 19px;
-    margin: 0;
-    padding: 8px 40px;
+    font-size: 18px;
     width: min-content;
-    min-width: 264px;
-    background-color: var( --non-spectrum-true-blue);
+    min-width: 180px;
+    background-color: var(--non-spectrum-true-blue);
     border: 2px solid var(--non-spectrum-true-blue);
     color: var(--background-color);
+    margin-top: 10px;
 }
 
 .profile-user-card-cta > a.button.primary {
