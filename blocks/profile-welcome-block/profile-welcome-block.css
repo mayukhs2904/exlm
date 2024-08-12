@@ -2,11 +2,6 @@
     display: flex;
 }
 
-.profile-curated-card,
-.profile-user-card {
-  flex: 1;
-}
-
 .profile-curated-card .profile-curated-card-eyebrowtext {
     font-size: 12px;
     font-weight: 500;
@@ -29,7 +24,7 @@
 
 .profile-welcome-block .profile-user-card {
     display: flex;
-    border: 1px solid var(--spectrum-gray-50);
+    border: 1px solid gray;
     background: var(--spectrum-gray-50);
     gap: 10px;
     padding: 30px;
@@ -38,7 +33,7 @@
 .profile-user-card .profile-user-card-left{
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 20px;
 }
 
 .profile-user-card .profile-user-card-right{
@@ -48,7 +43,7 @@
 
 .profile-user-card-left .profile-user-card-avatar-company-info {
     display: flex;
-    gap: 4px;
+    gap: 20px;
 }
 
 .profile-user-card-left, .profile-user-card-right {
@@ -91,6 +86,8 @@
 .profile-user-card-left .profile-user-card-info .profile-user-card-name {
     font-size: 16px;
     font-weight: 700;
+    white-space: nowrap;
+    margin-bottom: 4px;
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
