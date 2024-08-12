@@ -29,3 +29,19 @@
 .profile-user-card-left .profile-user-card-avatar-company-info {
     display: flex;
 }
+
+.profile-user-card-avatar {
+    width: 64px;
+    min-width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--non-spectrum-navy-blue);
+    color: var(--spectrum-gray-50);
+    overflow: hidden;
+}
+
+.profile-user-card-avatar .icon-profile {
+    width: 64px;
+    height: 64px;
+}
+
