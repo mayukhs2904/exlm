@@ -13,8 +13,8 @@ function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
   const a = document.createElement('a');
   if (profileCtaLink) {
     a.classList.add('button');
-    if (profileCtaType === 'secondary') a.classList.add('secondary');
-    if (profileCtaType === 'primary') a.classList.add('primary');
+    if (profileCtaType === 'Secondary') a.classList.add('secondary');
+    if (profileCtaType === 'Primary') a.classList.add('primary');
     a.setAttribute('href', profileCtaLink);
     a.textContent = profileCtaText;
     return a.outerHTML;
