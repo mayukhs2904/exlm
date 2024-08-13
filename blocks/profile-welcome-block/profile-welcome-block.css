@@ -47,7 +47,7 @@
     flex-direction: column;
     flex: 1;
     box-sizing: border-box;
-    border-right: 1px solid var(--spectrum-gray-300);
+    border-right: 1px solid rgba(213, 213, 213, 0.3);;
     padding-right: 20px;
 }
 
