@@ -1,5 +1,6 @@
 .profile-welcome-block {
     display: flex;
+    gap: 20px;
 }
 
 .profile-curated-card, .profile-user-card {
@@ -8,18 +9,22 @@
 
 .profile-curated-card .profile-curated-card-eyebrowtext {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 700;
+    color: var(--spectrum-gray-900);
 }
 
 .profile-curated-card .profile-curated-card-heading {
-    font-size: 36px;
+    font-size: 45px;
     font-weight: 700;
-    white-space: nowrap;
+    color: var(--spectrum-gray-900);
+    margin-top: 8px;
 }
 
 .profile-curated-card .profile-curated-card-description {
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 500;
+    color: var(--spectrum-gray-800);
+    margin-top: 16px;
 }
 
 .profile-welcome-block .profile-curated-card {
@@ -29,21 +34,29 @@
 
 .profile-welcome-block .profile-user-card {
     display: flex;
-    border: 1px solid gray;
-    border-radius: 4px;
-    background: var(--spectrum-gray-50);
-    gap: 60px;
-    padding: 30px;
+    width: 549px;
+    border: 1px solid #D6D6D6;
+    border-radius: 8px;
+    background: #FFFFFF;
+    padding: 24px;
+    margin-top: 34px;
 }
 
 .profile-user-card .profile-user-card-left{
     display: flex;
     flex-direction: column;
+    flex: 1;
+    box-sizing: border-box;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
 }
 
 .profile-user-card .profile-user-card-right{
     display: flex;
     flex-direction: column;
+    flex: 1;
+    box-sizing: border-box;
+    padding-left: 20px;
 }
 
 .profile-user-card-left .profile-user-card-avatar-company-info {
@@ -57,9 +70,9 @@
 }
 
 .profile-user-card-avatar {
-    width: 64px;
-    min-width: 64px;
-    height: 64px;
+    width: 75px;
+    min-width: 75px;
+    height: 75px;
     border-radius: 50%;
     background-color: var(--non-spectrum-navy-blue);
     color: var(--spectrum-gray-50);
@@ -67,52 +80,64 @@
 }
 
 .profile-user-card-avatar .icon-profile {
-    width: 64px;
-    height: 64px;
+    width: 75px;
+    height: 75px;
 }
 
 .profile-user-card-left .profile-user-card-title .heading, .profile-user-card-location .heading {
     font-size: 12px;
     font-weight: 700;
+    color: var(--spectrum-gray-900);
 }
 
 .profile-user-card-left .profile-user-card-incomplete, .profile-user-card-title, .profile-user-card-location {
     font-size: 14px;
+    color: var(--spectrum-gray-800);
+    font-weight: 500;
 }
 
 .profile-user-card-right .profile-user-card-role .heading, .profile-user-card-industry .heading, .profile-user-card-interests .heading {
     font-size: 12px;
     font-weight: 700;
+    color: var(--spectrum-gray-900);
 }
 
 .profile-user-card-right .profile-user-card-role, .profile-user-card-industry, .profile-user-card-interests {
     font-size: 14px;
+    color: var(--spectrum-gray-800);
+    font-weight: 500;
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-name {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
+    color: var(--spectrum-gray-900);
     white-space: nowrap;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
     font-size: 14px;
-    color: skyblue;
+    color: var(--spectrum-blue-900);
+    font-weight: 700;
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-org {
     font-size: 14px;
+    color: var(--spectrum-gray-800);
+    font-weight: 500;
 }
 
 .profile-user-card-cta > a.button {
-    font-size: 18px;
+    font-size: 14px;
+    font-weight: 700;
     width: min-content;
-    min-width: 180px;
+    min-width: 152px;
     background-color: var(--non-spectrum-true-blue);
     border: 2px solid var(--non-spectrum-true-blue);
     color: var(--background-color);
-    margin-top: 10px;
+    margin-top: 16px;
+    padding: 6px 16px;
 }
 
 .profile-user-card-cta > a.button.primary {
@@ -123,6 +148,6 @@
 
 .profile-user-card-cta > a.button.secondary {
     background-color: var(--background-color);
-    border: 2px solid var(--spectrum-gray-700);
-    color: var(--spectrum-gray-700);
+    border: 2px solid var(--spectrum-gray-800);
+    color: var(--spectrum-gray-800);
 }

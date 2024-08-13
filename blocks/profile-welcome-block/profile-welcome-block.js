@@ -39,7 +39,7 @@ const {
 } = profileData;
 
 const industryText = industry.length > 0 ? industry : 'Unknown';
-const interestsText = interests.length > 0 ? interests.join('&nbsp;&nbsp;') : 'Unknown';
+const interestsText = interests.length > 0 ? interests.join(' | ') : 'Unknown';
 const hasInterests = interests && interests.length > 0;
 
 export default async function decorate(block) {
@@ -56,10 +56,10 @@ export default async function decorate(block) {
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
        <div class="profile-curated-card">
             <div class="profile-curated-card-eyebrowtext">
-              ${profileEyebrowText.textContent}
+              ${profileEyebrowText.textContent.replace('{adobeIMS.first_name}', adobeFirstName)}
             </div>
             <div class="profile-curated-card-heading">
-              ${profileHeading.textContent.replace('{adobeIMS.first_name}', adobeFirstName)}
+              ${profileHeading.textContent}
             </div>
             <div class="profile-curated-card-description">
               ${profileDescription.textContent}
@@ -71,7 +71,7 @@ export default async function decorate(block) {
                 <div class="profile-user-card-avatar">
                 ${
                   profilePicture
-                    ? `<img width="64" height="64" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
+                    ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
                     : '<span class="icon icon-profile"></span>'
                 }
                 </div>
@@ -98,7 +98,7 @@ export default async function decorate(block) {
             <div class="profile-user-card-right">
                 <div class="profile-user-card-role"><span class="heading">${
                   placeholders?.myRole || 'MY ROLE: '
-                }</span>${roles.join('&nbsp;&nbsp;')}</div>
+                }</span>${roles.join(' | ')}</div>
                 <div class="profile-user-card-industry"><span class="heading">${
                   placeholders?.myIndustry || 'MY INDUSTRY: '
                 }</span>${industryText}</div>
