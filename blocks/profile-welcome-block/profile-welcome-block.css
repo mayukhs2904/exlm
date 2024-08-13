@@ -43,7 +43,6 @@
     border-radius: 8px;
     background: #FFFFFF;
     padding: 24px 16px;
-    margin-top: 32px;
 }
 
 .profile-user-card .profile-user-card-left{
@@ -161,7 +160,6 @@
 @media (min-width: 600px) {
     .profile-welcome-block {
         display: flex;
-        flex-direction: row;
         gap: 40px;
     }
 
@@ -181,6 +179,7 @@
 /* desktop */
 @media (min-width: 900px) {
     .profile-welcome-block {
+        flex-direction: row;
         gap: 20px;
     }
 
