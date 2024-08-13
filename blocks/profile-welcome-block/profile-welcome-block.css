@@ -14,6 +14,7 @@
     font-weight: 700;
     color: var(--spectrum-gray-900);
     text-align: center;
+    text-transform: uppercase;
 }
 
 .profile-curated-card .profile-curated-card-heading {
@@ -93,6 +94,7 @@
     font-size: 12px;
     font-weight: 700;
     color: var(--spectrum-gray-900);
+    text-transform: uppercase;
 }
 
 .profile-user-card-left .profile-user-card-incomplete, .profile-user-card-title, .profile-user-card-location {
@@ -105,6 +107,7 @@
     font-size: 12px;
     font-weight: 700;
     color: var(--spectrum-gray-900);
+    text-transform: uppercase;
 }
 
 .profile-user-card-right .profile-user-card-role, .profile-user-card-industry, .profile-user-card-interests {
@@ -117,7 +120,6 @@
     font-size: 18px;
     font-weight: 700;
     color: var(--spectrum-gray-900);
-    white-space: nowrap;
     margin-bottom: 8px;
 }
 
