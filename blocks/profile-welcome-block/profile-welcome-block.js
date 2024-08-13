@@ -33,16 +33,16 @@ if (isSignedIn) {
     communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
 }
 
-const adobeDisplayName = profileData?.displayName;
-const adobeFirstName = profileData?.first_name;
-const industry = profileData?.industryInterests;
-const roles = profileData?.role;
-const interests = profileData?.interests;
-const profilePicture = ppsProfileData?.images;
-const company = ppsProfileData?.company;
-const communityUserName = communityProfileData?.username;
-const communityUserTitle = communityProfileData?.title;
-const communityUserLocation = communityProfileData?.location;
+const adobeDisplayName = profileData?.displayName || '';
+const adobeFirstName = profileData?.first_name || '';
+const industry = profileData?.industryInterests || '';
+const roles = profileData?.role || '';
+const interests = profileData?.interests || '';
+const profilePicture = ppsProfileData?.images?.['100'] || '';
+const company = ppsProfileData?.company || '';
+const communityUserName = communityProfileData?.username || '';
+const communityUserTitle = communityProfileData?.title || '';
+const communityUserLocation = communityProfileData?.location || '';
 const industryText = industry.length > 0 ? industry : 'Unknown';
 const interestsText = interests.length > 0 ? interests.join(' | ') : 'Unknown';
 const hasInterests = interests && interests.length > 0;
