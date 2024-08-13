@@ -33,19 +33,34 @@ if (isSignedIn) {
     communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
 }
 
-console.log(profileData,"profiledata");
-const {
-  adobeDisplayName,
-  adobeFirstName,
-  industry,
-  roles,
-  interests,
-  profilePicture,
-  company,
-  communityUserName,
-  communityUserTitle,
-  communityUserLocation,
-} = profileData;
+console.log(profileData,"profiledata")
+console.log(ppsProfileData,"ppsprofiledata")
+console.log(communityProfileData,"communityprofiledata")
+
+const adobeDisplayName = profileData?.displayName;
+const adobeFirstName = profileData?.first_name;
+const industry = profileData?.industryInterests;
+const roles = profileData?.role;
+const interests = profileData?.interests;
+// const profilePicture = ppsProfileData?.
+// const company = 
+// const communityUserName = 
+// const communityUserTitle =
+// const communityUserLocation = 
+
+
+// const {
+//   adobeDisplayName,
+//   adobeFirstName,
+//   industry,
+//   roles,
+//   interests,
+//   profilePicture,
+//   company,
+//   communityUserName,
+//   communityUserTitle,
+//   communityUserLocation,
+// } = profileData;
 
 const industryText = industry.length > 0 ? industry : 'Unknown';
 const interestsText = interests.length > 0 ? interests.join(' | ') : 'Unknown';
