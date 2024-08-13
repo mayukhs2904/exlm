@@ -41,7 +41,6 @@
 .profile-welcome-block .profile-user-card {
     display: flex;
     flex-direction: column;
-    min-width: 320px;
     border: 1px solid #D6D6D6;
     border-radius: 8px;
     background: #FFFFFF;
@@ -172,7 +171,6 @@
     .profile-welcome-block .profile-user-card {
         display: flex;
         flex-direction: row;
-        min-width: 552px;
         padding: 24px;
     }
 
@@ -194,10 +192,6 @@
     .profile-welcome-block {
         flex-direction: row;
         gap: 20px;
-    }
-
-    .profile-welcome-block .profile-user-card {
-        min-width: 549px;
     }
 
     .profile-curated-card .profile-curated-card-eyebrowtext {
