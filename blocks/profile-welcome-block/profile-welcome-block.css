@@ -142,6 +142,7 @@
     border: 2px solid var(--non-spectrum-true-blue);
     color: var(--background-color);
     margin-top: 16px;
+    margin-bottom: 0px;
     padding: 6px 16px;
 }
 
@@ -196,6 +197,10 @@
 
     .profile-curated-card .profile-curated-card-eyebrowtext {
         text-align: left;
+    }
+
+    .profile-welcome-block .profile-user-card {
+        margin-top: 34px;
     }
     
     .profile-curated-card .profile-curated-card-heading {
