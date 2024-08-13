@@ -1,5 +1,5 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { fetchProfileData } from '../../scripts/profile/profile.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 let placeholders = {};
 try {
@@ -22,9 +22,18 @@ function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
   return '';
 }
 
-const profileFlags = ['exlProfile', 'communityProfile'];
-const profileData = await fetchProfileData(profileFlags);
+let profileData = [];
+let ppsProfileData = [];
+let communityProfileData = [];
 
+const isSignedIn = await isSignedInUser();
+if (isSignedIn) {
+    profileData = await defaultProfileClient.getMergedProfile();
+    ppsProfileData = await defaultProfileClient.getPPSProfile();
+    communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
+}
+
+console.log(profileData,"profiledata");
 const {
   adobeDisplayName,
   adobeFirstName,
