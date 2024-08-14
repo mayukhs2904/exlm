@@ -97,10 +97,21 @@
     text-transform: uppercase;
 }
 
-.profile-user-card-left .profile-user-card-incomplete, .profile-user-card-title, .profile-user-card-location {
+.profile-user-card-left .profile-user-card-title, .profile-user-card-location {
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
+}
+
+.profile-user-card-left .profile-user-card-incomplete {
+    display: flex;
+    font-size: var(--spectrum-font-size-100);;
+    color: var(--spectrum-gray-800);
+    font-weight: var(--font-weight-400);
+}
+
+.profile-user-card-left .profile-user-card-interests-industryClass {
+    font-style: italic;
 }
 
 .profile-user-card-right .profile-user-card-role .heading, .profile-user-card-industry .heading, .profile-user-card-interests .heading {

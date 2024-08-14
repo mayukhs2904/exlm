@@ -52,6 +52,9 @@ export default async function decorate(block) {
     const interestsText = interests.length > 0 ? interests.join(' | ') : (placeholders?.unknown || 'Unknown');
     const hasInterests = interests && interests.length > 0;
 
+    const industryClass = industry.length > 0 ? '' : '-italic';
+    const interestsClass = interests.length > 0 ? '' : '-italic';
+
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
                 <div class="profile-curated-card-eyebrowtext">
@@ -90,8 +93,9 @@ export default async function decorate(block) {
                             }</span>${communityUserLocation}</div>
                             `
                         : `
-                            <span class="icon icon-new-tab"></span>
-                            <div class="profile-user-card-incomplete">${incompleteProfileText.innerHTML}</div>
+                            <div class="profile-user-card-incomplete">
+                                <span class="icon icon-new-tab"></span>${incompleteProfileText.innerHTML}
+                            </div>
                             `
                     }
                 </div>
@@ -99,10 +103,10 @@ export default async function decorate(block) {
                     <div class="profile-user-card-role"><span class="heading">${
                       placeholders?.myRole || 'MY ROLE: '
                     }</span>${roles.join(' | ')}</div>
-                    <div class="profile-user-card-industry"><span class="heading">${
+                    <div class="profile-user-card-industry${industryClass}"><span class="heading">${
                       placeholders?.myIndustry || 'MY INDUSTRY: '
                     }</span>${industryText}</div>
-                    <div class="profile-user-card-interests"><span class="heading">${
+                    <div class="profile-user-card-interests${industryClass}"><span class="heading">${
                       placeholders?.myInterests || 'MY INTERESTS: '
                     }</span>${interestsText}</div>
                     <div class="profile-user-card-cta">${decorateButton(
