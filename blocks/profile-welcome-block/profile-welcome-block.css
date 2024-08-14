@@ -108,9 +108,10 @@
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
+    gap: 8px;
 }
 
-.profile-user-card-left .roleClass, .industryClass, .interestsClass {
+.profile-user-card-left .incompleteProfile {
     font-style: italic;
 }
 
