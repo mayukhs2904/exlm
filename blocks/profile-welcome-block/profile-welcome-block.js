@@ -24,10 +24,10 @@ export default async function decorate(block) {
     profileHeading,
     profileDescription,
     profileCtaType,
+    profileCtaText,
+    profileCtaLink,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
-
-  console.log(profileCtaType,"ctaa")
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -48,8 +48,8 @@ export default async function decorate(block) {
     const communityUserTitle = communityProfileData?.title || '';
     const communityUserLocation = communityProfileData?.location || '';
 
-    const industryText = industry.length > 0 ? industry : 'Unknown';
-    const interestsText = interests.length > 0 ? interests.join(' | ') : 'Unknown';
+    const industryText = industry.length > 0 ? industry : (placeholders?.unknown || 'Unknown');
+    const interestsText = interests.length > 0 ? interests.join(' | ') : (placeholders?.unknown || 'Unknown');
     const hasInterests = interests && interests.length > 0;
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
@@ -90,6 +90,7 @@ export default async function decorate(block) {
                             }</span>${communityUserLocation}</div>
                             `
                         : `
+                            <span class="icon icon-new-tab"></span>
                             <div class="profile-user-card-incomplete">${incompleteProfileText.innerHTML}</div>
                             `
                     }
