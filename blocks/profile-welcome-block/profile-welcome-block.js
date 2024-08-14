@@ -52,8 +52,9 @@ export default async function decorate(block) {
     const interestsText = interests.length > 0 ? interests.join(' | ') : (placeholders?.unknown || 'Unknown');
     const hasInterests = interests && interests.length > 0;
 
-    const industryClass = industry.length > 0 ? '' : '-italic';
-    const interestsClass = interests.length > 0 ? '' : '-italic';
+    const industryClass = industry.length > 0 ? '' : 'incompleteProfile';
+    const interestsClass = interests.length > 0 ? '' : 'incompleteProfile';
+    const roleClass = industryClass && interestsClass;
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
@@ -102,13 +103,13 @@ export default async function decorate(block) {
                 <div class="profile-user-card-right">
                     <div class="profile-user-card-role"><span class="heading">${
                       placeholders?.myRole || 'MY ROLE: '
-                    }</span>${roles.join(' | ')}</div>
-                    <div class="profile-user-card-industry${industryClass}"><span class="heading">${
+                    }</span><span class="${roleClass}">${roles.join(' | ')}</span></div>
+                    <div class="profile-user-card-industry"><span class="heading">${
                       placeholders?.myIndustry || 'MY INDUSTRY: '
-                    }</span>${industryText}</div>
-                    <div class="profile-user-card-interests${industryClass}"><span class="heading">${
+                    }</span><span class="${industryClass}">${industryText}</span></div>
+                    <div class="profile-user-card-interests"><span class="heading">${
                       placeholders?.myInterests || 'MY INTERESTS: '
-                    }</span>${interestsText}</div>
+                    }</span><span class="${interestsClass}">${interestsText}</span></div>
                     <div class="profile-user-card-cta">${decorateButton(
                       profileCtaType.innerHTML,
                       profileCtaText.innerHTML,

@@ -110,7 +110,7 @@
     font-weight: var(--font-weight-400);
 }
 
-.profile-user-card-left .profile-user-card-interests-industryClass {
+.profile-user-card-left .roleClass, .industryClass, .interestsClass {
     font-style: italic;
 }
 
