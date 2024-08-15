@@ -51,8 +51,10 @@ export default async function decorate(block) {
     // const industryText = industry.length > 0 ? industry : (placeholders?.unknown || 'Unknown');
     // const interestsText = interests.length > 0 ? interests.join(' | ') : (placeholders?.unknown || 'Unknown');
 
-    const hasInterests = interests && interests.length > 0;
-
+    const hasInterests = interests &&
+    ((Array.isArray(interests) && interests.length > 0) ||
+      (typeof interests === 'string' && interests.trim() !== ''));
+    
     // const industryClass = industry.length > 0 ? '' : 'incompleteProfile';
     // const interestsClass = interests.length > 0 ? '' : 'incompleteProfile';
     // const roleClass = industryClass && interestsClass;
@@ -115,7 +117,8 @@ export default async function decorate(block) {
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
                     <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
                     </div>
-                    ${industry && industry.length>0 ? 
+                    ${industry &&
+                      ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== '')) ? 
                     <div class="profile-user-card-industry">
                       <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
