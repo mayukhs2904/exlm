@@ -135,6 +135,10 @@
     margin-bottom: 8px;
 }
 
+.profile-user-card-left .profile-user-card-info .profile-user-card-name {
+    white-space: nowrap;
+}
+
 .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-blue-900);

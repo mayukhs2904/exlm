@@ -112,31 +112,23 @@ export default async function decorate(block) {
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
                     <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
                     </div>
-                    ${
-                      industry && industry.length > 0
-                        ? `<div class="profile-user-card-industry">
-                            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
-                            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                              ${!hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
-                            </span>
-                          </div>`
-                        : ''
-                    }
-                    ${
-                      interests && interests.length > 0
-                        ? `<div class="profile-user-card-interests">
-                            <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
-                            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                              ${!hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
-                            </span>
-                          </div>`
-                        : ''
-                    }
+                    <div class="profile-user-card-industry">
+                      <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
+                      <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                        ${!hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
+                      </span>
+                    </div>   
+                    <div class="profile-user-card-interests">
+                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
+                      <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                        ${!hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
+                      </span>
+                    </div>
                     <div class="profile-user-card-cta">${decorateButton(
                     profileCtaType.innerHTML,
                     profileCtaText.innerHTML,
                     profileCtaLink.innerHTML,
-                  )}</div>
+                    )}</div>
                 </div>    
         </div>
         `);
