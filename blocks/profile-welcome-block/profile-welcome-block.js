@@ -103,7 +103,10 @@ export default async function decorate(block) {
                       }
                       `
                     : `
-                        <div class="profile-user-card-incomplete">${incompleteProfileText.innerHTML}</div>
+                        <div class="profile-user-card-incomplete">
+                          <span class="icon icon-profile"></span>
+                          ${incompleteProfileText.innerHTML}
+                        </div>
                         `
                 }
                 </div>
