@@ -119,12 +119,12 @@ export default async function decorate(block) {
                     </div>
                     ${industry &&
                       ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== '')) ? 
-                    <div class="profile-user-card-industry">
+                    `<div class="profile-user-card-industry">
                       <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
                         ${!hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
                       </span>
-                    </div> : ''}  
+                    </div>` : ''}  
                     <div class="profile-user-card-interests">
                       <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
