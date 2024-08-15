@@ -110,14 +110,14 @@ export default async function decorate(block) {
                 <div class="profile-user-card-right">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
-                    <span class="${hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
+                    <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
                     </div>
                     ${
                       industry && industry.length > 0
                         ? `<div class="profile-user-card-industry">
                             <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
-                            <span class="${hasInterests ? 'incompleteProfile' : ''}">
-                              ${hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
+                            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                              ${!hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
                             </span>
                           </div>`
                         : ''
@@ -126,8 +126,8 @@ export default async function decorate(block) {
                       interests && interests.length > 0
                         ? `<div class="profile-user-card-interests">
                             <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
-                            <span class="${hasInterests ? 'incompleteProfile' : ''}">
-                              ${hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
+                            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                              ${!hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
                             </span>
                           </div>`
                         : ''
