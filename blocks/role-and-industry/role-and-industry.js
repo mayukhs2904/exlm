@@ -114,6 +114,10 @@ export default async function decorate(block) {
   block.append(roleAndIndustryDiv);
 
   if (isSignedIn) {
+    const profileData = await defaultProfileClient.getMergedProfile();
+    const role = profileData?.role;
+    const industryInterest = profileData?.industryInterests;
+    
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
@@ -142,10 +146,6 @@ export default async function decorate(block) {
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });
-
-    const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
-    const industryInterest = profileData?.industryInterests;
 
     // if (
     //   (Array.isArray(industryInterest) && industryInterest.length > 0) ||
