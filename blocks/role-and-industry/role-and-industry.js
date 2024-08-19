@@ -128,7 +128,8 @@ export default async function decorate(block) {
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
       console.log(selectedIndustryId,"id")
-      const selectedIndustry = updatedIndustryOptions.find(industry => industry.id === selectedIndustryId);
+      const selectedIndustryObject = updatedIndustryOptions.find(industry => industry.id === selectedIndustryId);
+      const selectedIndustry = selectedIndustryObject.Name;
       console.log(selectedIndustry,"industry")
       if (Array.isArray(selectedIndustry)) {
         const industrySelection = [];
