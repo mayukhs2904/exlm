@@ -133,11 +133,11 @@ export default async function decorate(block) {
       console.log(selectedIndustry,"industry")
       if (Array.isArray(selectedIndustry)) {
         const industrySelection = [];
-        industrySelection.push(selectedIndustry.Name);
+        industrySelection.push(selectedIndustry);
          console.log(industrySelection,"array indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       } else if (typeof selectedIndustry === 'string') {
-        const industrySelection = selectedIndustry.Name;
+        const industrySelection = selectedIndustry;
         console.log(industrySelection,"string indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
