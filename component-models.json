@@ -3527,5 +3527,45 @@
         "label": "Text to be shown for incomplete profile."
       }
     ]
+  },
+  {
+    "id": "embed",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The media image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Provide Embed Link"
+      }
+    ]
+  },
+  {
+    "id": "accordion-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "accLabel",
+        "value": "",
+        "label": "Label",
+        "description": "Add title to the Accordion"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "accDescription",
+        "value": "",
+        "label": "Description",
+        "description": "Add Description to the Accordion"
+      }
+    ]
   }
 ]
