@@ -123,7 +123,7 @@ export default async function decorate(block) {
     console.log(updatedIndustryOptions,"new array")
     const selectIndustryDropDown = new Dropdown(
       block.querySelector('.industry-selection-dropdown'),
-      `${placeholders?.select || 'Select'}`,
+      `${industryInterest ? industryInterest : (placeholders?.select || 'Select')}`,
       updatedIndustryOptions,
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
@@ -147,14 +147,14 @@ export default async function decorate(block) {
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
 
-    if (
-      (Array.isArray(industryInterest) && industryInterest.length > 0) ||
-      (typeof industryInterest === 'string' && industryInterest.trim() !== '')
-    ) {
-      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
-      console.log(selectedOption,"optn")
-      selectIndustryDropDown.updateDropdownValue(selectedOption);
-    }
+    // if (
+    //   (Array.isArray(industryInterest) && industryInterest.length > 0) ||
+    //   (typeof industryInterest === 'string' && industryInterest.trim() !== '')
+    // ) {
+    //   const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+    //   console.log(selectedOption,"optn")
+    //   selectIndustryDropDown.updateDropdownValue(selectedOption);
+    // }
 
     role.forEach((el) => {
       const checkBox = block.querySelector(`input[name="${el}"]`);
