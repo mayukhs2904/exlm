@@ -117,21 +117,27 @@ export default async function decorate(block) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
-      value: industry.Name,
+      value: industry.id,
       title: industry.Name,
     }));
+    console.log(updatedIndustryOptions,"new array")
     const selectIndustryDropDown = new Dropdown(
       block.querySelector('.industry-selection-dropdown'),
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
+    selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
+      console.log(selectedIndustryId,"id")
+      const selectedIndustry = updatedIndustryOptions.find(industry => industry.id === selectedIndustryId);
+      console.log(selectedIndustry,"industry")
       if (Array.isArray(selectedIndustry)) {
         const industrySelection = [];
-        industrySelection.push(selectedIndustry);
+        industrySelection.push(selectedIndustry.Name);
+         console.log(industrySelection,"array indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       } else if (typeof selectedIndustry === 'string') {
-        const industrySelection = selectedIndustry;
+        const industrySelection = selectedIndustry.Name;
+        console.log(industrySelection,"string indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });
@@ -145,7 +151,7 @@ export default async function decorate(block) {
       (typeof industryInterest === 'string' && industryInterest.trim() !== '')
     ) {
       const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
-      console.log(selectedOption)
+      console.log(selectedOption,"optn")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
