@@ -113,6 +113,7 @@ export default async function decorate(block) {
                 }
                 </div>
                 <div class="profile-user-card-right">
+                  <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
                     <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
@@ -131,6 +132,7 @@ export default async function decorate(block) {
                         ${!hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
                       </span>
                     </div>
+                  </div>
                     <div class="profile-user-card-cta">${decorateButton(
                     profileCtaType.innerHTML,
                     profileCtaText.innerHTML,

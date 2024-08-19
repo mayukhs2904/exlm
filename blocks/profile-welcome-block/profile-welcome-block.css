@@ -65,6 +65,10 @@
     padding-top: 16px;
 }
 
+.profile-user-card .profile-user-card-right .profile-user-card-details {
+    justify-content: space-between;
+}
+
 .profile-user-card-left .profile-user-card-avatar-company-info {
     display: flex;
     gap: 20px;
