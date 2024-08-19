@@ -86,10 +86,11 @@ export default async function decorate(block) {
                         ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
                         <div class="profile-user-card-org">${company}</div>
                     </div> 
-                </div> 
+                </div>
                 ${
                   hasInterests
                     ? `
+                    <div class="profile-user-card-communityInfo">
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
@@ -109,7 +110,8 @@ export default async function decorate(block) {
                           <span class="icon icon-profile"></span>
                           ${incompleteProfileText.innerHTML}
                         </div>
-                        `
+                    </div>
+                    `
                 }
                 </div>
                 <div class="profile-user-card-right">
