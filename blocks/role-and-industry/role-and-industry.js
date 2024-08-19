@@ -125,9 +125,16 @@ export default async function decorate(block) {
       title: industry.Name,
     }));
     console.log(updatedIndustryOptions,"new array")
+    const dropDownValue = 
+    (Array.isArray(industryInterest) && industryInterest.length > 0) 
+      ? industryInterest[0] 
+      : (typeof industryInterest === 'string' && industryInterest.trim() !== '') 
+        ? industryInterest.trim() 
+        : (placeholders?.select || 'Select');
+
     const selectIndustryDropDown = new Dropdown(
       block.querySelector('.industry-selection-dropdown'),
-      `${industryInterest ? industryInterest : (placeholders?.select || 'Select')}`,
+      dropDownValue,
       updatedIndustryOptions,
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
