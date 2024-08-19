@@ -73,20 +73,20 @@ export default async function decorate(block) {
             </div>
             <div class="profile-user-card">
                 <div class="profile-user-card-left">
-                <div class="profile-user-card-avatar-company-info">
-                    <div class="profile-user-card-avatar">
-                    ${
-                      profilePicture
-                        ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
-                        : '<span class="icon icon-profile"></span>'
-                    }
-                    </div>
-                    <div class="profile-user-card-info">
-                        <div class="profile-user-card-name">${adobeDisplayName}</div>
-                        ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
-                        <div class="profile-user-card-org">${company}</div>
-                    </div> 
-                </div>
+                  <div class="profile-user-card-avatar-company-info">
+                        <div class="profile-user-card-avatar">
+                        ${
+                          profilePicture
+                            ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
+                            : '<span class="icon icon-profile"></span>'
+                        }
+                        </div>
+                        <div class="profile-user-card-info">
+                            <div class="profile-user-card-name">${adobeDisplayName}</div>
+                            ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
+                            <div class="profile-user-card-org">${company}</div>
+                        </div> 
+                  </div>
                 ${
                   hasInterests
                     ? `
@@ -104,13 +104,13 @@ export default async function decorate(block) {
                             }</span>${communityUserLocation}</div>`
                           : ''
                       }
+                      </div>
                       `
                     : `
                         <div class="profile-user-card-incomplete">
                           <span class="icon icon-profile"></span>
                           ${incompleteProfileText.innerHTML}
                         </div>
-                    </div>
                     `
                 }
                 </div>
