@@ -189,7 +189,7 @@ export default async function decorate(block) {
           roleCardsData.forEach((roleCard) => {
             const roleCardCheckbox = block.querySelector(`input[name="${roleCard.role}"]`);
             if (roleCardCheckbox.checked) {
-              updatedRoles.push(roleCard.title);
+              updatedRoles.push(roleCard.role);
             }
           });
           defaultProfileClient

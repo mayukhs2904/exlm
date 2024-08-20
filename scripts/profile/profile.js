@@ -1,6 +1,14 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
 
@@ -118,6 +126,13 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
 const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
 
+  const roleMappings = {
+    Developer: placeholders.roleCardDeveloperTitle || 'Developer',
+    User: placeholders.roleCardUserTitle || 'Business User',
+    Leader: placeholders.roleCardBusinessLeaderTitle || 'Business Leader',
+    Admin: placeholders.roleCardAdministratorTitle || 'Administrator'
+  };
+
   return `<div class="profile-row additional-data">
     <div class="profile-card-body additional-data-body">
       <div class="profile-user-info">
@@ -125,7 +140,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
           roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
             ? `<div class="user-role"><span class="heading">${
                 placeholders?.myRole || 'My Role'
-              }: </span><span>${roles.join('&nbsp;&nbsp;')}</span></div>`
+              }: </span><span>${roles.map(role => roleMappings[role] || role).join('&nbsp;&nbsp;')}</span></div>`
             : ''
         }
         ${
