@@ -114,54 +114,39 @@ export default async function decorate(block) {
   block.append(roleAndIndustryDiv);
 
   if (isSignedIn) {
-    const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
-    const industryInterest = profileData?.industryInterests;
-    
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
-      value: industry.id,
+      value: industry.Name,
       title: industry.Name,
     }));
-    console.log(updatedIndustryOptions,"new array")
-    const dropDownValue = 
-    (Array.isArray(industryInterest) && industryInterest.length > 0) 
-      ? industryInterest[0] 
-      : (typeof industryInterest === 'string' && industryInterest.trim() !== '') 
-        ? industryInterest.trim() 
-        : (placeholders?.select || 'Select');
-
     const selectIndustryDropDown = new Dropdown(
       block.querySelector('.industry-selection-dropdown'),
-      dropDownValue,
+      `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
-      console.log(selectedIndustryId,"id")
-      const selectedIndustryObject = updatedIndustryOptions.find(industry => industry.value === selectedIndustryId);
-      const selectedIndustry = selectedIndustryObject.title;
-      console.log(selectedIndustry,"industry")
+    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
       if (Array.isArray(selectedIndustry)) {
         const industrySelection = [];
         industrySelection.push(selectedIndustry);
-         console.log(industrySelection,"array indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       } else if (typeof selectedIndustry === 'string') {
         const industrySelection = selectedIndustry;
-        console.log(industrySelection,"string indsutry selection")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });
 
-    // if (
-    //   (Array.isArray(industryInterest) && industryInterest.length > 0) ||
-    //   (typeof industryInterest === 'string' && industryInterest.trim() !== '')
-    // ) {
-    //   const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
-    //   console.log(selectedOption,"optn")
-    //   selectIndustryDropDown.updateDropdownValue(selectedOption);
-    // }
+    const profileData = await defaultProfileClient.getMergedProfile();
+    const role = profileData?.role;
+    const industryInterest = profileData?.industryInterests;
+
+    if (
+      (Array.isArray(industryInterest) && industryInterest.length > 0) ||
+      (typeof industryInterest === 'string' && industryInterest.trim() !== '')
+    ) {
+      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+      selectIndustryDropDown.updateDropdownValue(selectedOption);
+    }
 
     role.forEach((el) => {
       const checkBox = block.querySelector(`input[name="${el}"]`);
@@ -204,7 +189,7 @@ export default async function decorate(block) {
           roleCardsData.forEach((roleCard) => {
             const roleCardCheckbox = block.querySelector(`input[name="${roleCard.role}"]`);
             if (roleCardCheckbox.checked) {
-              updatedRoles.push(roleCard.role);
+              updatedRoles.push(roleCard.title);
             }
           });
           defaultProfileClient
