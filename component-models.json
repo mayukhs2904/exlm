@@ -3547,6 +3547,14 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "incompleteProfileText",
         "value": "",
         "label": "Text to be shown for incomplete profile."
