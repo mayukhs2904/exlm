@@ -111,6 +111,49 @@ export default async function decorate(block) {
                 ${profileDescription.innerHTML}
                 </div>
             </div>
+            ${document.documentElement.classList.contains('adobe-ue-edit') && `
+              <div class="profile-user-card">
+                <div class="profile-user-card-left">
+                  <div class="profile-user-card-avatar-company-info">
+                        <div class="profile-user-card-avatar">
+                        <span class="icon icon-profile"></span>
+                        </div>
+                        <div class="profile-user-card-info">
+                            <div class="profile-user-card-name">Ryan Potter</div>
+                            ${communityUserName ? `<div class="profile-user-card-tag">@RyPot478</div>` : ''}
+                            <div class="profile-user-card-org">Contravent</div>
+                        </div> 
+                  </div>
+                    <div class="profile-user-card-communityInfo">
+                      <div class="profile-user-card-title">
+                      <span class="heading">${placeholders?.title || 'TITLE'}: </span><span class="content"></span>Head of Experience Design</div>
+                      <div class="profile-user-card-location"><span class="heading">${placeholders?.location || 'LOCATION'}: </span><span class="content">Salt Lake City, UT</span></div>
+                      </div>
+                      <div class="profile-user-card-incomplete">
+                        <span class="icon icon-exclamation"></span>
+                        ${incompleteProfileText.innerHTML}
+                      </div>
+                </div>
+                <div class="profile-user-card-right">
+                  <div class="profile-user-card-details">
+                    <div class="profile-user-card-role">
+                    <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
+                    <span class="content">Business user, Developer</span>
+                    </div>
+                    <div class="profile-user-card-industry">
+                    <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+                    <span class="content">Education</span>
+                  </div>
+                    <div class="profile-user-card-interests">
+                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
+                      <span class="content">AEM</span>
+                    </div>
+                  </div>
+                    <div class="profile-user-card-cta">${decorateButton(
+                      profileCta
+                    )}</div>
+                </div>
+              `}
             <div class="profile-user-card">
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
