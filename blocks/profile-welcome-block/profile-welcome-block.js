@@ -10,19 +10,27 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(button) {
-  console.log(button,"button")
-  const link = button.querySelector('a');
-  if (link) {
-    link.classList.add('button');
-    if (link.parentElement.tagName === 'secondary') {
-      link.classList.add('secondary');
-    } else if (link.parentElement.tagName === 'primary') {
-      link.classList.add('primary');
-    }
-    return link;
-  }
-  return '';
+function decorateButton(div) {
+  // console.log(button,"button")
+  // const link = button.querySelector('a');
+  // if (link) {
+  //   link.classList.add('button');
+  //   if (link.parentElement.tagName === 'secondary') {
+  //     link.classList.add('secondary');
+  //   } else if (link.parentElement.tagName === 'primary') {
+  //     link.classList.add('primary');
+  //   }
+  //   return link;
+  // }
+  // return '';
+  const a = div.querySelector('a');
+      if (a) {
+        a.classList.add('button');
+        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+        return a.outerHTML;
+      }
+      return '';
 }
 
 export default async function decorate(block) {
