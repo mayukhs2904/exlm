@@ -10,13 +10,15 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
-  if (!profileCtaLink) return '';
-  const a = document.createElement('a');
-  a.classList.add('button', profileCtaType === 'primary' ? 'primary' : 'secondary');
-  a.href = profileCtaLink;
-  a.textContent = profileCtaText;
-  return a.outerHTML;
+function decorateButton(button) {
+  const a = button.querySelector('a');
+  if (a) {
+    a.classList.add('button');
+    if (a.parentElement.tagName === 'secondary') a.classList.add('secondary');
+    if (a.parentElement.tagName === 'primary') a.classList.add('primary');
+    return a.outerHTML;
+  }
+  return '';
 }
 
 export default async function decorate(block) {

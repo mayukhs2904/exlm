@@ -1035,12 +1035,7 @@
                 "template": {
                   "name": "Profile Welcome Block",
                   "model": "profile-welcome-block",
-                  "profileCtaType": "primary",
-                  "eyebrow": "Hey User! Welcome Back",
-                  "heading": "Your Experience League just got more personal.",
-                  "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
-                  "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "profileCtaText": "Manage Profile"
+                  "headingType": "h2"
                 }
               }
             }

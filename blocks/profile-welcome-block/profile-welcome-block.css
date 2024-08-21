@@ -19,11 +19,8 @@
 }
 
 .profile-welcome-block .profile-curated-card .profile-curated-card-heading {
-    font-size: var(--spectrum-font-size-900);
-    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-top: 8px;
-    line-height: 57px;
     text-align: center;
 }
 
