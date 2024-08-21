@@ -105,7 +105,7 @@ export default async function decorate(block) {
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
       
       ${console.log(document.documentElement.classList.contains('adobe-ue-edit')),"inside docm ue"}
-        <div class="profile-curated-card">
+            <div class="profile-curated-card">
                 <div class="profile-curated-card-eyebrowtext">
                 ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
                 </div>
@@ -116,7 +116,7 @@ export default async function decorate(block) {
                 ${profileDescription.innerHTML}
                 </div>
             </div>
-            ${document.documentElement.classList.contains('adobe-ue-edit') && `
+            ${document.documentElement.classList.contains('adobe-ue-edit') ? `
               <div class="profile-user-card">
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
@@ -158,8 +158,9 @@ export default async function decorate(block) {
                       profileCta
                     )}</div>
                 </div>
-              `}
-            <div class="profile-user-card">
+              </div>
+              ` :
+            `<div class="profile-user-card">
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
                         <div class="profile-user-card-avatar">
@@ -221,8 +222,8 @@ export default async function decorate(block) {
                     <div class="profile-user-card-cta">${decorateButton(
                       profileCta
                     )}</div>
-                </div>    
-        </div>
+                </div> 
+        </div>`}
         `);
 
     block.textContent = '';
