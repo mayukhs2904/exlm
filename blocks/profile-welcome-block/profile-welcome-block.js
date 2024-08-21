@@ -31,10 +31,12 @@ export default async function decorate(block) {
     profileHeading,
     profileDescription,
     profileCta,
+    profileCtaType,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
 
   console.log(profileCta,"profilecta")
+  console.log(profileCtaType,"type")
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
