@@ -71,9 +71,6 @@ export default async function decorate(block) {
     Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
   };
 
-  console.log("Check")
-  console.log(document.documentElement.classList.contains('adobe-ue-edit'),"ueee")
-
   const hasInterests =
     interests &&
     ((Array.isArray(interests) && interests.length > 0) ||
@@ -103,8 +100,6 @@ export default async function decorate(block) {
     }
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
-      
-      ${console.log(document.documentElement.classList.contains('adobe-ue-edit')),"inside docm ue"}
             <div class="profile-curated-card">
                 <div class="profile-curated-card-eyebrowtext">
                 ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
