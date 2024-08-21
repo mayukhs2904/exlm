@@ -11,18 +11,6 @@ try {
 }
 
 function decorateButton(div) {
-  // console.log(button,"button")
-  // const link = button.querySelector('a');
-  // if (link) {
-  //   link.classList.add('button');
-  //   if (link.parentElement.tagName === 'secondary') {
-  //     link.classList.add('secondary');
-  //   } else if (link.parentElement.tagName === 'primary') {
-  //     link.classList.add('primary');
-  //   }
-  //   return link;
-  // }
-  // return '';
   const a = div.querySelector('a');
       if (a) {
         a.classList.add('button');
