@@ -31,39 +31,54 @@ export default async function decorate(block) {
   ] = block.querySelectorAll(':scope div > div');
 
   const isSignedIn = await isSignedInUser();
+  let profileData = '';
+  let ppsProfileData = '';
+  let communityProfileData = '';
+  let adobeDisplayName = '';
+  let adobeFirstName = '';
+  let industry = '';
+  let roles = '';
+  let interests = '';
+  let profilePicture = '';
+  let company = '';
+  let communityUserName = '';
+  let communityUserTitle = '';
+  let communityUserLocation = '';
+
   if (isSignedIn) {
-    const profileData = await defaultProfileClient.getMergedProfile();
-    const ppsProfileData = await defaultProfileClient.getPPSProfile();
-    const communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
+    profileData = await defaultProfileClient.getMergedProfile();
+    ppsProfileData = await defaultProfileClient.getPPSProfile();
+    communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
 
-    const adobeDisplayName = profileData?.displayName || '';
-    const adobeFirstName = profileData?.first_name || '';
-    const industry = profileData?.industryInterests || [];
-    const roles = profileData?.role || [];
-    const interests = profileData?.interests || [];
+    adobeDisplayName = profileData?.displayName || '';
+    adobeFirstName = profileData?.first_name || '';
+    industry = profileData?.industryInterests || [];
+    roles = profileData?.role || [];
+    interests = profileData?.interests || [];
 
-    const profilePicture = ppsProfileData?.images?.['100'] || '';
-    const company = ppsProfileData?.company || '';
+    profilePicture = ppsProfileData?.images?.['100'] || '';
+    company = ppsProfileData?.company || '';
 
-    const communityUserName = communityProfileData?.username || '';
-    const communityUserTitle = communityProfileData?.title || '';
-    const communityUserLocation = communityProfileData?.location || '';
+    communityUserName = communityProfileData?.username || '';
+    communityUserTitle = communityProfileData?.title || '';
+    communityUserLocation = communityProfileData?.location || '';
+  }
 
-    const roleMappings = {
-      Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
-      User: placeholders?.roleCardUserTitle || 'Business User',
-      Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
-      Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
-    };
+  const roleMappings = {
+    Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+    User: placeholders?.roleCardUserTitle || 'Business User',
+    Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+    Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
+  };
 
-    const hasInterests =
-      interests &&
-      ((Array.isArray(interests) && interests.length > 0) ||
-        (typeof interests === 'string' && interests.trim() !== ''));
+  const hasInterests =
+    interests &&
+    ((Array.isArray(interests) && interests.length > 0) ||
+      (typeof interests === 'string' && interests.trim() !== ''));
 
-    const hasIndustry =
-      industry &&
-      ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
+  const hasIndustry =
+    industry &&
+    ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
 
     let industryContent = '';
     if (hasIndustry) {
@@ -165,5 +180,4 @@ export default async function decorate(block) {
     block.textContent = '';
     block.append(profileWelcomeBlock);
     decorateIcons(block);
-  }
 }
