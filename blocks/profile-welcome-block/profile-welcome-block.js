@@ -10,8 +10,8 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(div) {
-  const a = div.querySelector('a');
+function decorateButton(button) {
+  const a = button.querySelector('a');
       if (a) {
         a.classList.add('button');
         if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
@@ -29,8 +29,6 @@ export default async function decorate(block) {
     profileCta,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
-
-  console.log(profileCta,"profilecta")
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -63,10 +61,28 @@ export default async function decorate(block) {
       ((Array.isArray(interests) && interests.length > 0) ||
         (typeof interests === 'string' && interests.trim() !== ''));
 
-    const hasIndustry = 
-      industry && 
-      ((Array.isArray(industry) && industry.length > 0) ||
-        (typeof industry === 'string' && industry.trim() !== ''));
+    const hasIndustry =
+      industry &&
+      ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
+
+    let industryContent = '';
+    if (hasIndustry) {
+      industryContent = `
+          <div class="profile-user-card-industry">
+            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+              ${Array.isArray(industry) ? industry.join(', ') : industry}
+            </span>
+          </div>`;
+    } else if (!hasInterests) {
+      industryContent = `
+          <div class="profile-user-card-industry">
+            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+              ${placeholders?.unknown || 'Unknown'}
+            </span>
+          </div>`;
+    }
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
@@ -103,14 +119,14 @@ export default async function decorate(block) {
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
-                      <span class="heading">${placeholders?.title || 'TITLE'}: </span>${communityUserTitle}</div>`
+                      <span class="heading">${placeholders?.title || 'TITLE'}: </span><span class="content">${communityUserTitle}</span></div>`
                           : ''
                       }
                       ${
                         communityUserLocation
                           ? `<div class="profile-user-card-location"><span class="heading">${
                               placeholders?.location || 'LOCATION'
-                            }: </span>${communityUserLocation}</div>`
+                            }: </span><span class="content">${communityUserLocation}</span></div>`
                           : ''
                       }
                       </div>
@@ -127,28 +143,14 @@ export default async function decorate(block) {
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
-                    <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles
+                    <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">${roles
                       .map((role) => roleMappings[role] || role)
                       .join(' | ')}</span>
                     </div>
-                    ${hasIndustry ? `
-                      <div class="profile-user-card-industry">
-                        <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-                        <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                          ${industry}
-                        </span>
-                      </div>` 
-                    : 
-                    (hasInterests ? '' : `
-                      <div class="profile-user-card-industry">
-                        <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-                        <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                          ${placeholders?.unknown || 'Unknown'}
-                        </span>
-                      </div>`)}
+                    ${industryContent}
                     <div class="profile-user-card-interests">
                       <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
-                      <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                      <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">
                         ${!hasInterests ? placeholders?.unknown || 'Unknown' : interests.join(' | ')}
                       </span>
                     </div>
@@ -163,5 +165,5 @@ export default async function decorate(block) {
     block.textContent = '';
     block.append(profileWelcomeBlock);
     decorateIcons(block);
-}
+  }
 }
