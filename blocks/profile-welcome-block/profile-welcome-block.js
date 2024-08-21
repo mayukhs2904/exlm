@@ -72,8 +72,6 @@ export default async function decorate(block) {
       ((Array.isArray(industry) && industry.length > 0) ||
         (typeof industry === 'string' && industry.trim() !== ''));
 
-  }
-
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
                 <div class="profile-curated-card-eyebrowtext">
@@ -169,4 +167,5 @@ export default async function decorate(block) {
     block.textContent = '';
     block.append(profileWelcomeBlock);
     decorateIcons(block);
+}
 }
