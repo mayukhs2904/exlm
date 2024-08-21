@@ -26,9 +26,7 @@ export default async function decorate(block) {
     profileEyebrowText,
     profileHeading,
     profileDescription,
-    profileCtaType,
-    profileCtaText,
-    profileCtaLink,
+    profileCta,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
 
@@ -154,9 +152,7 @@ export default async function decorate(block) {
                     </div>
                   </div>
                     <div class="profile-user-card-cta">${decorateButton(
-                      profileCtaType.innerHTML,
-                      profileCtaText.innerHTML,
-                      profileCtaLink.innerHTML,
+                      profileCta
                     )}</div>
                 </div>    
         </div>
