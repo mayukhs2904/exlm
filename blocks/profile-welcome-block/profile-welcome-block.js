@@ -12,12 +12,15 @@ try {
 
 function decorateButton(button) {
   console.log(button,"button")
-  const a = button.querySelector('a');
-  if (a) {
-    a.classList.add('button');
-    if (a.parentElement.tagName === 'secondary') a.classList.add('secondary');
-    if (a.parentElement.tagName === 'primary') a.classList.add('primary');
-    return a.outerHTML;
+  const link = button.querySelector('a');
+  if (link) {
+    link.classList.add('button');
+    if (link.parentElement.tagName === 'secondary') {
+      link.classList.add('secondary');
+    } else if (link.parentElement.tagName === 'primary') {
+      link.classList.add('primary');
+    }
+    return link;
   }
   return '';
 }
