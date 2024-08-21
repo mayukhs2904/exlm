@@ -11,6 +11,7 @@ try {
 }
 
 function decorateButton(button) {
+  console.log(button,"button")
   const a = button.querySelector('a');
   if (a) {
     a.classList.add('button');
@@ -29,6 +30,8 @@ export default async function decorate(block) {
     profileCta,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
+
+  console.log(profileCta,"profilecta")
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
