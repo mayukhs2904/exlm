@@ -123,7 +123,7 @@ body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .ro
     color: #000;
 }
 
-body.profile .role-and-industry .industry-selection-title h1:not(.signup-dialog .role-and-industry .industry-selection-title), body.profile .role-and-industry .industry-selection-title h2:not(.signup-dialog .role-and-industry .industry-selection-title), body.profile .role-and-industry .industry-selection-title h3:not(.signup-dialog .role-and-industry .industry-selection-title), body.profile .role-and-industry .industry-selection-title h4:not(.signup-dialog .role-and-industry .industry-selection-title), body.profile .role-and-industry .industry-selection-title h5:not(.signup-dialog .role-and-industry .industry-selection-title), body.profile .role-and-industry .industry-selection-title h6:not(.signup-dialog .role-and-industry .industry-selection-title) {
+body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .role-and-industry .industry-selection-title):where(h1,h2,h3,h4,h5,h6) {
     margin-top: 0px;
     margin-bottom: 0px;
 }
