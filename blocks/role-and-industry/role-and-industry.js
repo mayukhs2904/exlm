@@ -159,6 +159,7 @@ export default async function decorate(block) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
+    console.log(industryInterest,"industry interest")
 
     //if its an object then we bave to take title in another way
     if (
