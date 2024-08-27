@@ -162,11 +162,27 @@ export default async function decorate(block) {
     console.log(industryInterest,"industry interest")
 
     //if its an object then we bave to take title in another way
+    // if (
+    //   (Array.isArray(industryInterest) && industryInterest.length > 0) ||
+    //   (typeof industryInterest === 'string' && industryInterest.trim() !== '')
+    // ) {
+    //   const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+    //   console.log(selectedOption,"selected option")
+    //   selectIndustryDropDown.updateDropdownValue(selectedOption);
+    // }
+
     if (
       (Array.isArray(industryInterest) && industryInterest.length > 0) ||
       (typeof industryInterest === 'string' && industryInterest.trim() !== '')
     ) {
-      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+      let selectedOption;
+      if (Array.isArray(industryInterest)) {
+        const firstElement = industryInterest[0];
+        // Check if the first element is an object and has a 'name' property
+        selectedOption = typeof firstElement === 'object' ? firstElement.name : firstElement;
+      } else {
+        selectedOption = industryInterest.trim();
+      }
       console.log(selectedOption,"selected option")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
