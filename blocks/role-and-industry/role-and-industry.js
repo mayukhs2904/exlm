@@ -126,6 +126,7 @@ export default async function decorate(block) {
       updatedIndustryOptions,
     );
     selectIndustryDropDown.handleOnChange((selectedIndustry) => {
+      console.log(selectedIndustry,"selected industry")
       if (Array.isArray(selectedIndustry)) {
         const industrySelection = [];
         industrySelection.push(selectedIndustry);
