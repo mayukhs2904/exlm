@@ -3,6 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -12,38 +13,10 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
-
-async function fetchIndustryOptions() {
-  try {
-    const response = await fetch(industryUrl);
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('There was a problem with the fetch operation:', error);
-    return [];
-  }
-}
-
-const getIndustryNameById = (industryId, industryOptionsArray) => {
-  let industry;
-  if (Array.isArray(industryId)) {
-    // If industryId is an array, find the first matching industry name for any ID in the array
-    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
-  } else {
-    // If industryId is a string, find the matching industry name directly
-    industry = industryOptionsArray.find((option) => option.id === industryId);
-  }
-  if (!industry) {
-    return [];
-  }
-  return industry.Name || '';
-};
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
@@ -141,15 +114,10 @@ export default async function decorate(block) {
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
       const industrySelection = [];
       if (Array.isArray(selectedIndustryId)) {
-        const selectedIndustryName = getIndustryNameById(selectedIndustryId[0],updatedIndustryOptions);
-        industrySelection.push({id: selectedIndustryId[0], name: selectedIndustryName});
-        console.log(industrySelection,"industryselection for array")
+        industrySelection.push(selectedIndustryId[0]);
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      }
-      else if (typeof selectedIndustryId === 'string') {
-        const selectedIndustryName = getIndustryNameById(selectedIndustryId,updatedIndustryOptions);
-        industrySelection.push({id: selectedIndustryId, name: selectedIndustryName});
-        console.log(industrySelection,"industryselection for string")
+      } else if (typeof selectedIndustryId === 'string') {
+        industrySelection.push(selectedIndustryId);
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });
@@ -162,14 +130,7 @@ export default async function decorate(block) {
       (Array.isArray(industryInterest) && industryInterest.length > 0) ||
       (typeof industryInterest === 'string' && industryInterest.trim() !== '')
     ) {
-      let selectedOption;
-      if (Array.isArray(industryInterest)) {
-        const firstElement = industryInterest[0];
-        // Check if the first element is an object and has a 'name' property
-        selectedOption = typeof firstElement === 'object' ? firstElement.id : firstElement;
-      } else {
-        selectedOption = industryInterest.trim();
-      }
+      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
