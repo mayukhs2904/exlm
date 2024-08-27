@@ -179,7 +179,7 @@ export default async function decorate(block) {
       if (Array.isArray(industryInterest)) {
         const firstElement = industryInterest[0];
         // Check if the first element is an object and has a 'name' property
-        selectedOption = typeof firstElement === 'object' ? firstElement.name : firstElement;
+        selectedOption = typeof firstElement === 'object' ? firstElement.id : firstElement;
       } else {
         selectedOption = industryInterest.trim();
       }
