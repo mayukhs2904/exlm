@@ -159,17 +159,6 @@ export default async function decorate(block) {
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
-    console.log(industryInterest,"industry interest")
-
-    //if its an object then we bave to take title in another way
-    // if (
-    //   (Array.isArray(industryInterest) && industryInterest.length > 0) ||
-    //   (typeof industryInterest === 'string' && industryInterest.trim() !== '')
-    // ) {
-    //   const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
-    //   console.log(selectedOption,"selected option")
-    //   selectIndustryDropDown.updateDropdownValue(selectedOption);
-    // }
 
     if (
       (Array.isArray(industryInterest) && industryInterest.length > 0) ||
@@ -183,7 +172,6 @@ export default async function decorate(block) {
       } else {
         selectedOption = industryInterest.trim();
       }
-      console.log(selectedOption,"selected option")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 

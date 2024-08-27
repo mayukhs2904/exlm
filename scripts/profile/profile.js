@@ -1,23 +1,21 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
 
 const fetchExlProfileData = async () => {
-  const [profileData, ppsProfileData] = await Promise.all([
+  const [profileData, ppsProfileData] = await Promise.allSettled([
     defaultProfileClient.getMergedProfile(),
     defaultProfileClient.getPPSProfile(),
   ]);
-  return { profileData, ppsProfileData };
+
+  // Throw error only if profileData is rejected
+  if (profileData.status === 'rejected') {
+    throw new Error(profileData.reason);
+  }
+  // Return profileData and ppsProfileData (or empty object if ppsProfileData is rejected)
+  return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
@@ -42,7 +40,7 @@ const fetchProfileData = async (profileFlags) => {
     ...(profileFlags.includes(EXL_PROFILE) && {
       adobeDisplayName: profileData?.displayName || '',
       email: profileData?.email || '',
-      industry: profileData?.industryInterests || '',
+      industry: profileData?.industryInterests || [],
       roles: profileData?.role || [],
       interests: profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
@@ -127,10 +125,10 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
 
   const roleMappings = {
-    Developer: placeholders.roleCardDeveloperTitle || 'Developer',
-    User: placeholders.roleCardUserTitle || 'Business User',
-    Leader: placeholders.roleCardBusinessLeaderTitle || 'Business Leader',
-    Admin: placeholders.roleCardAdministratorTitle || 'Administrator'
+    Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+    User: placeholders?.roleCardUserTitle || 'Business User',
+    Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+    Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
   };
 
   return `<div class="profile-row additional-data">
@@ -138,9 +136,9 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
       <div class="profile-user-info">
         ${
           roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
-            ? `<div class="user-role"><span class="heading">${
-                placeholders?.myRole || 'My Role'
-              }: </span><span>${roles.map(role => roleMappings[role] || role).join('&nbsp;&nbsp;')}</span></div>`
+            ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles
+                .map((role) => roleMappings[role] || role)
+                .join('&nbsp;&nbsp;')}</span></div>`
             : ''
         }
         ${
@@ -148,7 +146,11 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
           ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
-              }: </span><span>${industry}</span></div>`
+              }: </span><span>${Array.isArray(industry)
+          ? typeof industry[0] === 'object' && industry[0] !== null && 'name' in industry[0]
+            ? industry[0].name
+            : industry[0]
+          : industry}</span></div>`
             : ''
         }
         ${
@@ -157,7 +159,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             (typeof interests === 'string' && interests.trim() !== ''))
             ? `<div class="user-interests"><span class="heading">${
                 placeholders?.myInterests || 'My Interests'
-              }: </span><span>${interests.join('&nbsp;&nbsp;')}</span></div>`
+              }: </span><span>${interests.join(' | ')}</span></div>`
             : ''
         }
       </div>
