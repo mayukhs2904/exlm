@@ -166,6 +166,7 @@ export default async function decorate(block) {
       (typeof industryInterest === 'string' && industryInterest.trim() !== '')
     ) {
       const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+      console.log(selectedOption,"selected option")
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
