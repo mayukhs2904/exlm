@@ -175,7 +175,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             : ''
         }
         ${
-          industryName
+          industryName.trim() !== ''
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
               }: </span><span>${industryName}</span></div>`
