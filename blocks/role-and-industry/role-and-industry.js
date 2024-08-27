@@ -30,6 +30,21 @@ async function fetchIndustryOptions() {
   }
 }
 
+const getIndustryNameById = (industryId, industryOptionsArray) => {
+  let industry;
+  if (Array.isArray(industryId)) {
+    // If industryId is an array, find the first matching industry name for any ID in the array
+    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
+  } else {
+    // If industryId is a string, find the matching industry name directly
+    industry = industryOptionsArray.find((option) => option.id === industryId);
+  }
+  if (!industry) {
+    return [];
+  }
+  return industry.Name || '';
+};
+
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
@@ -125,14 +140,18 @@ export default async function decorate(block) {
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
-      console.log(selectedIndustry,"selected industry")
-      if (Array.isArray(selectedIndustry)) {
-        const industrySelection = [];
-        industrySelection.push(selectedIndustry);
+    selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
+      const industrySelection = [];
+      if (Array.isArray(selectedIndustryId)) {
+        const selectedIndustryName = getIndustryNameById(selectedIndustryId[0],updatedIndustryOptions);
+        industrySelection.push({id: selectedIndustryId[0], name: selectedIndustryName});
+        console.log(industrySelection,"industryselection for array")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      } else if (typeof selectedIndustry === 'string') {
-        const industrySelection = selectedIndustry;
+      }
+      else if (typeof selectedIndustryId === 'string') {
+        const selectedIndustryName = getIndustryNameById(selectedIndustryId,updatedIndustryOptions);
+        industrySelection.push({id: selectedIndustryId, name: selectedIndustryName});
+        console.log(industrySelection,"industryselection for string")
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });
@@ -141,6 +160,7 @@ export default async function decorate(block) {
     const role = profileData?.role;
     const industryInterest = profileData?.industryInterests;
 
+    //if its an object then we bave to take title in another way
     if (
       (Array.isArray(industryInterest) && industryInterest.length > 0) ||
       (typeof industryInterest === 'string' && industryInterest.trim() !== '')
