@@ -117,7 +117,7 @@ export default async function decorate(block) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
-      value: industry.Name,
+      value: industry.id,
       title: industry.Name,
     }));
     const selectIndustryDropDown = new Dropdown(
