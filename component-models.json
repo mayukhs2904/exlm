@@ -1150,7 +1150,7 @@
         "name": "customHexCode",
         "value": "",
         "label": "Custom Hexcode",
-        "description": "Sets the small pre-title above the title."
+        "description": "Sets the custom hexcode."
       },
       {
         "component": "text",
