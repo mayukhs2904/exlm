@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
@@ -30,6 +30,7 @@ export default async function decorate(block) {
       description:
         placeholders?.roleCardUserDescription ||
         `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
+      selectionDefault: placeholders?.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
@@ -84,6 +85,7 @@ export default async function decorate(block) {
                   <p>${card.description}</p>
                 </div>
                 <div class="role-cards-default-selection">
+                  ${isSignedIn && card?.selectionDefault ? `<p>${card.selectionDefault}</p>` : ''}
                   <span class="role-cards-checkbox">
                     <input name="${card.role}" type="checkbox" id="selectRole-${index}">
                     <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
@@ -113,13 +115,11 @@ export default async function decorate(block) {
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
       const industrySelection = [];
-      if (Array.isArray(selectedIndustryId)) {
-        industrySelection.push(selectedIndustryId[0]);
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      } else if (typeof selectedIndustryId === 'string') {
-        industrySelection.push(selectedIndustryId);
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      }
+      industrySelection.push(selectedIndustryId);
+      defaultProfileClient
+        .updateProfile('industryInterests', industrySelection, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();

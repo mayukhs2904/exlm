@@ -1536,6 +1536,19 @@
     ]
   },
   {
+    "id": "iframe-app",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iframeUrl",
+        "value": "",
+        "label": "iFrame URL",
+        "description": "Please provide a URL to an iFrame app."
+      }
+    ]
+  },
+  {
     "id": "secondary-search",
     "fields": [
       {
@@ -2744,21 +2757,7 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "value": "",
         "label": "Author Bio page URL"
-      },
-      {
-        "component": "multiselect",
-        "valueType": "string",
-        "name": "coveo-content-type",
-        "label": "Content Type",
-        "description": "Sets the coveo content type in page meta.",
-        "options": [
-          {
-            "name": "Perspectives",
-            "value": "Perspective"
-          }
-        ]
       },
       {
         "component": "aem-tag",
@@ -3663,6 +3662,10 @@
         "valueType": "string",
         "options": [
           {
+            "name": "Default",
+            "value": ""
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -3704,6 +3707,10 @@
         "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
         "valueType": "string",
         "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
           {
             "name": "Certification",
             "value": "certification"
@@ -3747,6 +3754,10 @@
         "valueType": "string",
         "options": [
           {
+            "name": "Default",
+            "value": ""
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -3788,6 +3799,10 @@
         "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
         "valueType": "string",
         "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
           {
             "name": "Certification",
             "value": "certification"
@@ -3860,59 +3875,6 @@
         ]
       },
       {
-        "component": "multiselect",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "description": "Sets the Industries.",
-        "options": [
-          {
-            "name": "Profile Context",
-            "value": "profile_context"
-          },
-          {
-            "name": "Financial Services",
-            "value": "recnimdzX9I4pPOxW"
-          },
-          {
-            "name": "High Tech",
-            "value": "rec6lPTfBw9dzB1C9"
-          },
-          {
-            "name": "Government",
-            "value": "rectSd3DmTitTVc0M"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "rec9FT7VnY7fpyfXY"
-          },
-          {
-            "name": "Healthcare",
-            "value": "recYTRHMCbBRXZDig"
-          },
-          {
-            "name": "Education",
-            "value": "recgygMmWplkQwADZ"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "recxaWHICuSXrjPH3"
-          },
-          {
-            "name": "Media and Entertainment",
-            "value": "media_entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "recAVnGpO0fTu1T8e"
-          },
-          {
-            "name": "Travel and Hospitality",
-            "value": "recvz0dWodhrWFK0V"
-          }
-        ]
-      },
-      {
         "component": "radio-group",
         "name": "sortBy",
         "value": "",
@@ -3956,6 +3918,23 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "personalized-content-placeholder",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "complete-profile-url",
+        "label": "Complete profile page URL"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "incomplete-profile-url",
+        "label": "Inomplete profile page URL"
       }
     ]
   }

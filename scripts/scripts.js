@@ -808,6 +808,7 @@ export function getConfig() {
       : 'https://experienceleaguecommunities-dev.adobe.com/',
     // Stream API
     eventSourceStreamUrl: '/api/stream',
+    interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;
 }
@@ -1069,6 +1070,16 @@ export async function loadArticles() {
   }
 }
 
+function showSignupDialog() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSignedIn = window?.adobeIMS?.isSignedInUser();
+  const { isProd } = getConfig();
+  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+    // eslint-disable-next-line import/no-cycle
+    import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
+  }
+}
+
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -1123,24 +1134,24 @@ export async function fetchWithFallback(path, fallbackPath) {
   return fetch(fallbackPath);
 }
 
-export async function fetchFragment(rePath, lang = 'en') {
-  const path = `/fragments/${lang}/${rePath}.plain.html`;
-  const fallback = `/fragments/en/${rePath}.plain.html`;
+export async function fetchFragment(rePath, lang) {
+  const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
+  const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
   return response.text();
 }
 
-export async function fetchLanguagePlaceholders() {
-  const { lang } = getPathDetails();
+export async function fetchLanguagePlaceholders(lang) {
+  const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
-    return await fetchPlaceholders(`/${lang}`);
+    return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
+    console.error(`Error fetching placeholders for lang: ${langCode}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
-      return await fetchPlaceholders('/en');
+      return await fetchPlaceholders(`${window.hlx.codeBasePath}/en`);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
@@ -1153,7 +1164,7 @@ export async function getLanguageCode() {
   if (window.languageCode) return window.languageCode;
   window.languageCode = new Promise((resolve, reject) => {
     const { lang } = getPathDetails();
-    fetch('/languages.json')
+    fetch(`${window.hlx.codeBasePath}/languages.json`)
       .then((response) => response.json())
       .then((languages) => {
         const langMap = languages.data;
@@ -1322,6 +1333,16 @@ function decodeAemPageMetaTags() {
   }
 }
 
+/**
+ * Fetch Json with fallback.
+ */
+export async function fetchJson(url, fallbackUrl) {
+  return fetch(url)
+    .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
+    .then((response) => (response.ok ? response.json() : null))
+    .then((json) => json?.data || []);
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
@@ -1332,11 +1353,7 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
-
-  if (isProfilePage()) {
-    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
-    document.body.classList.remove('loading');
-  }
+  showSignupDialog();
 
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
@@ -1372,7 +1389,6 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
-    document.body.classList.add('loading');
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {

@@ -1,5 +1,5 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
-import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
+import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
@@ -31,9 +31,8 @@ export async function fetchIndustryOptions() {
   }
 }
 
-const industryOptions = await fetchIndustryOptions();
 export const getIndustryNameById = (industryId, industryOptionsArray) => {
-  let industry;
+  let industry = {};
   if (Array.isArray(industryId)) {
     // If industryId is an array, find the first matching industry name for any ID in the array
     industry = industryOptionsArray.find((option) => industryId.includes(option.id));
@@ -41,17 +40,13 @@ export const getIndustryNameById = (industryId, industryOptionsArray) => {
     // If industryId is a string, find the matching industry name directly
     industry = industryOptionsArray.find((option) => option.id === industryId);
   }
-  return industry ? industry.Name || '' : [];
+  return industry ? industry.Name : '';
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
-  const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
-    return null;
-  }
-
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
   const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
     ? fetchCommunityProfileData()
@@ -64,18 +59,18 @@ const fetchProfileData = async (profileFlags) => {
 
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
-      adobeDisplayName: profileData?.displayName || '',
-      email: profileData?.email || '',
-      industry: profileData?.industryInterests || [],
-      roles: profileData?.role || [],
-      interests: profileData?.interests || [],
+      adobeDisplayName: UEAuthorMode ? 'User Name' : profileData?.displayName || '',
+      email: UEAuthorMode ? 'User Email' : profileData?.email || '',
+      industry: UEAuthorMode ? 'User Industry' : profileData?.industryInterests || '',
+      roles: UEAuthorMode ? ['User Roles'] : profileData?.role || [],
+      interests: UEAuthorMode ? ['User Interests'] : profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
-      company: ppsProfileData?.company || '',
+      company: UEAuthorMode ? 'User Company' : ppsProfileData?.company || '',
     }),
     ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityUserName: communityProfileDetails?.username || '',
-      communityUserTitle: communityProfileDetails?.title || '',
-      communityUserLocation: communityProfileDetails?.location || '',
+      communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
+      communityUserTitle: UEAuthorMode ? 'Community User Title' : communityProfileDetails?.title || '',
+      communityUserLocation: UEAuthorMode ? 'Community User Location' : communityProfileDetails?.location || '',
     }),
   };
 };
@@ -147,13 +142,14 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
+const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
+  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
-  if(Array.isArray(industry)) {
+  if (Array.isArray(industry)) {
     industryName = getIndustryNameById(industry[0], industryOptions);
   }
-  if(typeof industryName === 'string') {
+  if (typeof industry === 'string') {
     industryName = getIndustryNameById(industry, industryOptions);
   }
 
@@ -214,11 +210,20 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
+  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) : '';
+
+  // Await the asynchronous call to generate the additional profile information DOM
+  const additionalProfileInfoDOM = hasExlProfileFlag
+    ? await generateAdditionalProfileInfoDOM(profileData, placeholders)
+    : '';
+
+  const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
+    ? generateCommunityAccountDOM(profileData, placeholders, communityAccountURL)
+    : '';
+
   return {
-    ...(hasExlProfileFlag && { adobeAccountDOM: generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) }),
-    ...(hasExlProfileFlag && { additionalProfileInfoDOM: generateAdditionalProfileInfoDOM(profileData, placeholders) }),
-    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityAccountDOM: generateCommunityAccountDOM(profileData, placeholders, communityAccountURL),
-    }),
+    adobeAccountDOM,
+    additionalProfileInfoDOM,
+    communityAccountDOM,
   };
 };
