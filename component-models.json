@@ -1148,7 +1148,7 @@
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
-        "value": "",
+        "value": "#FFFFFF",
         "label": "Custom Hexcode",
         "description": "Sets the custom hexcode."
       },
