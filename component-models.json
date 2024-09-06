@@ -1147,9 +1147,10 @@
         },
         "component": "text",
         "name": "customHexCode",
-        "value": "",
+        "value": "#FFFFFF",
         "label": "Custom Hexcode",
-        "valueType": "string"
+        "valueType": "string",
+        "description": "Sets the small pre-title above the title."
       },
       {
         "component": "text",
