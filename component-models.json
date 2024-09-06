@@ -1130,8 +1130,26 @@
           {
             "name": "Yellow",
             "value": "bg-spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "#FF0000"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "custom"]
+        },
+        "component": "text",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Hexcode",
+        "valueType": "string"
       },
       {
         "component": "text",
