@@ -1142,9 +1142,6 @@
         ]
       },
       {
-        "condition": {
-          "===": [{ "var": "classes" }, "custom"]
-        },
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
