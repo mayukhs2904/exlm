@@ -1146,10 +1146,10 @@
           "===": [{ "var": "classes" }, "custom"]
         },
         "component": "text",
-        "name": "customHexCode",
-        "value": "#FFFFFF",
-        "label": "Custom Hexcode",
         "valueType": "string",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Hexcode",
         "description": "Sets the small pre-title above the title."
       },
       {
