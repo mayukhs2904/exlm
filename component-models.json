@@ -1159,8 +1159,8 @@
         "component": "boolean",
         "valueType": "boolean",
         "name": "backgroundHexCode",
-        "label": "Enable background with the same hexcode color",
-        "description": "This will enable background with the same hexcode color."
+        "label": "Enable Marquee background all the same Hex color",
+        "description": "Make Marquee background all the same Hex color"
       },
       {
         "component": "text",
