@@ -27,6 +27,10 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
+  if(bgColorCls){
+    backgroundHexcode=false;
+  }
+
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-foreground'>
