@@ -1148,9 +1148,19 @@
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
-        "value": "#FFFFFF",
+        "value": "",
         "label": "Custom Hexcode",
         "description": "Sets the custom hexcode."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "custom"]
+        },
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "backgroundHexCode",
+        "label": "Enable background with the same hexcode color",
+        "description": "This will enable background with the same hexcode color."
       },
       {
         "component": "text",
