@@ -1161,9 +1161,7 @@
         "name": "backgroundHexCode",
         "value": "",
         "label": "Enable Marquee background all the same Hex color",
-        "description": "Make Marquee background all the same Hex color",
-        "onHidden": { "value": false },
-        "default": false
+        "description": "Make Marquee background all the same Hex color"
       },
       {
         "component": "text",
