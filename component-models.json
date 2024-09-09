@@ -1159,7 +1159,6 @@
         "component": "boolean",
         "valueType": "boolean",
         "name": "backgroundHexCode",
-        "value": "",
         "label": "Enable background with the same hexcode color",
         "description": "This will enable background with the same hexcode color."
       },
