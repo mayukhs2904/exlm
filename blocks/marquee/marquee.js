@@ -19,7 +19,7 @@ function decorateButtons(buttons) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+  const [img, hexcode, backgroundHexcode, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
     block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
@@ -27,6 +27,7 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
   const eyebrowText = eyebrow?.textContent?.trim();
 
+  console.log(bgColor,"backgriund color")
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-foreground'>
