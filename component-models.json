@@ -1156,7 +1156,6 @@
         "component": "boolean",
         "valueType": "boolean",
         "name": "backgroundHexCode",
-        "value": "",
         "label": "Fill marquee with background color",
         "description": "Fill marquee with background color."
       },
