@@ -1133,7 +1133,7 @@
           },
           {
             "name": "Adobe Red",
-            "value": "#FF0000"
+            "value": "bg-non-spectrum-adobe-red"
           },
           {
             "name": "Custom",
@@ -1150,17 +1150,15 @@
         "name": "customHexCode",
         "value": "",
         "label": "Custom Hexcode",
-        "description": "Sets the custom hexcode."
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
-        "condition": {
-          "===": [{ "var": "classes" }, "custom"]
-        },
         "component": "boolean",
         "valueType": "boolean",
         "name": "backgroundHexCode",
-        "label": "Enable Marquee background all the same Hex color",
-        "description": "Make Marquee background all the same Hex color"
+        "value": "",
+        "label": "Fill marquee with background color",
+        "description": "Fill marquee with background color."
       },
       {
         "component": "text",
