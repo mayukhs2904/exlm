@@ -40,6 +40,7 @@
       "sign-up",
       "video-embed",
       "iframe-app",
+      "html-app",
       "secondary-search",
       "accordion-group",
       "media",
@@ -168,6 +169,7 @@
       "profile-welcome",
       "recommended-content",
       "personalized-content-placeholder",
+      "announcement-ribbon",
       "recently-reviewed"
     ]
   },

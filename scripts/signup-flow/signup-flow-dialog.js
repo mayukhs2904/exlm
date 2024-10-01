@@ -51,6 +51,7 @@ export default class SignupFlowDialog {
     Promise.all([
       fetchLanguagePlaceholders(lang),
       loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow-dialog.css`),
+      this.addModalSeenInteraction(),
     ]).then(([placeholders]) => {
       this.placeholders = placeholders;
       this.lang = lang;
@@ -66,17 +67,17 @@ export default class SignupFlowDialog {
     this.pages = [
       {
         name: 'step1',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step1`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step1`,
         title: this.placeholders?.signupFlowStep1Header,
       },
       {
         name: 'step2',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step2`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step2`,
         title: this.placeholders?.signupFlowStep2Header,
       },
       {
         name: 'confirm',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/confirm`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/confirm`,
         title: this.placeholders?.signupFlowConfirmHeader,
         nofollow: true,
       },
@@ -344,13 +345,13 @@ export default class SignupFlowDialog {
       if (
         !this.validateForm(
           productInterestsBlock,
-          '#product-interests-form',
+          '.product-interests-form',
           '.product-interests-form-error',
           this.placeholders?.productInterestFormErrorMessage,
         ) ||
         !this.validateForm(
           roleIndustryBlock,
-          '#role-and-industry-form',
+          '.role-and-industry-form',
           '.role-and-industry-form-error',
           this.placeholders?.formFieldGroupError,
         )
@@ -361,9 +362,6 @@ export default class SignupFlowDialog {
 
     const signupContent = this.signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
-    if (currentPageIndex === 1 && direction === 1) {
-      await this.addModalSeenInteraction();
-    }
     const newIndex = currentPageIndex + direction;
     this.toggleShimmer(true);
     const isLoaded = await this.loadPageContent(newIndex);

@@ -259,16 +259,21 @@ export function isArticleLandingPage() {
 
 /**
  * Check if current page is a Profile page.
- * theme = profile is set in bulk metadata for /en/profile** paths.
+ * theme = profile is set in bulk metadata for /en/home** paths.
  */
 export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
 }
-
+/**
+ * Check if current page is a home page.
+ */
+export function isHomePage(lang) {
+  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+}
 /**
  * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
  */
 export function isSignUpPage() {
   const theme = getMetadata('theme');
@@ -742,12 +747,50 @@ export function getConfig() {
     },
   ];
 
+  const baseLocalesMap = new Map([
+    ['de', 'de'],
+    ['en', 'en'],
+    ['ja', 'ja'],
+    ['fr', 'fr'],
+    ['es', 'es'],
+    ['pt-br', 'pt'],
+    ['ko', 'ko'],
+  ]);
+
+  const communityLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'en'],
+    ['nl', 'en'],
+    ['it', 'en'],
+    ['zh-hans', 'en'],
+    ['zh-hant', 'en'],
+  ]);
+
+  const adobeAccountLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'sv'],
+    ['nl', 'nl'],
+    ['it', 'it'],
+    ['zh-hant', 'zh-Hant'],
+    ['zh-hans', 'zh-Hans'],
+  ]);
+  const cookieConsentName = 'OptanonConsent';
+  const targetCriteriaIds = {
+    mostPopular: 'exl-hp-auth-recs-2',
+    recommended: 'exl-hp-auth-recs-1',
+    recentlyViewed: 'exl-hp-auth-recs-3',
+  };
+
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
+  // Locale param for Community page URL
+  const communityLocale = communityLangsMap.get(lang) || 'en';
+  // Lang param for Adobe account URL
+  const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
@@ -776,6 +819,8 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    cookieConsentName,
+    targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -794,21 +839,25 @@ export function getConfig() {
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
+    // Personlized Home Page Link
+    personalizedHomeLink: `/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
-    // Adobe account
-    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
-    // Community Account
+    // Adobe account URL
+    adobeAccountURL: isProd
+      ? `https://account.adobe.com/?lang=${adobeAccountLang}`
+      : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
+    // Community Account URL
     communityAccountURL: isProd
-      ? 'https://experienceleaguecommunities.adobe.com/'
-      : 'https://experienceleaguecommunities-dev.adobe.com/',
-    // Stream API
-    eventSourceStreamUrl: '/api/stream',
+      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
+      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    // Param for localized Community Profile URL
+    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };
   return window.exlm.config;
 }
@@ -1343,10 +1392,26 @@ export async function fetchJson(url, fallbackUrl) {
     .then((json) => json?.data || []);
 }
 
+export function getCookie(cookieName) {
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i += 1) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(cookieName) === 0) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
+
   await loadEager(document);
   await loadLazy(document);
   loadArticles();
@@ -1385,21 +1450,35 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
-  if (isProfilePage()) {
-    if (window.location.href.includes('.html')) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+(async () => {
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
+    const { lang } = getPathDetails();
+    const { isProd, personalizedHomeLink } = getConfig() || {};
+    document.documentElement.lang = lang || 'en';
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
+    } else if (isHomePage(lang) && !isProd) {
+      try {
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error during redirect process:', error);
+      }
+      loadPage();
+    } else {
+      loadPage();
     }
-  } else {
-    loadPage();
   }
-}
+})();

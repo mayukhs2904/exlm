@@ -1,4 +1,4 @@
-body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
+body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
     border: none;
 }
 
@@ -8,9 +8,8 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     margin: 0 0 18px;
 }
 
-.product-interests .product-interests-form-error .form-error {
-    display: block;
-    margin-top: 10px;
+.product-interests .product-interests-form-error {
+    margin-top: 5px;
 }
 
 .product-interests .interests-container {

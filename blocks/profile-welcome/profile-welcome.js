@@ -3,6 +3,8 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -22,10 +24,17 @@ function decorateButton(button) {
   return '';
 }
 
+function replaceProfileText(field, value) {
+  return field.replace('{adobeIMS.first_name}', value);
+}
+
 export default async function decorate(block) {
-  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] =
+  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
     block.querySelectorAll(':scope div > div');
 
+  const eyebrowText = profileEyebrowText.innerHTML;
+  const headingText = profileHeading.innerHTML;
+  const descriptionText = profileDescription.innerHTML;
   const isSignedIn = await isSignedInUser();
 
   let profileData = {};
@@ -41,19 +50,19 @@ export default async function decorate(block) {
   }
 
   const {
-    displayName: adobeDisplayName = '',
-    first_name: adobeFirstName = '',
-    industryInterests: industry = [],
-    role: roles = [],
-    interests = [],
+    displayName: adobeDisplayName = UEAuthorMode ? 'User Name' : '',
+    first_name: adobeFirstName = UEAuthorMode ? 'First Name' : '',
+    industryInterests: industry = UEAuthorMode ? ['User Industry'] : [],
+    role: roles = UEAuthorMode ? ['User Roles'] : [],
+    interests = UEAuthorMode ? ['User Interests'] : [],
   } = profileData || {};
 
-  const { images: { 100: profilePicture } = '', company = '' } = ppsProfileData || {};
+  const { images: { 100: profilePicture } = '', company = UEAuthorMode ? 'User Company' : '' } = ppsProfileData || {};
 
   const {
-    username: communityUserName = '',
-    title: communityUserTitle = '',
-    location: communityUserLocation = '',
+    username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
+    title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
+    location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
   } = communityProfileData || {};
 
   const roleMappings = {
@@ -93,7 +102,7 @@ export default async function decorate(block) {
               ${industryName}
             </span>
           </div>`;
-  } else if (!hasInterests) {
+  } else if (!hasInterests || UEAuthorMode) {
     industryContent = `
           <div class="profile-user-card-industry">
             <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
@@ -104,66 +113,25 @@ export default async function decorate(block) {
   }
 
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
-        <div class="profile-curated-card">
-                <div class="profile-curated-eyebrowtext">
-                ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
-                </div>
-                <div class="profile-curated-card-heading">
-                ${profileHeading.innerHTML}
-                </div>
-                <div class="profile-curated-card-description">
-                ${profileDescription.innerHTML}
-                </div>
-            </div>
-            ${
-              document.documentElement.classList.contains('adobe-ue-edit')
-                ? `
-              <div class="profile-user-card">
-                <div class="profile-user-card-left">
-                  <div class="profile-user-card-avatar-company-info">
-                        <div class="profile-user-card-avatar">
-                        <span class="icon icon-profile"></span>
-                        </div>
-                        <div class="profile-user-card-info">
-                            <div class="profile-user-card-name">User Name</div>
-                            ${communityUserName ? `<div class="profile-user-card-tag">User Tag</div>` : ''}
-                            <div class="profile-user-card-org">User Company</div>
-                        </div> 
-                  </div>
-                    <div class="profile-user-card-communityInfo">
-                      <div class="profile-user-card-title">
-                      <span class="heading">${
-                        placeholders?.title || 'TITLE'
-                      }: </span><span class="content"></span></div>
-                      <div class="profile-user-card-location"><span class="heading">${
-                        placeholders?.location || 'LOCATION'
-                      }: </span><span class="content"></span></div>
-                      </div>
-                      <div class="profile-user-card-incomplete">
-                        <span class="icon icon-exclamation"></span>
-                        ${incompleteProfileText.innerHTML}
-                      </div>
-                </div>
-                <div class="profile-user-card-right">
-                  <div class="profile-user-card-details">
-                    <div class="profile-user-card-role">
-                    <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
-                    <span class="content">User Roles</span>
-                    </div>
-                    <div class="profile-user-card-industry">
-                    <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-                    <span class="content">User Industry</span>
-                  </div>
-                    <div class="profile-user-card-interests">
-                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
-                      <span class="content">User Interests</span>
-                    </div>
-                  </div>
-                    <div class="profile-user-card-cta">${decorateButton(profileCta)}</div>
-                </div>
-              </div>
-              `
-                : `<div class="profile-user-card">
+    <div class="profile-curated-card">
+      <div class="profile-curated-eyebrowtext">
+      ${eyebrowText ? replaceProfileText(eyebrowText, adobeFirstName) : ``}
+      </div>
+      <div class="profile-curated-card-heading">
+      ${headingText ? replaceProfileText(headingText, adobeFirstName) : ``}
+      </div>
+      <div class="profile-curated-card-description">
+      ${descriptionText ? replaceProfileText(descriptionText, adobeFirstName) : ``}
+      </div>
+    </div>
+  `);
+  block.textContent = '';
+  block.append(profileWelcomeBlock);
+
+  // Conditionally display the profile card based on showProfileCard toggle
+  if (showProfileCard.textContent.trim() === 'true') {
+    const profileUserCard = document.createRange().createContextualFragment(`
+          <div class="profile-user-card">
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
                         <div class="profile-user-card-avatar">
@@ -180,7 +148,7 @@ export default async function decorate(block) {
                         </div> 
                   </div>
                 ${
-                  hasInterests
+                  hasInterests && !UEAuthorMode
                     ? `
                     <div class="profile-user-card-community-info">
                       ${
@@ -226,11 +194,9 @@ export default async function decorate(block) {
                   </div>
                     <div class="profile-user-card-cta">${decorateButton(profileCta)}</div>
                 </div>    
-              </div>`
-            }
+              </div>
         `);
-
-  block.textContent = '';
-  block.append(profileWelcomeBlock);
+    block.append(profileUserCard);
+  }
   decorateIcons(block);
 }

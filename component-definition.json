@@ -451,6 +451,21 @@
           }
         },
         {
+          "title": "HTML App",
+          "id": "html-app",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "HTML App",
+                  "model": "html-app"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Secondary Search",
           "id": "secondary-search",
           "plugins": {
@@ -1059,7 +1074,8 @@
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
                   "cta1Type": "primary",
-                  "cta1Text": "Manage profile"
+                  "cta1Text": "Manage profile",
+                  "showProfileCard": true
                 }
               }
             }
@@ -1075,7 +1091,8 @@
                 "template": {
                   "name": "Recommended Content",
                   "model": "recommended-content",
-                  "roles": ["profile_context"]
+                  "roles": ["profile_context"],
+                  "sortTargetResultsBy": ""
                 }
               }
             }
@@ -1097,6 +1114,26 @@
           }
         },
         {
+          "title": "Announcement Ribbon",
+          "id": "announcement-ribbon",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Announcement Ribbon",
+                  "model": "announcement-ribbon",
+                  "title": "Announcement Ribbon Title",
+                  "titleType": "h3",
+                  "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
+                  "cta1Type": "primary",
+                  "cta2Type": "primary"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Recently Reviewed",
           "id": "recently-reviewed",
           "plugins": {
@@ -1106,8 +1143,8 @@
                 "template": {
                   "name": "Recently Reviewed",
                   "model": "recently-reviewed",
-                  "headline": "Recently Reviewed Title",
-                  "headlineType": "h3",
+                  "heading": "Recently Reviewed Title",
+                  "headingType": "h3",
                   "description": "Recently reviewed description"
                 }
               }
