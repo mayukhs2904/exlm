@@ -4150,7 +4150,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 3,
+        "maxSize": 1,
         "options": [
           {
             "name": "Theme",
@@ -4169,7 +4169,7 @@
       },
       {
         "component": "select",
-        "name": "classes",
+        "name": "backgroundColor",
         "value": "",
         "label": "Background Color",
         "description": "The marquee background color",
