@@ -35,8 +35,15 @@ export default async function decorate(block) {
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
-  const bgSpectrumColor= bgColor.innerHTML.substr(3);
-  const bgColorVariable = bgSpectrumColor!=='custom' ? `var(--${bgColor.innerHTML.substr(3)})` : `#${hexcode.innerHTML}`;
+  // const bgSpectrumColor= bgColor.innerHTML.substr(3);
+  // const bgColorVariable = bgSpectrumColor!=='custom' ? `var(--${bgColor.innerHTML.substr(3)})` : `#${hexcode.innerHTML}`;
+  let bgColorVariable;
+  if (bgColor.innerHTML.includes('bg-')) {
+    const bgSpectrumColor = bgColor.innerHTML.substr(3);  // Remove 'bg-' prefix
+    bgColorVariable = `var(--${bgSpectrumColor})`;  // Use the CSS variable
+  } else {
+    bgColorVariable = `#${hexcode.innerHTML}`;  // Use the hex code directly
+  }
   const ribbonDom = document.createRange().createContextualFragment(`
   <div class="ribbon-image">
   ${image ? image.outerHTML : ''}
