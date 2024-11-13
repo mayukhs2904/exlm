@@ -35,8 +35,7 @@ export default async function decorate(block) {
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
-  const bgSpectrumColor= bgColor.innerHTML.substr(3);
-  const bgColorVariable = bgSpectrumColor!=='Custom' ? `var(--${bgSpectrumColor})` : `#${hexcode.innerHTML}`;
+  const bgColorVariable = bgSpectrumColor.includes('custom') ? `#${hexcode.innerHTML}` : `var(--${bgColor.innerHTML.substr(3)})`;
   const ribbonDom = document.createRange().createContextualFragment(`
   <div class="ribbon-image">
   ${image ? image.outerHTML : ''}
