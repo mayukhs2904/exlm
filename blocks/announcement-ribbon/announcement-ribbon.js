@@ -35,9 +35,11 @@ export default async function decorate(block) {
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
+  const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
 
   const ribbonDom = document.createRange().createContextualFragment(`
-  <div class="ribbon-image">
+  <div class="ribbon-image" style="background-color : ${bgColor}">
   ${image ? image.outerHTML : ''}
   </div>
   <div class="ribbon-content-container">
