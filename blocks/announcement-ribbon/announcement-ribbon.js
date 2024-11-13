@@ -31,7 +31,7 @@ export default async function decorate(block) {
     block.style.display = 'none';
     return;
   }
-  const [image, heading, description, firstCta, secondCta, hexcode] = [...block.children].map((row) => row.firstElementChild);
+  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
