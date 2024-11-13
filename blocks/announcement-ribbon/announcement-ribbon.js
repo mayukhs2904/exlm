@@ -39,7 +39,7 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
 
   const ribbonDom = document.createRange().createContextualFragment(`
-  <div class="ribbon-image" style="background-color : ${bgColor}">
+  <div class="ribbon-image">
   ${image ? image.outerHTML : ''}
   </div>
   <div class="ribbon-content-container">
@@ -54,6 +54,7 @@ export default async function decorate(block) {
     <span class="icon icon-close-black"></span>
   `);
 
+  ribbonDom.style.backgroundColor = `${bgColor}`;
   block.textContent = '';
   block.append(ribbonDom);
 
