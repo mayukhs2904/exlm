@@ -66,11 +66,11 @@ export default async function decorate(block) {
   const icon = block.querySelector('.icon');
   if (icon) {
     if (block.classList.contains('dark')) {
-      // If 'dark' class is present, change to 'icon-close-light'
+      // If dark class is present, change to light
       icon.classList.remove('icon-close-black');
       icon.classList.add('icon-close-light');
     } else {
-      // Otherwise, make sure it's the default icon
+      // Otherwise default icon
       icon.classList.remove('icon-close-light');
       icon.classList.add('icon-close-black');
     }

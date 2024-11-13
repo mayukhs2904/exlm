@@ -4077,16 +4077,13 @@
         "label": "Description"
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
-        "label": "Style",
+        "value": "",
+        "label": "Theme",
+        "description": "Select light or dark theme",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
         "options": [
-          {
-            "name": "Theme",
-            "children": [
               {
                 "name": "Light",
                 "value": "light"
@@ -4095,8 +4092,6 @@
                 "name": "Dark",
                 "value": "dark"
               }
-            ]
-          }
         ]
       },
       {
