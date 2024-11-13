@@ -69,7 +69,7 @@ function sanitizeSolutionLevels(solutionLevels) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export default async function buildProductCard(element, model) {
+export default async function buildProductCard(element, model, isInSignUpFlow) {
   const { id, selected: isSelected, Name: product } = model;
   // Create card container
   const card = document.createElement('div');
@@ -149,13 +149,13 @@ export default async function buildProductCard(element, model) {
 
   // Add to DOM
   element.appendChild(card);
-
+  const dropdownId = isInSignUpFlow ? `${product}-inDialog` : product;
   const cardDropdown = new Dropdown(
     content,
     dropdownOptions[0].value,
     dropdownOptions,
     DROPDOWN_VARIANTS.DEFAULT,
-    product,
+    dropdownId,
   );
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
