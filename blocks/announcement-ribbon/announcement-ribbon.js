@@ -54,9 +54,12 @@ export default async function decorate(block) {
     <span class="icon icon-close-black"></span>
   `);
 
-  ribbonDom.style.backgroundColor = `${bgColor}`;
   block.textContent = '';
   block.append(ribbonDom);
+  const container = block.querySelector('.announcement-ribbon');
+  if (container) {
+    container.style.backgroundColor = bgColor;
+  }
 
   decorateIcons(block);
 
