@@ -45,9 +45,7 @@
   cursor: pointer;
 }
 
-.announcement-ribbon.block.dark .ribbon-heading {
-  color: var(--background-color);
-}
+.announcement-ribbon.block.dark .ribbon-heading :where(h1, h2, h3, h4, h5, h6),
 .announcement-ribbon.block.dark .ribbon-description {
   color: var(--background-color);
 }
