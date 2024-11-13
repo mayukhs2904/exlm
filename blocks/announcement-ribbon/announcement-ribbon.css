@@ -45,7 +45,9 @@
   cursor: pointer;
 }
 
-.announcement-ribbon.block.dark .ribbon-heading,
+.announcement-ribbon.block.dark .ribbon-heading {
+  color: var(--background-color);
+}
 .announcement-ribbon.block.dark .ribbon-description {
   color: var(--background-color);
 }
