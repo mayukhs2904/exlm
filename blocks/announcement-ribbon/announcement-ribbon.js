@@ -37,13 +37,11 @@ export default async function decorate(block) {
   description?.classList.add('ribbon-description');
   let bgColorVariable;
   if (bgColor.innerHTML.includes('bg-')) {
-    const bgSpectrumColor = bgColor.innerHTML.substr(3);
-    bgColorVariable = `var(--${bgSpectrumColor})`;
+    const bgSpectrumColor = bgColor.innerHTML.substr(3);  // Remove 'bg-' prefix
+    bgColorVariable = `var(--${bgSpectrumColor})`;  // Use the CSS variable
   } else {
-    bgColorVariable = `#${hexcode.innerHTML}`;
+    bgColorVariable = `#${hexcode.innerHTML}`;  // Use the hex code directly
   }
-
-  const iconClass = block.classList.contains('dark') ? 'icon-close-light' : 'icon-close-black';
 
   const ribbonDom = document.createRange().createContextualFragment(`
   <div class="ribbon-image">
@@ -58,13 +56,25 @@ export default async function decorate(block) {
       ${decorateButtons(firstCta, secondCta)}
     </div>
     </div>
-    <span class="icon ${iconClass}"></span>
+    <span class="icon icon-close-black"></span>
   `);
 
   block.textContent = '';
   block.append(ribbonDom);
   block.style.backgroundColor = bgColorVariable;
 
+  const icon = block.querySelector('.icon');
+  if (icon) {
+    if (block.classList.contains('dark')) {
+      // If 'dark' class is present, change to 'icon-close-light'
+      icon.classList.remove('icon-close-black');
+      icon.classList.add('icon-close-light');
+    } else {
+      // Otherwise, make sure it's the default icon
+      icon.classList.remove('icon-close-light');
+      icon.classList.add('icon-close-black');
+    }
+  }
   decorateIcons(block);
 
   // Add close button functionality
