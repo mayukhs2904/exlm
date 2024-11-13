@@ -4243,7 +4243,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "classes" }, "custom"]
+          "===": [{ "var": "backgroundColor" }, "custom"]
         },
         "component": "text",
         "valueType": "string",
