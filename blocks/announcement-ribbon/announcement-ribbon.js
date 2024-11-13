@@ -31,13 +31,12 @@ export default async function decorate(block) {
     block.style.display = 'none';
     return;
   }
-  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
+  const [image, heading, description, bgColor, hexcode, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
-  const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
-
+  const bgSpectrumColor= bgColor.innerHTML.substr(3);
+  const bgColorVariable = bgSpectrumColor!=='Custom' ? `var(--${bgSpectrumColor})` : `#${hexcode.innerHTML}`;
   const ribbonDom = document.createRange().createContextualFragment(`
   <div class="ribbon-image">
   ${image ? image.outerHTML : ''}
@@ -56,10 +55,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(ribbonDom);
-  const container = block.querySelector('.announcement-ribbon');
-  if (container) {
-    container.style.backgroundColor = bgColor;
-  }
+  block.style.backgroundColor = bgColorVariable;
 
   decorateIcons(block);
 
