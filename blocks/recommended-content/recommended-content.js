@@ -183,23 +183,19 @@ export default async function decorate(block) {
   <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
+  // Clearing the block's content and adding CSS class
+  block.innerHTML = '';
 
-  // filterSectionElement.classList.add('recommended-content-filter-heading');
   const filterSectionContainer = filterSectionElement.innerHTML;
   filterSectionContainer.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
-
-  // Clearing the block's content and adding CSS class
-  block.innerHTML = '';
-  
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
   block.appendChild(filterSectionContainer);
   block.appendChild(blockHeader);
 
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
-  // const filterSectionContainer = block.querySelector('.recommended-content-filter-heading');
   const reversedDomElements = remainingElements.reverse();
   const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     reversedDomElements;
@@ -377,7 +373,6 @@ export default async function decorate(block) {
       if (!(targetSupport && targetCriteriaScopeId)) {
         headerContainer.innerHTML = headingElement.innerText;
         descriptionContainer.innerHTML = descriptionElement.innerText;
-        // filterSectionContainer.innerHTML = filterSectionElement.innerText;
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
@@ -530,9 +525,7 @@ export default async function decorate(block) {
           sortCriteria,
           noOfResults: numberOfResults,
           aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showDefaultOptions
-            ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
-            : { interests: [interest], experience: [expLevel], role: profileRoles },
+          context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
         if (renderCards) {
