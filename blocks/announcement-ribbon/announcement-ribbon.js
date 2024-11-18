@@ -31,16 +31,18 @@ export default async function decorate(block) {
     block.style.display = 'none';
     return;
   }
-  const [image, heading, description, bgColor, hexcode, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
+  const [image, heading, description, bgColor, hexcode, firstCta, secondCta] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
   let bgColorVariable;
   if (bgColor.innerHTML.includes('bg-')) {
-    const bgSpectrumColor = bgColor.innerHTML.substr(3);  // Remove 'bg-' prefix
-    bgColorVariable = `var(--${bgSpectrumColor})`;  // Use the CSS variable
+    const bgSpectrumColor = bgColor.innerHTML.substr(3); // Remove 'bg-' prefix
+    bgColorVariable = `var(--${bgSpectrumColor})`; // Use the CSS variable
   } else {
-    bgColorVariable = `#${hexcode.innerHTML}`;  // Use the hex code directly
+    bgColorVariable = `#${hexcode.innerHTML}`; // Use the hex code directly
   }
 
   const ribbonDom = document.createRange().createContextualFragment(`
@@ -66,7 +68,7 @@ export default async function decorate(block) {
   const icon = block.querySelector('.icon');
   if (icon) {
     if (block.classList.contains('dark')) {
-      // If dark class is present, change to light
+      // If dark class is present, change the icon to light
       icon.classList.remove('icon-close-black');
       icon.classList.add('icon-close-light');
     } else {
