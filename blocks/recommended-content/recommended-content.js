@@ -186,12 +186,11 @@ export default async function decorate(block) {
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
 
-  const filterSectionContainer = filterSectionElement.innerHTML;
-  filterSectionContainer.classList.add('recommended-content-filter-heading');
+  filterSectionElement.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
-  block.appendChild(filterSectionContainer);
+  block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
   const headerContainer = block.querySelector('.recommended-content-header');
@@ -360,11 +359,11 @@ export default async function decorate(block) {
       } = profileData || {};
 
       if (profileInterests.length === 0) {
-        filterSectionContainer.style.display = 'none';
+        filterSectionElement.style.display = 'none';
         blockHeader.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else if (profileInterests.length === 1) {
-        filterSectionContainer.style.display = 'none';
+        filterSectionElement.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
@@ -416,7 +415,7 @@ export default async function decorate(block) {
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1) {
-        filterSectionContainer.style.display = 'none';
+        filterSectionElement.style.display = 'none';
       }
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
