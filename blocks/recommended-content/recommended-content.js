@@ -195,6 +195,7 @@ export default async function decorate(block) {
 
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
+  const filterSectionContainer = block.querySelector('.recommended-content-filter-heading');
   const reversedDomElements = remainingElements.reverse();
   const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     reversedDomElements;
@@ -372,6 +373,7 @@ export default async function decorate(block) {
       if (!(targetSupport && targetCriteriaScopeId)) {
         headerContainer.innerHTML = headingElement.innerText;
         descriptionContainer.innerHTML = descriptionElement.innerText;
+        filterSectionContainer.innerHTML = filterSectionElement.innerText;
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
