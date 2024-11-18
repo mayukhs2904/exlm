@@ -192,7 +192,7 @@ export default async function decorate(block) {
   block.innerHTML = '';
   
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
-  block.appendChild(filterSectionElement);
+  block.appendChild(filterSectionElement.innerText);
   block.appendChild(blockHeader);
 
   const headerContainer = block.querySelector('.recommended-content-header');
