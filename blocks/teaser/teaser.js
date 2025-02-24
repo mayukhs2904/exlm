@@ -9,7 +9,7 @@ export function generateTeaserDOM(props, classes, isSignedIn) {
   console.log(variant,"variant")
   console.log(hideInlineBanner,"hide inline banner");
   console.log(isSignedIn,"is signed in")
-  if(variant.textContent==='secondary' && hideInlineBanner.textContent==='true' && isSignedIn==='true'){
+  if(variant.textContent.trim()==='secondary' && hideInlineBanner.textContent.trim()==='true' && isSignedIn){
     console.log("enter")
     return;
   }
