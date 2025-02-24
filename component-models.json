@@ -3,16 +3,6 @@
     "id": "teaser",
     "fields": [
       {
-        "component": "select",
-        "label": "Select",
-        "name": "select",
-        "valueType": "string",
-        "options": [
-          { "name": "Teaser", "value": "option1" },
-          { "name": "Inner Banner", "value": "option2" }
-        ]
-      },
-      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",

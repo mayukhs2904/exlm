@@ -43,6 +43,6 @@ export default function decorate(block) {
   const teaserDOM = generateTeaserDOM(props, block.classList);
   block.textContent = '';
   console.log(props,"props")
-  block.classList.add(`${props[0]}`);
+  // block.classList.add(`${props[0]}`);
   block.append(teaserDOM);
 }
