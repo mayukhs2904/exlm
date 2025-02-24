@@ -1,10 +1,14 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
-export function generateTeaserDOM(props, classes) {
+export function generateTeaserDOM(props, classes, isSignedIn) {
   // Extract properties, always same order as in model, empty string if not set
-  const [variant, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
+  const [variant, hideInlineBanner, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
+  if(variant==='secondary' && hideInlineBanner && isSignedIn){
+    return;
+  }
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${picture ? picture.outerHTML : ''}</div>
@@ -37,11 +41,12 @@ export function generateTeaserDOM(props, classes) {
   return teaserDOM;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // get the first and only cell from each row
+  const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
   const variant = props[0]?.textContent?.trim();
-  const teaserDOM = generateTeaserDOM(props, block.classList);
+  const teaserDOM = generateTeaserDOM(props, block.classList, isSignedIn);
   block.textContent = '';
   if (variant) {
     block.classList.add(variant);
