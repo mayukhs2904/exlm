@@ -5,8 +5,8 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "classes",
-        "label": "Style",
+        "name": "variantType",
+        "label": "Variant Type",
         "options": [
           {
             "name": "Teaser",

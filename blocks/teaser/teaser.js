@@ -2,7 +2,7 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
+  const [variant, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
   // Build DOM
@@ -40,6 +40,7 @@ export function generateTeaserDOM(props, classes) {
 export default function decorate(block) {
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
+  console.log(props,"props")
   const teaserDOM = generateTeaserDOM(props, block.classList);
   block.textContent = '';
   block.append(teaserDOM);
