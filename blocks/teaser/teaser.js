@@ -6,7 +6,10 @@ export function generateTeaserDOM(props, classes, isSignedIn) {
   const [variant, hideInlineBanner, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
+  console.log(hideInlineBanner,"hide inline banner");
+  console.log(isSignedIn,"is signed in")
   if(variant==='secondary' && hideInlineBanner && isSignedIn){
+    console.log("enter")
     return;
   }
   // Build DOM
