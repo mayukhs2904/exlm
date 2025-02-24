@@ -3,6 +3,23 @@
     "id": "teaser",
     "fields": [
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "variantType",
+        "value": "",
+        "label": "Variant Type",
+        "options": [
+          {
+            "name": "Teaser",
+            "value": "teaser"
+          },
+          {
+            "name": "Inline Banner",
+            "value": "inlineBanner"
+          }
+        ]
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
