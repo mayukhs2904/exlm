@@ -41,6 +41,7 @@ export default function decorate(block) {
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateTeaserDOM(props, block.classList);
+  block.classList.add(`${props[0]}`);
   block.textContent = '';
   block.append(teaserDOM);
 }
