@@ -42,6 +42,7 @@ export default function decorate(block) {
   const props = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateTeaserDOM(props, block.classList);
   block.textContent = '';
+  console.log(props,"props")
   block.classList.add(`${props[0]}`);
   block.append(teaserDOM);
 }
