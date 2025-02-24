@@ -7,9 +7,9 @@ class AdobeTargetClient {
   constructor() {
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
+    this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
-    const main = document.querySelector('main');
-    this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed');
+    this.blocks = [];
     this.targetArray = [];
     this.currentItem = null;
   }
@@ -51,28 +51,38 @@ class AdobeTargetClient {
    */
   async loadTargetData() {
     return new Promise((resolve) => {
-      if (window?.exlm?.targetData?.length) resolve(true);
-      document.addEventListener(
-        'web-sdk-send-event-complete',
-        async (event) => {
-          try {
-            if (
-              event.detail.$type === 'adobe-alloy.send-event-complete' &&
-              event.detail.$rule.name === 'AT: PHP: Handle response propositions'
-            ) {
-              await this.handleTargetEvent();
-              if (window?.exlm?.targetData?.length) resolve(true);
-              else resolve(false);
-            } else {
-              resolve(false);
-            }
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log(error);
+      if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length) resolve(true);
+
+      function handleTargetError(event) {
+        if (event) {
+          // eslint-disable-next-line no-console
+          console.error('Error loading target data', event?.detail);
+          resolve(false);
+        }
+      }
+
+      async function handleTargetLoad(event) {
+        document.removeEventListener('web-sdk-send-event-error', handleTargetError);
+        try {
+          if (
+            event.detail.$type === 'adobe-alloy.send-event-complete' &&
+            event.detail.$rule.name === 'AT: PHP: Handle response propositions'
+          ) {
+            await this.handleTargetEvent();
+            if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length)
+              resolve(true);
+            else resolve(false);
+          } else {
+            resolve(false);
           }
-        },
-        { once: true },
-      );
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
+      }
+
+      document.addEventListener('web-sdk-send-event-error', handleTargetError, { once: true });
+      document.addEventListener('web-sdk-send-event-complete', handleTargetLoad.bind(this), { once: true });
     });
   }
 
@@ -83,13 +93,14 @@ class AdobeTargetClient {
    */
   handleTargetEvent() {
     return new Promise((resolve) => {
-      function targetEventHandler(event) {
+      const targetEventHandler = (event) => {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
+        if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
           window.exlm.targetData.push(event.detail);
         }
         resolve(true);
-      }
+      };
       document.addEventListener(this.targetDataEventName, targetEventHandler);
       resolve(false);
     });
@@ -105,8 +116,13 @@ class AdobeTargetClient {
   // eslint-disable-next-line class-methods-use-this
   getTargetData(criteria) {
     return new Promise((resolve) => {
-      if (!criteria) resolve(window.exlm.targetData);
-      else {
+      if (!criteria) {
+        const data = window.exlm?.targetData;
+        resolve(data);
+      } else if (criteria === this.recommendationMarqueeScopeName) {
+        const [data] = window.exlm.recommendationMarqueeTargetData || [];
+        resolve(data);
+      } else {
         window.exlm.targetData.forEach((data) => {
           if (data?.meta.scope === criteria) resolve(data);
         });
@@ -115,14 +131,53 @@ class AdobeTargetClient {
     });
   }
 
+  sanitizeTargetData() {
+    if (!window?.exlm?.targetData?.length) {
+      return;
+    }
+
+    window.exlm.targetData = window.exlm.targetData
+      .sort((data1, data2) => {
+        const numA = parseInt(data1?.meta?.scope.match(/\d+$/)[0], 10);
+        const numB = parseInt(data2?.meta?.scope.match(/\d+$/)[0], 10);
+        return numA - numB;
+      })
+      .map((data, i) => {
+        data.meta.scope = data.meta.scope.replace(/\d+$/, i + 1);
+        return data;
+      });
+
+    const possibleMarqueeData = window.exlm.targetData[0];
+
+    if (!possibleMarqueeData) {
+      return;
+    }
+
+    this.recommendationMarqueeScopeName = possibleMarqueeData.meta.scope;
+
+    const marqueeIndex = window.exlm.targetData.findIndex(
+      (data) => data.meta.scope === this.recommendationMarqueeScopeName,
+    );
+
+    window.exlm.targetData.splice(marqueeIndex, 1);
+    window.exlm.recommendationMarqueeTargetData.push(possibleMarqueeData);
+  }
+
   /**
    * Fetches target data and maps it to the appropriate DOM components for processing.
    * It determines whether to update, replace, or add new blocks to the DOM.
    */
   async mapComponentsToTarget() {
+    const main = document.querySelector('main');
+    this.blocks = main.querySelectorAll(
+      '.recommended-content:not(.recommended-content.coveo-only), .recently-reviewed, .recommendation-marquee:not(.recommendation-marquee.coveo-only)',
+    );
+    this.sanitizeTargetData();
     const targetData = await this.getTargetData();
-
+    const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
+    let blockRevisionNeeded = false;
     if (targetData.length) {
+      blockRevisionNeeded = true;
       this.targetArray = targetData.map(({ meta }) => {
         const { scope, 'criteria.title': criteriaTitle } = meta;
         const indexMatch = scope.match(/-(\d+)$/);
@@ -136,13 +191,15 @@ class AdobeTargetClient {
         const blockName = blockElement?.dataset.blockName;
 
         // eslint-disable-next-line no-nested-ternary
-        const mode = blockId
+        let mode = blockId
           ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
             (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
             ? 'update'
             : 'replace'
           : 'new';
-
+        if (blockName === 'recommendation-marquee') {
+          mode = 'replace'; // If authored block is marquee, replace it with recommended-block as, this block is not the first one and marquee is always reserved as first block.
+        }
         let newBlock = 'recommended-content';
         if (criteriaTitle === 'exl-php-recently-viewed-content') {
           newBlock = 'recently-reviewed';
@@ -150,6 +207,22 @@ class AdobeTargetClient {
 
         return { blockId, scope, mode, criteriaTitle, newBlock };
       });
+    }
+    if (marqueeTargetData?.meta) {
+      blockRevisionNeeded = true;
+      const [firstBlockEl] = this.blocks; // Marquee should always be the first block.
+      let marqueeBlockId = '';
+      if (firstBlockEl) {
+        marqueeBlockId = `rm-${Math.random().toString(36).substring(2)}`;
+        firstBlockEl.id = marqueeBlockId;
+      }
+      const blockName = firstBlockEl?.dataset.blockName;
+      const { 'criteria.title': criteriaTitle, scope } = marqueeTargetData.meta;
+      const mode = blockName === 'recommendation-marquee' ? 'update' : 'replace';
+      const newBlock = 'recommendation-marquee';
+      this.targetArray.unshift({ blockId: marqueeBlockId, scope, mode, criteriaTitle, newBlock });
+    }
+    if (blockRevisionNeeded) {
       this.reviseBlocks();
     }
   }
@@ -217,7 +290,15 @@ class AdobeTargetClient {
     } else {
       const containerSection = document.createElement('div');
       containerSection.classList.add('section', 'profile-section');
-      main.appendChild(containerSection);
+      const profileRailSection = main.querySelector('.profile-rail-section');
+      const profileBottomSections = main.querySelectorAll('.profile-bottom-section');
+      if (profileBottomSections.length) {
+        main.insertBefore(containerSection, profileBottomSections[0]);
+      } else if (profileRailSection) {
+        main.insertBefore(containerSection, profileRailSection);
+      } else {
+        main.appendChild(containerSection);
+      }
       decorateSections(main);
       containerSection.appendChild(blockEl);
     }

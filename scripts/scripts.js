@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-bitwise */
 import {
-  sampleRUM,
   buildBlock,
   loadHeader,
   loadFooter,
@@ -27,7 +26,7 @@ import {
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
+const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee', 'personalized-content-placeholder']; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -695,7 +694,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
       : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
-    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };
@@ -742,6 +741,9 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
 ]);
 
 export async function loadIms() {
+  // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
+  // eg. embedding header in community which has it's own IMS setup.
+  if (!window.imsLoaded && window.adobeIMS) return Promise.resolve();
   const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
@@ -838,7 +840,6 @@ async function loadLazy(doc) {
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
-  sampleRUM('lazy');
 }
 
 /**
@@ -864,27 +865,6 @@ export function createTag(tag, attributes, html) {
 }
 
 /**
- * Copies all meta tags to window.EXL_META
- * These are consumed by Qualtrics to pass additional data along with the feedback survey.
- */
-function addMetaTagsToWindow() {
-  window.EXL_META = {};
-
-  document.querySelectorAll('meta').forEach((tag) => {
-    if (
-      typeof tag.name === 'string' &&
-      tag.name.length > 0 &&
-      typeof tag.content === 'string' &&
-      tag.content.length > 0
-    ) {
-      window.EXL_META[tag.name] = tag.content;
-    }
-  });
-
-  window.EXL_META.lang = document.documentElement.lang;
-}
-
-/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -892,7 +872,6 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-  addMetaTagsToWindow();
 }
 
 /** load and execute the default export of the given js module path */
@@ -926,14 +905,21 @@ export async function loadArticles() {
   }
 }
 
-function showSignupDialog() {
-  const urlParams = new URLSearchParams(window.location.search);
+async function showSignupDialog() {
   const isSignedIn = window?.adobeIMS?.isSignedInUser();
-  const { isProd } = getConfig();
-  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+  if (!isSignedIn) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const { isProd, signUpFlowConfigDate, modalReDisplayDuration } = getConfig();
+
+  if (!isProd && urlParams.get('signup-wizard') === 'on') {
     // eslint-disable-next-line import/no-cycle
     import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
+    return;
   }
+
+  const { default: initSignupFlowHandler } = await import('./signup-flow/signup-flow-handler.js');
+  await initSignupFlowHandler(signUpFlowConfigDate, modalReDisplayDuration);
 }
 
 /**
@@ -1014,14 +1000,20 @@ export async function getLanguageCode() {
  * @param {function} onRejected callback function to execute when the placeholder is rejected/error
  * @returns {HTMLSpanElement}
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected, lang) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
-  fetchLanguagePlaceholders()
+  fetchLanguagePlaceholders(lang)
     .then((placeholders) => {
-      span.textContent = placeholders[placeholderKey] || fallbackText;
+      if (placeholders[placeholderKey]) {
+        span.textContent = placeholders[placeholderKey];
+        span.setAttribute('data-placeholder-resolved-key', placeholderKey);
+      } else {
+        span.textContent = fallbackText;
+        span.setAttribute('data-placeholder-resolved-fallback-text', 'fallback');
+      }
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
@@ -1037,11 +1029,12 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
 /**
  * decorates placeholder spans in a given element
  * @param {HTMLElement} element
+ * @param {string} lang
  */
-export function decoratePlaceholders(element) {
+export function decoratePlaceholders(element, lang) {
   const placeholdersEls = [...element.querySelectorAll('[data-placeholder]')];
   placeholdersEls.forEach((el) => {
-    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent));
+    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent, undefined, undefined, lang));
   });
 }
 
@@ -1164,6 +1157,16 @@ function createDocColumns() {
   mainSections.forEach((section) => {
     mainContent.append(section);
   });
+  // create last section, used for elements that should be at the bottom of the page
+  const lastSection = createTag('div', { class: 'section last', 'data-section-status': 'initialized' });
+  mainContent.append(lastSection);
+}
+
+/**
+ * @returns {HTMLDivElement} the last section of the document, was added by createDocColumns
+ */
+export function getLastDocsSection() {
+  return document.querySelector('main > div > div.section.last');
 }
 
 /** handles a set of 1-1 redirects */
@@ -1178,10 +1181,10 @@ async function loadPage() {
   await loadEager(document);
   createDocColumns();
   loadRails();
-  await loadLazy(document);
   loadArticles();
+  await loadLazy(document);
   loadDelayed();
-  showSignupDialog();
+  await showSignupDialog();
 
   if (isDocPage) {
     // load prex/next buttons
@@ -1197,16 +1200,6 @@ async function loadPage() {
   }
 }
 
-/**
- * A simple shorter impl of alloy prehide script.
- * This is used for target A/B testing of home page, and should be removed after the test is done.
- */
-function prehidePageForTarget() {
-  const styleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
-  document.head.appendChild(styleEl);
-  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 5000);
-}
-
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
   if (window.hlx.DO_NOT_LOAD_PAGE) return;
@@ -1219,7 +1212,6 @@ function prehidePageForTarget() {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
-  const PHP_AB = 'phpAB';
 
   const isUserSignedIn = async () => {
     await loadIms();
@@ -1249,15 +1241,9 @@ function prehidePageForTarget() {
     try {
       const signedIn = await isUserSignedIn();
       const { personalizedHomeLink } = getConfig() || {};
-      if (signedIn) {
-        // Execute the prehiding function
-        if (!sessionStorage.getItem(PHP_AB)) {
-          prehidePageForTarget();
-        }
-        if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
-          window.location.pathname = `${lang}${personalizedHomeLink}`;
-          return;
-        }
+      if (signedIn && personalizedHomeLink) {
+        window.location.pathname = `${lang}${personalizedHomeLink}`;
+        return;
       }
     } catch (error) {
       console.error('Error during redirect process:', error);

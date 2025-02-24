@@ -73,7 +73,35 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": "article-content-section"
+                  "style": "article-content-section",
+                  "text1": {
+                    "sling:resourceType": "core/franklin/components/text/v1/text",
+                    "name": "Text",
+                    "model": "text",
+                    "text": "<p>[Insert page summary here. 1-2 sentences are recommended for the page summary.]<br><br>To configure the page title, article author(s), and tags, navigate to Page-level properties by clicking Content Tree -&gt; Page -&gt; Properties. (remove this with text)</p>"
+                  },
+                  "article-tags": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Tags",
+                    "model": "article-tags"
+                  },
+                  "text2": {
+                    "sling:resourceType": "core/franklin/components/text/v1/text",
+                    "name": "Text",
+                    "model": "text",
+                    "text": "<p>[Insert article body content here. Add additional blocks below as needed]</p>"
+                  },
+                  "social-share": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Social Share",
+                    "model": "social-share",
+                    "social network": ["facebook", "twitter", "linkedin"]
+                  },
+                  "author-summary": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Author Summary",
+                    "model": "author-summary"
+                  }
                 }
               }
             }
@@ -134,8 +162,25 @@
                 "template": {
                   "name": "Profile Section",
                   "model": "profile-section",
-                  "style": "profile-section",
+                  "style": ["profile-section", "default"],
                   "filter": "profile-section"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Profile Bottom Section",
+          "id": "profile-bottom-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Profile Bottom Section",
+                  "model": "profile-bottom-section",
+                  "style": ["profile-bottom-section", "default"],
+                  "filter": "profile-bottom-section"
                 }
               }
             }
@@ -284,10 +329,17 @@
                   "title": "Announcement Ribbon Title",
                   "titleType": "h3",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "cta1Type": "primary",
-                  "cta2Type": "primary",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
-                  "classes": "light"
+                  "classes": "light",
+                  "dismissalTime": "sessionStorage"
                 }
               }
             }
@@ -446,7 +498,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Browse Filters",
-                  "model": "browse-filters"
+                  "model": "browse-filters",
+                  "headingType": "h2"
                 }
               }
             }
@@ -571,7 +624,15 @@
                   "titleType": "h3",
                   "description": "Description",
                   "subject": "/content/dam/summit-subject.png",
-                  "classes": ["light", "left"]
+                  "classes": ["light", "left"],
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -658,7 +719,11 @@
                   "model": "featured-content",
                   "content_cta": "Read Article",
                   "classes": ["adobe", "left"],
-                  "linkText": "Read Article"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Read Article"
                 }
               }
             }
@@ -790,11 +855,20 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png",
+                  "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "customHexCode": "FFFFFF"
+                  "customHexCode": "FFFFFF",
+                  "marqueeSize": "medium",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -814,7 +888,15 @@
                   "title": "Lorem ipsum",
                   "titleType": "h3",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
-                  "classes": "left"
+                  "classes": "left",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -880,8 +962,11 @@
                   "heading": "Your Experience League just got more personal.",
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "cta1Type": "primary",
-                  "cta1Text": "Manage profile",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Manage profile",
                   "showProfileCard": true
                 }
               }
@@ -922,6 +1007,24 @@
           }
         },
         {
+          "title": "Recommendation Marquee",
+          "id": "recommendation-marquee",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recommendation Marquee",
+                  "model": "recommendation-marquee",
+                  "roles": ["profile_context"],
+                  "filterProductBy": "all_adobe_products",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Recommended Content",
           "id": "recommended-content",
           "plugins": {
@@ -932,8 +1035,8 @@
                   "name": "Recommended Content",
                   "model": "recommended-content",
                   "roles": ["profile_context"],
-                  "sortTargetResultsBy": "",
-                  "filterProductBy": "all_adobe_products"
+                  "filterProductBy": "all_adobe_products",
+                  "headingType": "h2"
                 }
               }
             }
@@ -1105,7 +1208,15 @@
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": ["light", "left"]
+                  "classes": ["light", "left"],
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -1120,6 +1231,22 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Topic Results"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Upcoming Event",
+          "id": "upcoming-event",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Upcoming Event",
+                  "model": "upcoming-event",
+                  "headingType": "h2"
                 }
               }
             }

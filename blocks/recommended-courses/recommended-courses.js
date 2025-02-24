@@ -4,7 +4,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
@@ -16,7 +16,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const [headingElement, toolTipElement, linkElement] = [...block.children].map((row) => row.firstElementChild);
   const contentType = RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY;
-  let buildCardsShimmer = '';
+  let buildCardsShimmer = null;
   const noOfResults = 4;
 
   // Clearing the block's content and adding CSS class
@@ -182,8 +182,6 @@ export default async function decorate(block) {
   // Parameters for fetching card data
   const parameters = { contentType };
 
-  headingElement.firstElementChild.classList.add('h2');
-
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
@@ -214,8 +212,8 @@ export default async function decorate(block) {
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('browse-cards-block-content');
 
-      buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
-      buildCardsShimmer.add(block);
+      buildCardsShimmer = new BrowseCardShimmer(noOfResults);
+      buildCardsShimmer.addShimmer(block);
 
       // Fetching user profile data
       defaultProfileClient.getMergedProfile().then(async (data) => {
@@ -243,22 +241,22 @@ export default async function decorate(block) {
 
           cardModifiedData
             .then((cardData) => {
-              buildCardsShimmer.remove();
+              buildCardsShimmer.removeShimmer();
               if (cardData && cardData.length > 0) {
                 displayCards(contentDiv, cardData, noOfResults);
                 block.appendChild(contentDiv);
               } else {
                 buildNoResultsContent(block, true);
-                recommendedCoursesInterestContent(block);
+                recommendedCoursesInterestContent();
               }
               /* Hide Tooltip while scrolling the cards  layout */
               hideTooltipOnScroll(contentDiv);
             })
             .catch((err) => {
               // Hide shimmer placeholders on error
-              buildCardsShimmer.remove();
+              buildCardsShimmer.removeShimmer();
               buildNoResultsContent(block, true);
-              recommendedCoursesInterestContent(block);
+              recommendedCoursesInterestContent();
               // eslint-disable-next-line no-console
               console.error('Recommended Cards:', err);
             });
@@ -266,7 +264,7 @@ export default async function decorate(block) {
       });
     } else if (window.hlx.aemRoot) {
       buildNoResultsContent(block, true);
-      recommendedCoursesInterestContent(block);
+      recommendedCoursesInterestContent();
     } else {
       const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
       if (recommendedCoursesContainer) {
