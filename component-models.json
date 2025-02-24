@@ -5,7 +5,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "variantType",
+        "name": "classes",
         "value": "",
         "label": "Variant Type",
         "options": [
