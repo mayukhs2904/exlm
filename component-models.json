@@ -4,19 +4,12 @@
     "fields": [
       {
         "component": "select",
-        "valueType": "string",
+        "label": "Select",
         "name": "select",
-        "value": "teaser",
-        "label": "select",
+        "valueType": "string",
         "options": [
-          {
-            "name": "Teaser",
-            "value": "teaser"
-          },
-          {
-            "name": "Inline Banner",
-            "value": "inlineBanner"
-          }
+          { "name": "Teaser", "value": "option1" },
+          { "name": "Inner Banner", "value": "option2" }
         ]
       },
       {
