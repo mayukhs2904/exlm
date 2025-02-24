@@ -6,6 +6,7 @@
         "component": "select",
         "valueType": "string",
         "name": "variantType",
+        "value": "teaser",
         "label": "Variant Type",
         "options": [
           {

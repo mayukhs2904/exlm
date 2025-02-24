@@ -2,7 +2,7 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [variant, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
+  const [pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
   // Build DOM

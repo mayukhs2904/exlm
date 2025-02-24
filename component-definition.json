@@ -551,6 +551,7 @@
                   "teaser": {
                     "name": "Teaser",
                     "model": "teaser",
+                    "variantType": "teaser",
                     "fileReference": "/content/dam/default-teaser-banner.png",
                     "title": "Teaser Title",
                     "titleType": "h3",
