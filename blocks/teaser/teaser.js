@@ -1,18 +1,11 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
-export function generateTeaserDOM(props, classes, isSignedIn) {
+export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
   const [variant, hideInlineBanner, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
-  console.log(variant,"variant")
-  console.log(hideInlineBanner,"hide inline banner");
-  console.log(isSignedIn,"is signed in")
-  if(variant.textContent.trim()==='secondary' && hideInlineBanner.textContent.trim()==='true' && isSignedIn){
-    console.log("enter")
-    return;
-  }
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${picture ? picture.outerHTML : ''}</div>
@@ -50,7 +43,14 @@ export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
   const variant = props[0]?.textContent?.trim();
-  const teaserDOM = generateTeaserDOM(props, block.classList, isSignedIn);
+  const hideInlineBanner = props[1]?.textContent?.trim();
+  let teaserDOM;
+  if(variant==='secondary' && hideInlineBanner==='true' && isSignedIn){
+    teaserDOM='';
+  }
+  else{
+    teaserDOM = generateTeaserDOM(props, block.classList);
+  }
   block.textContent = '';
   if (variant) {
     block.classList.add(variant);
