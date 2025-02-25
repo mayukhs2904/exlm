@@ -1,10 +1,9 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import {isSignedInUser} from '../../scripts/auth/profile.js'
 
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [variant, hideinlinebanner, pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
-  console.log(variant,"variant");
-  console.log(hideinlinebanner,"hide inline baner")
+  const [pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
   // Build DOM
@@ -39,10 +38,19 @@ export function generateTeaserDOM(props, classes) {
   return teaserDOM;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // get the first and only cell from each row
+  const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
-  const teaserDOM = generateTeaserDOM(props, block.classList);
+  const variant = props.shift();
+  const hideInlineBanner = props.shift();
+  let teaserDOM='';
+  if(variant.textContent.trim()==='secondary' && hideInlineBanner.textContent.trim()==='true' && isSignedIn){
+    teaserDOM='';
+  }
+  else{
+    teaserDOM = generateTeaserDOM(props, block.classList);
+  }
   block.textContent = '';
   block.append(teaserDOM);
 }
