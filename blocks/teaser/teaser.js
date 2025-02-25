@@ -43,17 +43,19 @@ export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
   const variant = props.shift();
+  const variantValue = variant.textContent.trim();
   const hideInlineBanner = props.shift();
+  const hideInlineBannerValue = hideInlineBanner.trim();
   let teaserDOM='';
-  if(variant.textContent.trim()==='secondary' && hideInlineBanner.textContent.trim()==='true' && isSignedIn){
+  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
     teaserDOM='';
   }
   else{
     teaserDOM = generateTeaserDOM(props, block.classList);
   }
   block.textContent = '';
-  if(variant){
-    block.classList.add(`${variant}`);
+  if(variantValue){
+    block.classList.add(`${variantValue}`);
   }
   block.append(teaserDOM);
 }
