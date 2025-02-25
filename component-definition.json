@@ -552,6 +552,7 @@
                     "name": "Teaser",
                     "model": "teaser",
                     "variantType": "primary",
+                    "hideInlineBanner": "false",
                     "fileReference": "/content/dam/default-teaser-banner.png",
                     "title": "Teaser Title",
                     "titleType": "h3",
