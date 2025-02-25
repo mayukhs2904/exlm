@@ -52,5 +52,8 @@ export default async function decorate(block) {
     teaserDOM = generateTeaserDOM(props, block.classList);
   }
   block.textContent = '';
+  if(variant){
+    block.classList.add(`${variant}`);
+  }
   block.append(teaserDOM);
 }
