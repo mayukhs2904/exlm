@@ -49,9 +49,6 @@ export default async function decorate(block) {
   const variant = props[0]?.textContent?.trim();
   const hideInlineBanner = props[1]?.textContent?.trim();
   let teaserDOM;
-  if(UEAuthorMode){
-    teaserDOM = generateTeaserDOM(props, block.classList);
-  }
   if(variant==='secondary' && hideInlineBanner==='true' && isSignedIn){
     teaserDOM='';
   }
