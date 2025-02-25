@@ -131,6 +131,10 @@
     padding: 0 56px;
   }
 
+  .section div.teaser-wrapper:has(.secondary){
+    border-radius: 16px;
+  }
+
   .section div.teaser-wrapper {
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--spectrum-spacing-800));
@@ -266,10 +270,6 @@
   body[class^='article-'] .section div.teaser-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
-  }
-
-  .teaser-wrapper:has(.secondary) {
-    border-radius: 16px;
   }
 
   body[class^='browse-'] .section div.teaser-wrapper .background img,
