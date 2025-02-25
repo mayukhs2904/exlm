@@ -45,7 +45,7 @@ export default async function decorate(block) {
   const variant = props.shift();
   const variantValue = variant.textContent.trim();
   const hideInlineBanner = props.shift();
-  const hideInlineBannerValue = hideInlineBanner.trim();
+  const hideInlineBannerValue = hideInlineBanner.textContent.trim();
   let teaserDOM='';
   if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
     teaserDOM='';
