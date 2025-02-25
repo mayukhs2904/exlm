@@ -551,8 +551,6 @@
                   "teaser": {
                     "name": "Teaser",
                     "model": "teaser",
-                    "variantType": "primary",
-                    "hideInlineBanner": "false",
                     "fileReference": "/content/dam/default-teaser-banner.png",
                     "title": "Teaser Title",
                     "titleType": "h3",
@@ -1207,6 +1205,8 @@
                   "name": "Teaser",
                   "model": "teaser",
                   "fileReference": "/content/dam/default-teaser-banner.png",
+                  "variantType": "primary",
+                  "hideInlineBanner": "false",
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
