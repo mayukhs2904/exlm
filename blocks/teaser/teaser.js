@@ -46,12 +46,19 @@ export default async function decorate(block) {
   const variantValue = variant.textContent.trim();
   const hideInlineBanner = props.shift();
   const hideInlineBannerValue = hideInlineBanner.textContent.trim();
-  let teaserDOM='';
-  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
-    teaserDOM='';
+  // let teaserDOM='';
+  // if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
+  //   teaserDOM='';
+  // }
+  // else{
+  //   teaserDOM = generateTeaserDOM(props, block.classList);
+  // }
+  const teaserDOM = generateTeaserDOM(props, block.classList);
+  if(variant==='secondary' && hideInlineBanner==='true' && isSignedIn){
+    block.classList.add('hide')
   }
   else{
-    teaserDOM = generateTeaserDOM(props, block.classList);
+    block.classList.remove('hide');
   }
   block.textContent = '';
   if(variantValue){
