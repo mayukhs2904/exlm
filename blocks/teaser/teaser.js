@@ -54,8 +54,8 @@ export default async function decorate(block) {
   //   teaserDOM = generateTeaserDOM(props, block.classList);
   // }
   const teaserDOM = generateTeaserDOM(props, block.classList);
-  if(variant==='secondary' && hideInlineBanner==='true' && isSignedIn){
-    block.classList.add('hide')
+  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
+    block.classList.add('hide');
   }
   else{
     block.classList.remove('hide');

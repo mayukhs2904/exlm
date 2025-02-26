@@ -135,7 +135,7 @@
     border-radius: 16px;
   } */
 
-  .teaser-wrapper .teaser.secondary {
+  .teaser-wrapper:has(.secondary) {
     border-radius: 16px;
   }
 
