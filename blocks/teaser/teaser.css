@@ -141,7 +141,7 @@
 
   .section div.teaser-wrapper:has(.secondary), .section div.teaser-wrapper:has(.secondary) .background img {
     border-radius: 16px;
-    border-color: #e8e8e8;
+    border: 1px solid #e8e8e8;
   }
 
   .section div.teaser-wrapper:has(.hide) {
@@ -152,6 +152,11 @@
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--spectrum-spacing-800));
     margin-right: calc(-1 * var(--spectrum-spacing-800));
+  }
+
+  .section div.teaser-wrapper:has(.secondary) {
+    margin-left: unset;
+    margin-right: unset;
   }
 
   /* remove background color , add border */
@@ -169,6 +174,10 @@
     padding: 0 var(--spectrum-spacing-800);
     background-color: unset;
     min-height: 420px;
+  }
+
+  .teaser.block.secondary > .foreground {
+    min-height: 236px;
   }
 
   .teaser.block.dark > .foreground {
