@@ -139,7 +139,7 @@
     border-radius: 16px;
   }
 
-  .teaser-wrapper .teaser.hide {
+  .teaser-wrapper:has(.hide) {
     display: none;
   }
 
