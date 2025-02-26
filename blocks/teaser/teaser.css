@@ -141,6 +141,7 @@
 
   .section div.teaser-wrapper:has(.secondary), .section div.teaser-wrapper:has(.secondary) .background img {
     border-radius: 16px;
+    border-color: #e8e8e8;
   }
 
   .section div.teaser-wrapper:has(.hide) {
@@ -290,6 +291,7 @@
 
   body[class^='browse-'] .section div.teaser-wrapper:has(.secondary),
   body[class^='article-'] .section div.teaser-wrapper:has(.secondary) {
+    border-color: #e8e8e8;
     border-radius: 16px;
   }
 

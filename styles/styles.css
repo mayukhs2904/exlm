@@ -1083,6 +1083,10 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
     padding-bottom: 40px;
   }
 
+  body[class^="browse-"] .section.teaser-container:has(.hide) {
+    padding: 0px;
+  }
+
   body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
     margin-bottom: 82px;
   }
