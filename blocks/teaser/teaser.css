@@ -131,11 +131,7 @@
     padding: 0 56px;
   }
 
-  /* .section div.teaser-wrapper:has(.secondary){
-    border-radius: 16px;
-  } */
-
-  .teaser-wrapper:has(.secondary) {
+  body .section div.teaser-wrapper:has(.secondary){
     border-radius: 16px;
   }
 
