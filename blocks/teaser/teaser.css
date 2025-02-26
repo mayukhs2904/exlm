@@ -38,6 +38,10 @@
   margin-bottom: var(--spectrum-spacing-300);
 }
 
+.teaser.block.secondary > .foreground > .text > .eyebrow {
+  margin-bottom: var(--spectrum-spacing-100);
+}
+
 /* the main title, hidden in mobile */
 .teaser.block > .foreground > .text > .title {
   display: none;
@@ -46,6 +50,10 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--spectrum-spacing-100);
+}
+
+.teaser.block.secondary > .foreground > .text > .title {
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 .teaser.block.dark > .foreground > .text > .title {
@@ -171,6 +179,10 @@
     width: 40%;
     order: 0;
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .teaser.block.secondary > .foreground > .text {
+    padding: var(--spectrum-spacing-600) 0;
   }
 
   /* change the order if text should be on the right */
