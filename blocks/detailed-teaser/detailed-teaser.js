@@ -55,12 +55,12 @@ export default async function decorate(block) {
   // get the first and only cell from each row
   const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
-  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
-  block.textContent = '';
   const variant = props.shift();
   const variantValue = variant.textContent.trim();
   const hideInlineBanner = props.shift();
   const hideInlineBannerValue = hideInlineBanner.textContent.trim();
+  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
+  block.textContent = '';
   if(UEAuthorMode){
     if(variantValue==='secondary' && hideInlineBannerValue==='true') {
       block.classList.add('hide');
