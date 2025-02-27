@@ -9,6 +9,11 @@
   margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
+.section div.detailed-teaser-wrapper:has(.inline-banner) {
+  margin-left: unset;
+  margin-right: unset;
+}
+
 .detailed-teaser-wrapper:has(.hide-inline-banner) {
   display: none;
 }
@@ -20,6 +25,11 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: row;
+}
+
+.detailed-teaser.block.inline-banner {
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
 }
 
 /* the background image container */
@@ -68,6 +78,10 @@
 /* eyebrow content */
 .detailed-teaser.block > .foreground > .text > .eyebrow {
   margin-bottom: 26px;
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .text > .eyebrow {
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow:empty {
@@ -169,6 +183,10 @@
   padding-top: var(--spectrum-spacing-400);
 }
 
+.detailed-teaser.block.inline-banner > .foreground > .spacer {
+  padding: 0;
+}
+
 .detailed-teaser.block > .foreground > .spacer:empty {
   display: none;
 }
@@ -176,6 +194,19 @@
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .spacer img {
   border-radius: 30px;
+}
+
+.detailed-teaser.block.inline-banner > .foreground {
+  width: 100%;
+  flex-direction: column-reverse;
+}
+
+.detailed-teaser.block.inline-banner.right > .foreground {
+  flex-direction: column;
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .text > .description, .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
+  margin-top: var(--spectrum-spacing-300);
 }
 
 /* ----- TABLET ----- */
@@ -192,15 +223,47 @@
     min-height: 320px;
   }
 
+  .detailed-teaser.block.inline-banner > .foreground {
+    flex-direction: row;
+    width: 100%;
+    margin: unset;
+    padding: 0;
+    min-height: 240px;
+    gap:40px;
+  }
+
+  .detailed-teaser.block.inline-banner.right > .foreground {
+    flex-direction: row;
+  }
+
   /* limit width of text part and set order */
   .detailed-teaser.block > .foreground > .text {
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .detailed-teaser.block.right.inline-banner > .foreground > .text {
+    padding: var(--spectrum-spacing-600) var(--spectrum-spacing-800) var(--spectrum-spacing-600) 0;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text {
+    padding: var(--spectrum-spacing-600) 0 var(--spectrum-spacing-600) var(--spectrum-spacing-800);
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
+    margin-top: var(--spectrum-font-size-600);
   }
 
   /* teaser on browse pages has different width for text */
   body[class^='browse-'] .detailed-teaser.block > .foreground > .text,
   body[class^='article-'] .detailed-teaser.block > .foreground > .text {
     min-width: unset;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text {
+    min-width: unset;
+    width: 40%;
+    flex-grow: 1;
+    max-width: unset;
   }
 
   /* spacer/subject image */
@@ -233,6 +296,21 @@
   }
 }
 
+.detailed-teaser.block.inline-banner > .foreground > .spacer picture {
+  height: 100%;
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .spacer img {
+  border-radius: 0px;
+  min-height: unset;
+  display: block;
+  height: 100%;
+  width: 100%;
+  max-height: 300px;
+  max-width: 590px;
+  object-fit: cover;
+}
+
 @media (min-width: 1024px) {
   .detailed-teaser.block:has(.pop-subject-image) {
     margin-top: 50px;
@@ -246,6 +324,10 @@
     justify-content: space-between;
     max-width: var(--default-max-width);
     width: 100%;
+  }
+
+  .detailed-teaser.block.inline-banner .foreground {
+    justify-content: unset;
   }
 
   /* the cta buttons */
