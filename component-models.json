@@ -574,6 +574,32 @@
     "id": "detailed-teaser",
     "fields": [
       {
+        "component": "select",
+        "name": "variantType",
+        "value": "primary",
+        "label": "Variant Type",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Teaser",
+            "value": "primary"
+          },
+          {
+            "name": "Inline Banner",
+            "value": "secondary"
+          }
+        ]
+      },{
+      "condition": {
+        "===": [{ "var": "variantType" }, "secondary"]
+      },
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "hideInlineBanner",
+        "label": "Hide teaser if user is logged in?",
+        "description": "This option allows to hide the teaser when user is logged in."
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
