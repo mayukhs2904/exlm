@@ -62,14 +62,14 @@ export default async function decorate(block) {
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
   if(UEAuthorMode){
-    if(variantValue==='secondary' && hideInlineBannerValue==='true') {
-      block.classList.add('hide');
+    if(variantValue==='inline-banner' && hideInlineBannerValue==='true') {
+      block.classList.add('hide-inline-banner');
     }
     else{
-      block.classList.remove('hide');
+      block.classList.remove('hide-inline-banner');
     }
   }
-  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn) {
+  if(variantValue==='inline-banner' && hideInlineBannerValue==='true' && isSignedIn) {
     block.classList.add('hide-inline-banner');
   }
   else{
