@@ -53,5 +53,26 @@ export default function decorate(block) {
   const props = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
+  const variant = props.shift();
+  const variantValue = variant.textContent.trim();
+  const hideInlineBanner = props.shift();
+  const hideInlineBannerValue = hideInlineBanner.textContent.trim();
+  if(UEAuthorMode){
+    if(variantValue==='secondary' && hideInlineBannerValue==='true') {
+      block.classList.add('hide');
+    }
+    else{
+      block.classList.remove('hide');
+    }
+  }
+  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn) {
+    block.classList.add('hide-inline-banner');
+  }
+  else{
+    block.classList.remove('hide-inline-banner');
+  }
+  if(variantValue){
+    block.classList.add(`${variantValue}`);
+  }
   block.append(teaserDOM);
 }

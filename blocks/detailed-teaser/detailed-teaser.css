@@ -9,6 +9,10 @@
   margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
+.detailed-teaser-wrapper:has(.hide-inline-banner) {
+  display: none;
+}
+
 .detailed-teaser.block {
   width: 100%;
   height: 100%;

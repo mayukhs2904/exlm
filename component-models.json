@@ -576,17 +576,17 @@
       {
         "component": "select",
         "name": "variantType",
-        "value": "primary",
+        "value": "detailed-teaser-variation",
         "label": "Variant Type",
         "valueType": "string",
         "options": [
           {
-            "name": "Teaser",
-            "value": "primary"
+            "name": "Detailed Teaser",
+            "value": "detailed-teaser-variation"
           },
           {
             "name": "Inline Banner",
-            "value": "secondary"
+            "value": "inline-banner"
           }
         ]
       },{
