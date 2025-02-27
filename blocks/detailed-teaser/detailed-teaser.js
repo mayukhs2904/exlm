@@ -1,5 +1,7 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
