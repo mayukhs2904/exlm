@@ -1,4 +1,5 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import {isSignedInUser} from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -50,8 +51,9 @@ export function generateDetailedTeaserDOM(props, classes) {
   return teaserDOM;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // get the first and only cell from each row
+  const isSignedIn = await isSignedInUser();
   const props = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';

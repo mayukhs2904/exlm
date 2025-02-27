@@ -591,13 +591,13 @@
         ]
       },{
       "condition": {
-        "===": [{ "var": "variantType" }, "secondary"]
+        "===": [{ "var": "variantType" }, "inline-banner"]
       },
         "component": "boolean",
         "valueType": "boolean",
         "name": "hideInlineBanner",
-        "label": "Hide teaser if user is logged in?",
-        "description": "This option allows to hide the teaser when user is logged in."
+        "label": "Hide inline banner if user is logged in?",
+        "description": "This option allows to hide the banner when user is logged in."
       },
       {
         "component": "reference",
