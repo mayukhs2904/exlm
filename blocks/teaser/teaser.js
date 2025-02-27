@@ -1,5 +1,7 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import {isSignedInUser} from '../../scripts/auth/profile.js'
+import {isSignedInUser} from '../../scripts/auth/profile.js';
+
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
@@ -54,7 +56,15 @@ export default async function decorate(block) {
   //   teaserDOM = generateTeaserDOM(props, block.classList);
   // }
   const teaserDOM = generateTeaserDOM(props, block.classList);
-  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn){
+  if(UEAuthorMode){
+    if(variantValue==='secondary' && hideInlineBannerValue==='true') {
+      block.classList.add('hide');
+    }
+    else{
+      block.classList.remove('hide');
+    }
+  }
+  if(variantValue==='secondary' && hideInlineBannerValue==='true' && isSignedIn) {
     block.classList.add('hide');
   }
   else{

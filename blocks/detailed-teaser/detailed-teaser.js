@@ -69,11 +69,13 @@ export default async function decorate(block) {
       block.classList.remove('hide-inline-banner');
     }
   }
-  if(variantValue==='inline-banner' && hideInlineBannerValue==='true' && isSignedIn) {
-    block.classList.add('hide-inline-banner');
-  }
   else{
-    block.classList.remove('hide-inline-banner');
+    if(variantValue==='inline-banner' && hideInlineBannerValue==='true' && isSignedIn) {
+      block.classList.add('hide-inline-banner');
+    }
+    else{
+      block.classList.remove('hide-inline-banner');
+    }
   }
   if(variantValue){
     block.classList.add(`${variantValue}`);
