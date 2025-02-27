@@ -295,8 +295,8 @@
     padding: 0 var(--spectrum-spacing-1100);
   }
 
-  body[class^='browse-'] .section div.detailed-teaser-wrapper.inline-banner .foreground,
-  body[class^='article-'] .section div.detailed-teaser-wrapper.inline-banner .foreground {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper:has(.inline-banner) .foreground,
+  body[class^='article-'] .section div.detailed-teaser-wrapper:has(.inline-banner) .foreground {
     padding: 0;
   }
 
