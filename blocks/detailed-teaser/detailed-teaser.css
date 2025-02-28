@@ -28,7 +28,7 @@
 }
 
 .detailed-teaser.block.inline-banner {
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--non-spectrum-unicorn-silver);
   border-radius: 16px;
 }
 
@@ -58,6 +58,15 @@
   position: relative;
   max-width: var(--default-max-width);
   margin: auto;
+}
+
+.detailed-teaser.block.inline-banner > .foreground {
+  width: 100%;
+  flex-direction: column-reverse;
+}
+
+.detailed-teaser.block.inline-banner.right > .foreground {
+  flex-direction: column;
 }
 
 /* the text block (eyebrow content, title , descr , cta) */
@@ -169,6 +178,10 @@
   padding: 5px 14px 6px;
 }
 
+.detailed-teaser.block.inline-banner > .foreground > .text > .description, .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
+  margin-top: var(--spectrum-spacing-300);
+}
+
 /* spacer/subject image */
 .detailed-teaser.block > .foreground > .spacer {
   display: block;
@@ -194,19 +207,6 @@
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .spacer img {
   border-radius: 30px;
-}
-
-.detailed-teaser.block.inline-banner > .foreground {
-  width: 100%;
-  flex-direction: column-reverse;
-}
-
-.detailed-teaser.block.inline-banner.right > .foreground {
-  flex-direction: column;
-}
-
-.detailed-teaser.block.inline-banner > .foreground > .text > .description, .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
-  margin-top: var(--spectrum-spacing-300);
 }
 
 .detailed-teaser.block.inline-banner > .foreground > .spacer picture {
