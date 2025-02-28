@@ -60,10 +60,13 @@ export default async function decorate(block) {
   block.textContent = '';
   if(variantValue==='inline-banner'){
     const isSignedIn = await isSignedInUser();
+    console.log(isSignedIn,"is signed in")
     if(hideInlineBannerValue==='true' && isSignedIn) {
+      console.log("enter")
       block.classList.add('hide-inline-banner');
     }
     else{
+      console.log("Else")
       block.classList.remove('hide-inline-banner');
     }
   }
