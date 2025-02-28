@@ -3,6 +3,7 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
+  console.log(props,"props")
   // Extract properties, always same order as in model, empty string if not set
   const [backImage, eyebrowContent, title, description, subjectImage, popSubjectImage, firstCta, secondCta] = props;
   const backPicture = backImage.querySelector('picture');
@@ -52,11 +53,11 @@ export function generateDetailedTeaserDOM(props, classes) {
 export default async function decorate(block) {
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
-  const variant = props.shift();
-  const variantValue = variant.textContent.trim();
-  const hideInlineBanner = props.shift();
-  const hideInlineBannerValue = hideInlineBanner.textContent.trim();
-  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
+  const variantValue = props[0]?.textContent.trim();
+  const hideInlineBannerValue = props[1]?.textContent.trim();
+  console.timeLog(variantValue,hideInlineBannerValue,"values")
+  
+  const teaserDOM = generateDetailedTeaserDOM(props.slice(2), block.classList);
   block.textContent = '';
   if(variantValue==='inline-banner'){
     const isSignedIn = await isSignedInUser();
