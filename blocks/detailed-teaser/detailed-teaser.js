@@ -52,25 +52,20 @@ export function generateDetailedTeaserDOM(props, classes) {
 
 export default async function decorate(block) {
   // get the first and only cell from each row
-  const props = [...block.children].map((row) => row.firstElementChild);
-  const variantValue = props[0]?.textContent.trim();
-  const hideInlineBannerValue = props[1]?.textContent.trim();
-  console.log(variantValue,"variant values")
-  console.log(hideInlineBannerValue,"hideInlineBanner values")
-  
-  const teaserDOM = generateDetailedTeaserDOM(props.slice(2), block.classList);
+  const [variantElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
+  const variant = variantElement?.textContent?.trim();
+  console.log(variant,"variant")
+  const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
+  console.log(hideInlineBanner,"hide inline")
+  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
-  if(variantValue==='inline-banner'){
+  if(variant === 'inline-banner'){
+    block.classList.add(variant);
     const isSignedIn = await isSignedInUser();
-    if(hideInlineBannerValue==='true' && isSignedIn) {
+    if(hideInlineBanner === 'true' && isSignedIn) {
       block.classList.add('hide-inline-banner');
+      console.log("enter if")
     }
-    else{
-      block.classList.remove('hide-inline-banner');
-    }
-  }
-  if (variantValue) {
-    block.classList.add(`${variantValue}`);
   }
   block.append(teaserDOM);
 }
