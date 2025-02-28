@@ -55,19 +55,17 @@ export default async function decorate(block) {
   const props = [...block.children].map((row) => row.firstElementChild);
   const variantValue = props[0]?.textContent.trim();
   const hideInlineBannerValue = props[1]?.textContent.trim();
-  console.timeLog(variantValue,hideInlineBannerValue,"values")
+  console.log(variantValue,"variant values")
+  console.log(hideInlineBannerValue,"hideInlineBanner values")
   
   const teaserDOM = generateDetailedTeaserDOM(props.slice(2), block.classList);
   block.textContent = '';
   if(variantValue==='inline-banner'){
     const isSignedIn = await isSignedInUser();
-    console.log(isSignedIn,"is signed in")
     if(hideInlineBannerValue==='true' && isSignedIn) {
-      console.log("enter")
       block.classList.add('hide-inline-banner');
     }
     else{
-      console.log("Else")
       block.classList.remove('hide-inline-banner');
     }
   }
