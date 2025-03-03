@@ -111,6 +111,14 @@
   object-fit: cover;
 }
 
+.detailed-teaser.block.carousel-teaser > .foreground > .spacer img {
+  border-radius: 0;
+  min-height: unset;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
 .detailed-teaser.block > .foreground > .text > .eyebrow > .logo img {
   height: 32px;
 }
@@ -206,7 +214,7 @@
   padding-top: var(--spectrum-spacing-400);
 }
 
-.detailed-teaser.block.inline-banner > .foreground > .spacer {
+.detailed-teaser.block.inline-banner > .foreground > .spacer, .detailed-teaser.block.carousel-teaser > .foreground > .spacer {
   padding: 0;
 }
 
@@ -219,7 +227,7 @@
   border-radius: 30px;
 }
 
-.detailed-teaser.block.inline-banner > .foreground > .spacer picture {
+.detailed-teaser.block.inline-banner > .foreground > .spacer picture, .detailed-teaser.block.carousel-teaser > .foreground > .spacer picture {
   height: 100%;
 }
 
@@ -237,6 +245,10 @@
     min-height: 320px;
   }
 
+  .detailed-teaser.carousel-teaser {
+    padding: 0;
+  }
+
   .detailed-teaser.block.inline-banner > .foreground {
     flex-direction: row;
     width: 100%;
@@ -249,6 +261,11 @@
   /* limit width of text part and set order */
   .detailed-teaser.block > .foreground > .text {
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .detailed-teaser.block.carousel-teaser > .foreground > .text {
+    padding: 112px 56px 112px 56px;
+    box-sizing: border-box;
   }
 
   .detailed-teaser.block.inline-banner > .foreground > .text {
@@ -331,6 +348,11 @@
     width: 100%;
   }
 
+  .detailed-teaser.block.carousel-teaser .foreground {
+    gap: 0px;
+    justify-content: unset;
+  }
+
   .detailed-teaser.block.inline-banner .foreground {
     justify-content: unset;
   }
@@ -345,11 +367,21 @@
     min-width: 550px;
   }
 
+  .detailed-teaser.block.carousel-teaser > .foreground > .text {
+    min-width: unset;
+    width: 50%;
+    max-width: unset;
+  }
+
   /* the subject image /spacer */
   .detailed-teaser.block > .foreground > .spacer {
     display: flex;
     align-items: center;
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .detailed-teaser.block > .foreground > .spacer {
+    width: 50%;
   }
 
   .detailed-teaser.block > .foreground.pop-subject-image > .spacer {

@@ -3,32 +3,6 @@
     "id": "teaser",
     "fields": [
       {
-        "component": "select",
-        "name": "variantType",
-        "value": "primary",
-        "label": "Variant Type",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Teaser",
-            "value": "primary"
-          },
-          {
-            "name": "Inline Banner",
-            "value": "secondary"
-          }
-        ]
-      },{
-      "condition": {
-        "===": [{ "var": "variantType" }, "secondary"]
-      },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "hideInlineBanner",
-        "label": "Hide teaser if user is logged in?",
-        "description": "This option allows to hide the teaser when user is logged in."
-      },
-      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -574,37 +548,6 @@
     "id": "detailed-teaser",
     "fields": [
       {
-        "component": "select",
-        "name": "variantType",
-        "value": "",
-        "label": "Variant Type",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Detailed Teaser (Default)",
-            "value": ""
-          },
-          {
-            "name": "Inline Banner",
-            "value": "inline-banner"
-          },
-          {
-            "name": "Carousel Teaser",
-            "value": "carousel-teaser"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "variantType" }, "inline-banner"]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "hideInlineBanner",
-        "label": "Hide inline banner if user is logged in?",
-        "description": "This option allows to hide the banner when user is logged in."
-      },
-      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -617,7 +560,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 3,
         "options": [
           {
             "name": "Theme",
@@ -644,8 +587,31 @@
                 "value": "right"
               }
             ]
+          },
+          {
+            "name": "Variant Type",
+            "children": [
+              {
+                "name": "Detailed Teaser (Default)",
+                "value": ""
+              },
+              {
+                "name": "Inline Banner",
+                "value": "inline-banner"
+              }
+            ]
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "inline-banner"]
+        },
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "hideInlineBanner",
+        "label": "Hide inline banner if user is logged in?",
+        "description": "This option allows to hide the banner when user is logged in."
       },
       {
         "component": "reference",
