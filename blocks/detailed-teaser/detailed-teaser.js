@@ -52,13 +52,9 @@ export function generateDetailedTeaserDOM(props, classes) {
 
 export default async function decorate(block) {
   // get the first and only cell from each row
-  const [imageEl, classList, hideInlineBannerEl, ...props] = [...block.children].map((row) => row.firstElementChild);
-  const classesText = classList.textContent.trim();
-  console.log(classesText,"clases text")
-  const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
-  console.log(classes,"class")
-  console.log(hideInlineBannerEl,"hide inline");
-  const teaserDOM = generateDetailedTeaserDOM([imageEl,...props], block.classList);
+  const [imageElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
+  console.log(imageElement,"hide inline");
+  const teaserDOM = generateDetailedTeaserDOM([imageElement,...props], block.classList);
   block.textContent = '';
   // if (variant === 'inline-banner') {
   //   const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
