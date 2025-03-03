@@ -605,7 +605,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "classes" }, "inline-banner"]
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "inline-banner"] }]
         },
         "component": "boolean",
         "valueType": "boolean",
