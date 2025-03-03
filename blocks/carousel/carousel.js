@@ -36,15 +36,7 @@ export default function decorate(block) {
   // loop through all children blocks
   [...panels].forEach((panel, i) => {
     // generate the  panel
-    let [image, classList, ...rest] = panel.children;
-    const hasPictureTag = image?.querySelector('picture');
-    if (!hasPictureTag) {
-      let variantEl, hideBannerEl;
-      [variantEl, hideBannerEl, image, classList, ...rest] = panel.children;
-      if (variantEl?.textContent.trim()) {
-          panel.classList.add(variantEl.textContent.trim());
-      }
-    }
+    const [image, classList, ...rest] = panel.children;
     const classesText = classList.textContent.trim();
     const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
     const blockType = [...classes].includes('detailed-teaser') ? 'detailed-teaser' : 'teaser';
