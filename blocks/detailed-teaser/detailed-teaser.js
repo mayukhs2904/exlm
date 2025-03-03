@@ -54,17 +54,15 @@ export default async function decorate(block) {
   // get the first and only cell from each row
   const [variantElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
   const variant = variantElement?.textContent?.trim();
-  console.log(variant,"variant")
-  const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
-  console.log(hideInlineBanner,"hide inline")
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
-  if(variant === 'inline-banner'){
+  if (variant === 'inline-banner') {
     block.classList.add(variant);
+    const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
+    const { isSignedInUser } = await import('../../scripts/auth/profile.js');
     const isSignedIn = await isSignedInUser();
-    if(hideInlineBanner === 'true' && isSignedIn) {
+    if (hideInlineBanner === 'true' && isSignedIn) {
       block.classList.add('hide-inline-banner');
-      console.log("enter if")
     }
   }
   block.append(teaserDOM);

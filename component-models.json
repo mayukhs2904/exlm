@@ -576,23 +576,24 @@
       {
         "component": "select",
         "name": "variantType",
-        "value": "detailed-teaser-variation",
+        "value": "",
         "label": "Variant Type",
         "valueType": "string",
         "options": [
           {
-            "name": "Detailed Teaser",
-            "value": "detailed-teaser-variation"
+            "name": "Detailed Teaser (Default)",
+            "value": ""
           },
           {
             "name": "Inline Banner",
             "value": "inline-banner"
           }
         ]
-      },{
-      "condition": {
-        "===": [{ "var": "variantType" }, "inline-banner"]
       },
+      {
+        "condition": {
+          "===": [{ "var": "variantType" }, "inline-banner"]
+        },
         "component": "boolean",
         "valueType": "boolean",
         "name": "hideInlineBanner",
