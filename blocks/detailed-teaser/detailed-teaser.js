@@ -3,7 +3,6 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
-  console.log(props,"props")
   // Extract properties, always same order as in model, empty string if not set
   const [backImage, eyebrowContent, title, description, subjectImage, popSubjectImage, firstCta, secondCta] = props;
   const backPicture = backImage.querySelector('picture');
