@@ -39,7 +39,9 @@ export default function decorate(block) {
     let [image, classList, ...rest] = panel.children;
     const hasPictureTag = image?.querySelector('picture');
     if (!hasPictureTag) {
-      [,, image, classList, ...rest] = panel.children;
+      [variant, hideBanner , image, classList, ...rest] = panel.children;
+      panel.classList.add(variant);
+      
     }
     const classesText = classList.textContent.trim();
     const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
