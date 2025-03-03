@@ -587,6 +587,10 @@
           {
             "name": "Inline Banner",
             "value": "inline-banner"
+          },
+          {
+            "name": "Carousel Teaser",
+            "value": "carousel-teaser"
           }
         ]
       },

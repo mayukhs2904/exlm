@@ -56,8 +56,10 @@ export default async function decorate(block) {
   const variant = variantElement?.textContent?.trim();
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
-  if (variant === 'inline-banner') {
+  if(variant){
     block.classList.add(variant);
+  }
+  if (variant === 'inline-banner') {
     const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
     const { isSignedInUser } = await import('../../scripts/auth/profile.js');
     const isSignedIn = await isSignedInUser();
