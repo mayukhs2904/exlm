@@ -39,9 +39,11 @@ export default function decorate(block) {
     let [image, classList, ...rest] = panel.children;
     const hasPictureTag = image?.querySelector('picture');
     if (!hasPictureTag) {
-      [variant, hideBanner , image, classList, ...rest] = panel.children;
-      panel.classList.add(variant);
-      
+      let variantEl, hideBannerEl;
+      [variantEl, hideBannerEl, image, classList, ...rest] = panel.children;
+      if (variantEl?.textContent.trim()) {
+          panel.classList.add(variantEl.textContent.trim());
+      }
     }
     const classesText = classList.textContent.trim();
     const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
