@@ -613,12 +613,12 @@
             "name": "Background Color",
             "children": [
               {
-                "name": "Gray",
-                "value": "bg-spectrum-gray-700"
-              },
-              {
                 "name": "Black",
                 "value": "bg-spectrum-gray-900"
+              },
+              {
+                "name": "Gray",
+                "value": "bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
