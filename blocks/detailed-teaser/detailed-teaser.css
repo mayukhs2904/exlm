@@ -176,6 +176,7 @@
 }
 
 .detailed-teaser.block.dark > .foreground > .text > .title,
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow,
 .detailed-teaser.block.dark > .foreground > .text > .eyebrow > .title,
 .detailed-teaser.block.dark > .foreground > .text > .description,
 .detailed-teaser.block.dark > .foreground > .text > .description * {
