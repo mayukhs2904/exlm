@@ -59,12 +59,14 @@
   margin: auto;
 }
 
-.detailed-teaser.inline-banner > .foreground {
+.detailed-teaser.inline-banner > .foreground,
+.detailed-teaser.fifty-split-layout > .foreground {
   width: 100%;
   flex-direction: column-reverse;
 }
 
-.detailed-teaser.inline-banner.right > .foreground {
+.detailed-teaser.inline-banner.right > .foreground,
+.detailed-teaser.fifty-split-layout.right > .foreground {
   flex-direction: column;
 }
 
@@ -83,12 +85,17 @@
   order: 1;
 }
 
+.detailed-teaser.block.fifty-split-layout > .foreground > .text {
+  padding: 32px;
+}
+
 /* eyebrow content */
 .detailed-teaser.block > .foreground > .text > .eyebrow {
   margin-bottom: 26px;
 }
 
-.detailed-teaser.block.inline-banner > .foreground > .text > .eyebrow {
+.detailed-teaser.block.inline-banner > .foreground > .text > .eyebrow,
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .eyebrow {
   margin-bottom: var(--spectrum-spacing-100);
 }
 
@@ -111,12 +118,14 @@
   object-fit: cover;
 }
 
-.detailed-teaser.block.carousel-teaser > .foreground > .spacer img {
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer img {
   border-radius: 0;
+  display: block;
   min-height: unset;
   height: 100%;
   width: 100%;
   object-fit: cover;
+  max-height: unset;
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow > .logo img {
@@ -196,8 +205,13 @@
 }
 
 .detailed-teaser.block.inline-banner > .foreground > .text > .description,
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .description,
 .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
   margin-top: var(--spectrum-spacing-300);
+}
+
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .cta {
+  margin-top: var(--spectrum-spacing-400);
 }
 
 /* spacer/subject image */
@@ -214,8 +228,13 @@
   padding-top: var(--spectrum-spacing-400);
 }
 
-.detailed-teaser.block.inline-banner > .foreground > .spacer, .detailed-teaser.block.carousel-teaser > .foreground > .spacer {
+.detailed-teaser.block.inline-banner > .foreground > .spacer,
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
   padding: 0;
+}
+
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
+  height: 100%;
 }
 
 .detailed-teaser.block > .foreground > .spacer:empty {
@@ -227,7 +246,8 @@
   border-radius: 30px;
 }
 
-.detailed-teaser.block.inline-banner > .foreground > .spacer picture, .detailed-teaser.block.carousel-teaser > .foreground > .spacer picture {
+.detailed-teaser.block.inline-banner > .foreground > .spacer picture,
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer picture {
   height: 100%;
 }
 
@@ -245,8 +265,10 @@
     min-height: 320px;
   }
 
-  .detailed-teaser.carousel-teaser {
+  .detailed-teaser.fifty-split-layout > .foreground {
     padding: 0;
+    width: 100%;
+    flex-direction: column-reverse;
   }
 
   .detailed-teaser.block.inline-banner > .foreground {
@@ -263,8 +285,8 @@
     padding: var(--spectrum-spacing-500) 0;
   }
 
-  .detailed-teaser.block.carousel-teaser > .foreground > .text {
-    padding: 112px 56px 112px 56px;
+  .detailed-teaser.block.fifty-split-layout > .foreground > .text {
+    padding: 64px 32px 64px 56px;
     box-sizing: border-box;
   }
 
@@ -277,7 +299,7 @@
   }
 
   .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
-    margin-top: var(--spectrum-font-size-600);
+    margin-top: var(--spectrum-spacing-400);
   }
 
   /* teaser on browse pages has different width for text */
@@ -348,9 +370,13 @@
     width: 100%;
   }
 
-  .detailed-teaser.block.carousel-teaser .foreground {
-    gap: 0px;
+  .detailed-teaser.block.fifty-split-layout .foreground {
+    gap: 0;
     justify-content: unset;
+  }
+
+  .detailed-teaser.fifty-split-layout.right > .foreground {
+    flex-direction: row;
   }
 
   .detailed-teaser.block.inline-banner .foreground {
@@ -367,10 +393,11 @@
     min-width: 550px;
   }
 
-  .detailed-teaser.block.carousel-teaser > .foreground > .text {
+  .detailed-teaser.block.fifty-split-layout > .foreground > .text {
     min-width: unset;
     width: 50%;
     max-width: unset;
+    padding: 112px 56px;
   }
 
   /* the subject image /spacer */
@@ -380,7 +407,7 @@
     padding: var(--spectrum-spacing-500) 0;
   }
 
-  .detailed-teaser.block > .foreground > .spacer {
+  .detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
     width: 50%;
   }
 

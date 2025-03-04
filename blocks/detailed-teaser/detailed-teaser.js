@@ -1,5 +1,4 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
@@ -52,7 +51,7 @@ export function generateDetailedTeaserDOM(props, classes) {
 export default async function decorate(block) {
   // get the first and only cell from each row
   const [imageElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
-  const teaserDOM = generateDetailedTeaserDOM([imageElement,...props], block.classList);
+  const teaserDOM = generateDetailedTeaserDOM([imageElement, ...props], block.classList);
   block.textContent = '';
   if (block.classList.contains('inline-banner')) {
     const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
@@ -61,6 +60,11 @@ export default async function decorate(block) {
     if (hideInlineBanner === 'true' && isSignedIn) {
       block.classList.add('hide-inline-banner');
     }
+  }
+  const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  const bgColor = bgColorCls ?? `var(--${bgColorCls.substr(3)})`;
+  if(bgColor){
+    block.style.backgroundColor=bgColor;
   }
   block.append(teaserDOM);
 }
