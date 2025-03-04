@@ -41,9 +41,15 @@ export default function decorate(block) {
     const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
     const blockType = [...classes].includes('detailed-teaser') ? 'detailed-teaser' : 'teaser';
     const bgColorCls = [...classes].find((cls) => cls.startsWith('bg-'));
+<<<<<<< HEAD
     if(bgColorCls){
       const bgColor = `var(--${bgColorCls.substr(3)})`;
       panel.style.backgroundColor=bgColor;
+=======
+    if (bgColorCls) {
+      const bgColor = `var(--${bgColorCls.substr(3)})`;
+      panel.style.backgroundColor = bgColor;
+>>>>>>> 4d1761faac055be80da9d03c5384f1033a859711
     }
     // check if we have to render teaser or a detailed teaser
     const teaserDOM =

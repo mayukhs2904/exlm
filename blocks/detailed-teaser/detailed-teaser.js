@@ -62,9 +62,9 @@ export default async function decorate(block) {
     }
   }
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  if(bgColorCls){
+  if (bgColorCls) {
     const bgColor = `var(--${bgColorCls.substr(3)})`;
-    block.style.backgroundColor=bgColor;
+    block.style.backgroundColor = bgColor;
   }
   block.append(teaserDOM);
 }
