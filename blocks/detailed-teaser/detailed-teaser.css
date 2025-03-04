@@ -373,6 +373,7 @@
   .detailed-teaser.block.fifty-split-layout .foreground {
     gap: 0;
     justify-content: unset;
+    max-width: none;
   }
 
   .detailed-teaser.fifty-split-layout.right > .foreground {
