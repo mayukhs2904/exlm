@@ -56,6 +56,10 @@
             "name": "Background Color",
             "children": [
               {
+                "name": "Black",
+                "value": "bg-spectrum-gray-900"
+              },
+              {
                 "name": "Grey",
                 "value": "bg-spectrum-gray-700"
               },
@@ -608,6 +612,10 @@
           {
             "name": "Background Color",
             "children": [
+              {
+                "name": "Black",
+                "value": "bg-spectrum-gray-700"
+              },
               {
                 "name": "Gray",
                 "value": "bg-spectrum-gray-700"
