@@ -288,6 +288,7 @@
   .detailed-teaser.block.fifty-split-layout > .foreground > .text {
     padding: 64px 32px 64px 56px;
     box-sizing: border-box;
+    max-width: unset;
   }
 
   .detailed-teaser.block.inline-banner > .foreground > .text {
