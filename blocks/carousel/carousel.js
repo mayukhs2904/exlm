@@ -48,6 +48,9 @@ export default function decorate(block) {
     if(blockType==='detailed-teaser'){
       [image, classList, ,...rest]=panel.children;
     }
+    if (blockType === 'detailed-teaser') {
+      [image, classList, , ...rest] = panel.children;
+    }
     // check if we have to render teaser or a detailed teaser
     const teaserDOM =
       blockType === 'detailed-teaser'

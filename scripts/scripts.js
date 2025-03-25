@@ -330,29 +330,23 @@ export function decorateExternalLinks(main) {
 }
 
 /**
- * Links that have urls with JSON the hash, the JSON will be translated to attributes
- * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
- * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * Links that have URLs with hash fragments; the hash fragments will be translated to attributes.
+ * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
+ * becomes: <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ *
+ * Hash fragments without key-value pairs (e.g., #support) are ignored.
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  const links = block.querySelectorAll('a');
-  links.forEach((link) => {
-    const decodedHref = decodeURIComponent(link.getAttribute('href'));
-    const firstCurlyIndex = decodedHref.indexOf('{');
-    const lastCurlyIndex = decodedHref.lastIndexOf('}');
-    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
-      // everything between curly braces is treated as JSON string.
-      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
-      const fixedJsonString = optionsJsonStr.replace(/'/g, '"'); // JSON.parse function expects JSON strings to be formatted with double quotes
-      const parsedJSON = JSON.parse(fixedJsonString);
-      Object.entries(parsedJSON).forEach(([key, value]) => {
-        link.setAttribute(key.trim(), value);
-      });
-      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
-      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
-      link.href = decodedHref.substring(0, endIndex);
-    }
+  block.querySelectorAll('a').forEach((link) => {
+    const href = link?.href;
+    if (!href) return;
+
+    const [baseUrl, hashParams] = href.split('#');
+    if (!hashParams?.includes('=')) return;
+    link.href = baseUrl;
+    const params = new URLSearchParams(hashParams);
+    params.forEach((value, key) => link.setAttribute(key, value));
   });
 };
 
@@ -522,21 +516,27 @@ export function getLink(edsPath) {
 
 /** @param {HTMLMapElement} main */
 async function buildPreMain(main) {
+  const { lang } = getPathDetails();
   const fragmentUrl = getMetadata('fragment');
-  const fragmentPath = fragmentUrl ? new URL(fragmentUrl, window.location).pathname : '';
+
+  if (!fragmentUrl) return;
+
+  const fragmentLangUrl = fragmentUrl.startsWith('/en/') ? fragmentUrl.replace('/en/', `/${lang}/`) : fragmentUrl;
+  const fragmentPath = new URL(fragmentLangUrl, window.location).pathname;
+
   const currentPath = window.location.pathname?.replace('.html', '');
   if (currentPath.endsWith(fragmentPath)) {
     return; // do not load fragment if it is the same as the current page
   }
+
   if (fragmentUrl) {
     const preMain = htmlToElement(
-      `<aside><div><div class="fragment"><a href="${fragmentUrl}"></a></div></div></aside>`,
+      `<aside><div><div class="fragment"><a href="${fragmentLangUrl}"></a></div></div></aside>`,
     );
     // add fragment as first section in preMain
     main.before(preMain);
     decorateSections(preMain);
     decorateBlocks(preMain);
-    loadBlocks(preMain);
   }
 }
 
@@ -864,8 +864,10 @@ async function loadThemes() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+  const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
   await loadThemes();
+  if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
 
   const { hash } = window.location;
@@ -971,6 +973,16 @@ export async function fetchFragment(rePath, lang) {
   const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
   const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
+  return response.text();
+}
+
+/** fetch fragment relative to /${lang}/global-fragments/ */
+export async function fetchGlobalFragment(metaName, fallback, lang) {
+  const fragmentPath = getMetadata(metaName);
+  const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
+  const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
+  const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;
+  const response = await fetchWithFallback(path, fallbackPath);
   return response.text();
 }
 
@@ -1197,6 +1209,29 @@ function handleRedirects() {
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
+}
+
+export async function loadFragment(fragmentURL) {
+  if (!fragmentURL) return null;
+
+  const fragmentLink = fragmentURL.startsWith('/content')
+    ? fragmentURL.replace(/^\/content\/[^/]+\/global/, '')
+    : fragmentURL;
+
+  const fragmentPath = new URL(fragmentLink, window.location).pathname;
+  const currentPath = window.location.pathname?.replace('.html', '');
+
+  if (currentPath.endsWith(fragmentPath)) {
+    return null;
+  }
+
+  const fragmentEl = htmlToElement(`<div><div><div class="fragment"><a href="${fragmentLink}"></a></div></div></div>`);
+
+  decorateSections(fragmentEl);
+  decorateBlocks(fragmentEl);
+  await loadBlocks(fragmentEl);
+
+  return fragmentEl;
 }
 
 async function loadPage() {

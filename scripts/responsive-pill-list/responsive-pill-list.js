@@ -22,6 +22,7 @@ export default class ResponsivePillList {
     this.onInitCallback = onInitCallback;
     this.onSelectCallback = onSelectCallback;
     this.isSelectedFromUser = false;
+    this.scrollMaxReached = false;
     this.initialize();
     this.main = document.querySelector('main');
   }
@@ -119,6 +120,7 @@ export default class ResponsivePillList {
       listWidth,
       fitItems: items,
       fitWidth,
+      maxWidth,
     };
     main.removeChild(tempWrapper);
     return widthInfo;
@@ -211,10 +213,11 @@ export default class ResponsivePillList {
    * Renders the tabbed layout based on the provided items.
    */
   renderTabbedLayout() {
-    const { fitWidth } = this.evaluateWidth();
+    const { maxWidth } = this.evaluateWidth();
     const tabWrapper = document.createElement('div');
     tabWrapper.classList.add('responsive-pill-list');
-    tabWrapper.style.maxWidth = `${fitWidth + PILLS_OFFSET_DELTA}px`;
+    const delta = 4;
+    tabWrapper.style.maxWidth = `${maxWidth - delta}px`;
     const tabList = document.createElement('ul');
     this.scrollSteps = [];
     this.items.forEach((item) => {
@@ -252,6 +255,7 @@ export default class ResponsivePillList {
   }
 
   navigatePills(forward) {
+    this.scrollMaxReached = false;
     const wrapperEl = this.wrapper.querySelector('ul');
     if (forward) {
       const elements = Array.from(wrapperEl.children);
@@ -269,12 +273,18 @@ export default class ResponsivePillList {
         }
         return acc;
       }, null);
-      wrapperEl.scrollLeft = targetElement.offsetLeft;
+      const targetScrollLeft = targetElement.offsetLeft;
+      this.scrollMaxReached = wrapperEl.offsetWidth + targetScrollLeft >= wrapperEl.scrollWidth;
+      wrapperEl.scrollLeft = targetScrollLeft;
       if (wrapperEl.scrollLeft !== currentOffset) {
         this.scrollSteps.push(currentOffset);
       }
     } else {
-      const scrollValue = this.scrollSteps.pop();
+      const currentScrollValue = wrapperEl.scrollLeft;
+      let scrollValue = this.scrollSteps.pop();
+      if (scrollValue === currentScrollValue && this.scrollSteps.length) {
+        scrollValue = this.scrollSteps.pop();
+      }
       wrapperEl.scrollLeft = scrollValue;
     }
     this.handleNavButtonVisiblity();
@@ -295,7 +305,10 @@ export default class ResponsivePillList {
       }
     }
     if (rightButton) {
-      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA) {
+      if (
+        lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA ||
+        this.scrollMaxReached
+      ) {
         rightButton.classList.remove('responsive-pill-list-nav-visible');
       } else {
         rightButton.classList.add('responsive-pill-list-nav-visible');
