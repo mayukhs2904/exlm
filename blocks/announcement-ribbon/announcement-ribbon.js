@@ -132,7 +132,7 @@ async function decorateRibbon ({ block, image, heading, description, pagePath, r
 }
 
 export default async function decorate(block) {
-  const [image, heading, description, idElem, hexcode, firstCta, secondCta] = [...block.children].map(
+  const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
   console.log(image,"image");
@@ -154,7 +154,7 @@ export default async function decorate(block) {
     block.remove(); // remove the banner section if it was dismissed
     // ribbonStore.remove();
   } else {
-    decorateRibbon({ block, image, heading, description, pagePath, ribbonId, dismissable, bgColor, hexcode, firstCta, secondCta });
+    decorateRibbon({ block, image, heading, description, pagePath, ribbonId, dismissable, hexcode, firstCta, secondCta });
   }
   
 }
