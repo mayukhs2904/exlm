@@ -135,6 +135,11 @@ export default async function decorate(block) {
   const [image, heading, description, idElem, hexcode, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+  console.log(image,"image");
+  console.log(heading,"heading");
+  console.log(description,"desc");
+  console.log(idElem,"id ele");
+  console.log(hexcode,"hex code")
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
