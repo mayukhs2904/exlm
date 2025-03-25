@@ -2,6 +2,8 @@
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
+export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
+export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
 export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
 export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
@@ -39,13 +41,22 @@ export const pageName = (language) => {
     }
   }
 
-  const responseStr = `xl:${docs ? 'docs' : 'learn'}${result}`;
+  let responseStr = `xl:`;
+
+  if (docs) {
+    responseStr += 'docs';
+  } else if (browse) {
+    responseStr += 'learn:browse';
+  } else {
+    responseStr += 'learn';
+  }
+
+  responseStr += result;
 
   return responseStr.toLowerCase();
 };
 
 export async function pushPageDataLayer(language) {
-  console.timeLog('martech', `datalayer: start ${Date.now()}`);
   window.adobeDataLayer = window.adobeDataLayer || [];
   const user = {
     userDetails: {
@@ -61,15 +72,14 @@ export async function pushPageDataLayer(language) {
       notificationPref: false,
       org: '',
       orgs: [],
+      userCorporateName: '',
     },
   };
 
   try {
-    console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
     const { defaultProfileClient } = await import('../auth/profile.js');
     const userData = await defaultProfileClient.getMergedProfile();
-    console.timeLog('martech', `datalayer: profile inquiry done. Adding profile data to datlayer ${Date.now()}`);
     if (userData) {
       user.userDetails = {
         ...user.userDetails,
@@ -80,10 +90,12 @@ export async function pushPageDataLayer(language) {
         learningInterest: userData.interests || [],
         role: userData.role || [],
         experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
         industry: userData.industryInterests || [],
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',
         orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
     }
   } catch (e) {
@@ -103,19 +115,17 @@ export async function pushPageDataLayer(language) {
   const name = pageName(language);
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
-  if (sections.length > 1) {
+  if (!browse && sections.length > 1) {
     sections.shift();
   }
-
   const mainSiteSection = search ? 'search' : '';
 
-  console.timeLog('martech', `datalayer: push ${Date.now()}`);
   window.adobeDataLayer.push({
     event: 'page loaded',
     web: {
       webPageDetails: {
         URL: window.location.href,
-        cleanURL: window.location.href.replace(/^https?:\/\//, ''),
+        cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
         domain: window.location.host,
         docrole: role,
         doctype: docType,
@@ -132,12 +142,12 @@ export async function pushPageDataLayer(language) {
         userAgent: window.navigator.userAgent,
         server: window.location.host,
         siteSection: section,
-        siteSubSection1: sections[0] || '',
+        siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
         siteSubSection2: sections[1] || '',
         siteSubSection3: sections[2] || '',
         siteSubSection4: sections[3] || '',
         siteSubSection5: sections[4] || '',
-        solution,
+        solution: browseProduct ? sections[1] : solution,
         solutionVersion,
         subSolution,
         type,
@@ -261,6 +271,38 @@ export function assetInteractionModel(id, assetInteractionType, filters) {
     asset: {
       id: assetId,
       interactionType: assetInteractionType,
+    },
+  });
+}
+
+/**
+ * Used to push a signup modal event to the data layer
+ * @param {HTMLButtonElement} target
+ * @param {String} action
+ */
+export function pushSignupEvent(target, action) {
+  const signupStep = target.closest('.signup-dialog-container')?.classList[1] || '';
+  const stepDLValue = signupStep?.split('-')[0].replace('step', 'step ');
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'signup-dialog',
+    eventType: action === 'show-modal' ? 'web.webinteraction.linkClicks' : 'web.webinteraction.assetInteraction',
+    signupDialog: {
+      action: `sign up dialog ${action}`,
+      step: stepDLValue,
+      buttontext: action,
+    },
+    web: {
+      webInteraction: {
+        URL: '',
+        linkClicks: { value: 1 },
+        name: `sign up dialog ${stepDLValue}`,
+        type: 'other',
+      },
+      webPageDetails: {
+        pageViews: { value: 0 },
+      },
     },
   });
 }

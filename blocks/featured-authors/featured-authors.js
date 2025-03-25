@@ -1,4 +1,5 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -7,31 +8,6 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
-}
-
-// loads author info from author bio page
-export async function fetchAuthorBio(link) {
-  return fetch(link)
-    .then((response) => response.text())
-    .then((html) => {
-      const parser = new DOMParser();
-      const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = [...htmlDoc.querySelector('.author-bio').children].map((row) => row.firstElementChild);
-
-      return {
-        authorImage: authorInfo[0].querySelector('img')?.src,
-        authorName: authorInfo[1].textContent,
-        authorTitle: authorInfo[2].textContent,
-        authorCompany: authorInfo[3].textContent,
-        authorDescription: authorInfo[4].textContent,
-        authorSocialLinkText: authorInfo[5].textContent,
-        authorSocialLinkURL: authorInfo[6].querySelector('a')?.href,
-      };
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    });
 }
 
 /**
@@ -49,7 +25,7 @@ async function setAuthorInfo(authorElem) {
   authorElem.classList.add('author');
 
   // add the author image
-  if (authorInfo?.authorImage) {
+  if (authorInfo && authorInfo.authorImage) {
     const imageDiv = document.createElement('div');
     imageDiv.classList.add('author-image');
     const authorPict = document.createElement('picture');
@@ -58,12 +34,6 @@ async function setAuthorInfo(authorElem) {
     authorImg.alt = authorInfo.authorName;
     authorPict.append(authorImg);
     imageDiv.append(authorPict);
-
-    // add empty div for company dot
-    const companyDot = document.createElement('div');
-    companyDot.classList.add('company-dot', authorInfo.authorCompany.toLowerCase());
-    imageDiv.append(companyDot);
-
     authorElem.append(imageDiv);
   }
 
@@ -77,7 +47,7 @@ async function setAuthorInfo(authorElem) {
   authorName.textContent = authorInfo.authorName;
   const authorTitle = document.createElement('div');
   authorTitle.classList.add('author-title');
-  authorTitle.textContent = authorInfo.authorTitle;
+  authorTitle.textContent = authorInfo?.authorTitle;
   authorInfoDiv.append(authorName, authorTitle);
 
   // if a social link is present, add it to the author info div
@@ -86,7 +56,7 @@ async function setAuthorInfo(authorElem) {
     const socialLinkElem = document.createElement('a');
     socialLinkElem.classList.add('author-social-link');
     authorInfoDiv.append(socialLinkElem);
-    socialLinkElem.textContent = authorInfo.authorSocialLinkText;
+    socialLinkElem.textContent = authorInfo?.authorSocialLinkText;
     socialLinkElem.href = socialLink;
   }
 

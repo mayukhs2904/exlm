@@ -10,12 +10,12 @@
   cursor: pointer;
   list-style: none;
   padding: 16px 0;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
 
-.accordion details summary :where(h2,h3,h4,h5,h6) {
+.accordion details summary :where(h2, h3, h4, h5, h6) {
   margin: 0;
   font: inherit;
   color: inherit;
@@ -23,8 +23,8 @@
 }
 
 .accordion details summary::before {
-  content: url("../../icons/chevron_right.svg");
-  position: relative; 
+  content: url('../../icons/chevron_right.svg');
+  position: relative;
   top: 3.5px;
   left: -4.2px;
   margin-right: -2px;
@@ -56,6 +56,10 @@
   margin-top: 14px;
 }
 
+.accordion ol li p {
+  margin-bottom: 8px;
+}
+
 .accordion p:last-child {
   margin-bottom: 0;
 }
@@ -74,20 +78,16 @@
   margin-bottom: 0;
 }
 
+ol .accordion ul {
+  margin-bottom: 14px;
+}
+
 .accordion ul li ul {
   margin-bottom: 14px;
 }
 
-.accordion ol li p {
-  margin-bottom: 8px;
-}
-
 ol .accordion summary {
   font-size: var(--spectrum-font-size-200);
-}
-
-ol .accordion ul {
-  margin-bottom: 14px;
 }
 
 .accordion details .accordion {
@@ -104,11 +104,11 @@ ol .accordion ul {
 }
 
 .accordion details[open] summary::before {
-  content: url("../../icons/chevron_down.svg");
+  content: url('../../icons/chevron-down.svg');
 }
 
-.accordion .code-wrapper, 
-.accordion .code-wrapper div, 
+.accordion .code-wrapper,
+.accordion .code-wrapper div,
 .accordion .note-wrapper,
 .accordion .note-wrapper div {
   margin-left: 0;

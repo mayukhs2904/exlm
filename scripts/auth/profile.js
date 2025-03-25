@@ -3,12 +3,12 @@ import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
-// eslint-disable-next-line import/no-cycle
-import showSignupModal from '../events/signup-flow-event.js';
+import { getMetadata } from '../lib-franklin.js';
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
+// NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
-const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl, cdnOrigin } = getConfig();
+
 const override = /^(recommended|votes)$/;
 
 /**
@@ -23,11 +23,26 @@ export async function isSignedInUser() {
   }
 }
 
+/**
+ * @see: https://git.corp.adobe.com/IMS/imslib2.js#documentation
+ * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
+ */
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', postSignInStreamKey].forEach((key) =>
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
-  window.adobeIMS?.signOut();
+  const signOutRedirectUrl = getMetadata('signout-redirect-url');
+
+  if (signOutRedirectUrl) {
+    const redirectUrl =
+      signOutRedirectUrl.startsWith('/') || signOutRedirectUrl === '/'
+        ? `${cdnOrigin}${signOutRedirectUrl}`
+        : signOutRedirectUrl;
+    const signoutOptions = { redirect_uri: redirectUrl };
+    window.adobeIMS?.signOut(signoutOptions);
+  } else {
+    window.adobeIMS?.signOut();
+  }
 }
 
 // A store that saves promises and their results in sessionStorage
@@ -56,13 +71,26 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
-
     this.store = new PromiseSessionStore();
   }
 
   async getAttributes() {
     const attributes = await this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
     return structuredClone(attributes);
+  }
+
+  async getIMSAccessToken() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const token = await window.adobeIMS.getAccessToken();
+    return token;
+  }
+
+  async getIMSProfile() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const profile = await window.adobeIMS.getProfile();
+    return profile;
   }
 
   async getProfile(refresh = false) {
@@ -131,8 +159,12 @@ class ProfileClient {
         delete profile[i];
       }
     });
-    // eslint-disable-next-line
-    if (override.test(key) || replace === true) {
+    const replaceMultipleItems = Array.isArray(key) && Array.isArray(val) && replace === true;
+    if (replaceMultipleItems) {
+      key.forEach((keyId, i) => {
+        profile[keyId] = val[i];
+      });
+    } else if (override.test(key) || replace === true) {
       profile[key] = val;
     } else if (attriubutes.types[key] === 'array') {
       // eslint-disable-next-line
@@ -152,13 +184,21 @@ class ProfileClient {
     } else {
       profile[key] = val;
     }
+    const payload = [];
+    if (replaceMultipleItems) {
+      key.forEach((keyId) => {
+        payload.push({ op: 'replace', path: `/${keyId}`, value: profile[keyId] });
+      });
+    } else {
+      payload.push({ op: 'replace', path: `/${key}`, value: profile[key] });
+    }
     await this.fetchProfile({
       method: 'PATCH',
       headers: {
         'content-type': 'application/json-patch+json',
         'x-csrf-token': await csrf(JWTTokenUrl),
       },
-      body: JSON.stringify([{ op: 'replace', path: `/${key}`, value: profile[key] }]),
+      body: JSON.stringify(payload),
     });
 
     // uppdate the profile in session storage after the changes
@@ -214,11 +254,7 @@ class ProfileClient {
           },
         })
           .then((res) => res.json())
-          .then((data) => {
-            if (!sessionStorage.getItem(postSignInStreamKey)) {
-              showSignupModal();
-              sessionStorage.setItem(postSignInStreamKey, 'true');
-            }
+          .then(async (data) => {
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })
@@ -233,18 +269,15 @@ class ProfileClient {
    * Iterates backward through the interactions array to grab the latest instance
    * of an event.
    *
-   * @param {String} event
-   * @param {Object} otherConditions - Object of key value pairs to match against interaction
-   * @returns Interaction object or undefined if not found
+   * @param {String} interactionName
+   * @returns {Object|undefined} Interaction object or undefined if not found
    */
-  async getLatestInteraction(event, otherConditions) {
+  async getLatestInteraction(interactionName) {
     const profile = await this.getMergedProfile(false);
-    const conditions = Object.apply({}, { event }, otherConditions || {});
-
-    return profile.interactions.findLast((interaction) => {
-      const keys = Object.keys(conditions);
-      return !keys.some((key) => interaction[key] !== conditions[key]);
-    });
+    if (profile.interactions && profile.interactions.length) {
+      return profile.interactions.findLast((interaction) => interaction.event === interactionName);
+    }
+    return undefined;
   }
 
   /**

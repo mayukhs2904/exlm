@@ -1,5 +1,5 @@
-@import "../teaser/teaser.css";
-@import "../detailed-teaser/detailed-teaser.css";
+@import '../teaser/teaser.css';
+@import '../detailed-teaser/detailed-teaser.css';
 
 /* carousel wrapper stretches over complete width */
 .section div.carousel-wrapper {
@@ -7,8 +7,8 @@
   max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 /* contains all teaser divs */
@@ -24,7 +24,7 @@
 }
 
 .carousel.block > .panel-container::-webkit-scrollbar {
-  display:none;
+  display: none;
 }
 
 /* teaser inside carousel have same height and texts are centered */
@@ -32,7 +32,7 @@
 .carousel.block > .panel-container > .teaser.block {
   flex-shrink: 0;
   scroll-snap-align: start;
-  height:auto;
+  height: auto;
 }
 
 .carousel.block > .panel-container > .detailed-teaser.block > .foreground,
@@ -47,10 +47,10 @@
 
 /* contains the carousel buttons */
 .carousel.block > .button-container {
-  display:flex;
+  display: flex;
   justify-content: center;
   gap: 4px;
-  padding-top:22px;
+  padding-top: 22px;
 }
 
 /* defines look of a button */
@@ -71,16 +71,13 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+  .section.carousel-container {
+    padding: 0 var(--spectrum-spacing-800);
+  }
+
   .section div.carousel-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
-  }
-}
-
-@media (min-width: 600px) {
-  .section.carousel-container {
-    padding-top: 0;
-    padding-bottom: 0;
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 }

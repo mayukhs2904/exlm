@@ -1,6 +1,55 @@
 import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createPlaceholderSpan, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, decoratePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+
+const EXPERIENCE_LEVEL_PLACEHOLDERS = [
+  {
+    label: 'Beginner',
+    placeholder: 'filterExpLevelBeginnerTitle',
+    description: 'filterExpLevelBeginnerDescription',
+  },
+  {
+    label: 'Intermediate',
+    placeholder: 'filterExpLevelIntermediateTitle',
+    description: 'filterExpLevelIntermediateDescription',
+  },
+  {
+    label: 'Experienced',
+    placeholder: 'filterExpLevelExperiencedTitle',
+    description: 'filterExpLevelExperiencedDescription',
+  },
+];
+
+const ROLE_PLACEHOLDERS = [
+  {
+    label: 'Developer',
+    placeholder: 'filterRoleDeveloperTitle',
+    description: 'filterRoleDeveloperDescription',
+  },
+  {
+    label: 'User',
+    placeholder: 'filterRoleUserTitle',
+    description: 'filterRoleUserDescription',
+  },
+  {
+    label: 'Leader',
+    placeholder: 'filterRoleLeaderTitle',
+    description: 'filterRoleLeaderDescription',
+  },
+  {
+    label: 'Admin',
+    placeholder: 'filterRoleAdminTitle',
+    description: 'filterRoleAdminDescription',
+  },
+];
+
+const PLACEHOLDERS = {
+  previous: 'playlistPreviousLabel',
+  next: 'playlistNextLabel',
+  of: 'playlistOfLabel',
+  filter: 'filterLabel',
+  clearFilter: 'filterClearLabel',
+};
 
 async function fetchPlaylists() {
   const { lang } = getPathDetails();
@@ -8,11 +57,28 @@ async function fetchPlaylists() {
   return resp.json();
 }
 
+const sortAlphanumerically = (a, b) => a.localeCompare(b);
+
 const playlistsPromise = fetchPlaylists();
 const filterOptions = [
-  { legend: 'Product', filterName: 'solution' },
-  { legend: 'Role', filterName: 'role' },
-  { legend: 'Experience Level', filterName: 'level' },
+  { legend: 'Product', filterName: 'solution', placeholderKey: 'filterProductLabel', sort: sortAlphanumerically },
+  {
+    legend: 'Role',
+    filterName: 'role',
+    placeholderKey: 'filterRoleLabel',
+    optionPlaceholders: ROLE_PLACEHOLDERS,
+    sort: sortAlphanumerically,
+  },
+  {
+    legend: 'Experience Level',
+    filterName: 'level',
+    placeholderKey: 'filterExperienceLevelLabel',
+    optionPlaceholders: EXPERIENCE_LEVEL_PLACEHOLDERS,
+    sort: (a, b) => {
+      const levels = ['Beginner', 'Intermediate', 'Experienced'];
+      return levels.indexOf(a) - levels.indexOf(b);
+    },
+  },
 ];
 const multiSelects = [];
 
@@ -163,18 +229,19 @@ const updateCards = (filters) => {
     };
 
     pagination = newPagination({
-      previousLabel: 'Previous',
+      previousLabel: `<span data-placeholder="${PLACEHOLDERS.previous}">Previous</span>`,
       previousClass: 'playlist-browse-pagination-previous button secondary',
-      nextLabel: 'Next',
+      nextLabel: `<span data-placeholder="${PLACEHOLDERS.next}">Next</span>`,
       nextClass: 'playlist-browse-pagination-next button secondary',
       paginationLabelClass: 'playlist-browse-pagination-label',
-      ofLabel: 'of',
+      ofLabel: `<span data-placeholder="${PLACEHOLDERS.of}">of</span>`,
       currentPage: 1,
       items: filteredPlaylists,
       onPageChange,
     });
 
     pagination.classList.add('playlist-browse-pagination');
+    decoratePlaceholders(pagination);
     cards.after(pagination);
   });
 };
@@ -240,9 +307,15 @@ class Filter {
     filterButton.forEach((button) => {
       const filterName = button.classList[1];
       const span = button.querySelector('.count-span');
-      const filterCount = this.filters[filterName].length;
+      const filterCount = this.filters[filterName]?.length;
       span.innerHTML = filterCount ? ` (${filterCount})` : '';
     });
+    // enable clear button if filters are selected
+    if (this.filters.solution.length || this.filters.role.length || this.filters.level.length) {
+      this.clearButton.disabled = false;
+    } else {
+      this.clearButton.disabled = true;
+    }
   }
 
   // add filter pills
@@ -251,14 +324,19 @@ class Filter {
     filterPills.innerHTML = '';
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
-        const legendPill = filterOptions.find((filterOption) => filterOption.filterName === legend)?.legend;
+        const filterOption = filterOptions.find((f) => f.filterName === legend);
+        const filterValuePlaceholderKey = filterOption?.optionPlaceholders?.find(
+          (o) => o?.label?.toLowerCase() === value?.toLowerCase(),
+        )?.placeholder;
+
         const pill = htmlToElement(`
-          <button class="filter-pill" data-value="${value}" data-filter="${legend}">
-            <span>${legendPill}</span>
+          <button class="filter-pill" data-value="${value}" data-filter="${filterOption.legend}">
+            <span data-placeholder="${filterOption.placeholderKey}">${filterOption.legend}</span>
             <span>:&nbsp</span>
-            <span>${value}</span>
+            <span data-placeholder="${filterValuePlaceholderKey}">${value}</span>
             <span class="icon icon-close"></span>
           </button>`);
+        decoratePlaceholders(pill);
         filterPills.append(pill);
         // remove filter when pill is clicked
         pill.addEventListener('click', () => {
@@ -270,68 +348,77 @@ class Filter {
         });
       });
     });
-    decorateIcons(filterPills);
   };
 
   updateUI = () => {
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
-      '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
+      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${PLACEHOLDERS.filter}">Filters</span></label></div>`,
     );
-    this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
+    this.clearButton = htmlToElement(
+      `<button class="filters-clear" disabled><span data-placeholder="${PLACEHOLDERS.clearFilter}">Clear filters</span></button>`,
+    );
 
-    const filterOptionsPromises = filterOptions.map(({ legend, filterName }) => {
-      const panelContent = htmlToElement(`<div></div>`);
-      const buttonLabel = document.createElement('span');
-      buttonLabel.append(createPlaceholderSpan(filterName, legend));
-      buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
+    const filterOptionsPromises = filterOptions.map(
+      ({ legend, filterName, placeholderKey, optionPlaceholders, sort }) => {
+        const panelContent = htmlToElement(`<div></div>`);
+        const buttonLabel = document.createElement('span');
+        buttonLabel.append(createPlaceholderSpan(placeholderKey, legend));
+        buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
 
-      // load filter options
-      const filterPanel = newShowHidePanel({
-        buttonLabel,
-        buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
-        hiddenPanelClass: 'playlist-browse-filter-hidden',
-        panelContent,
-        panelClass: 'playlist-browse-filter-panel',
-        expanded: false,
-      });
-      filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
-      const span = filterPanel.querySelector('span');
-      span.classList.add('button-span');
-
-      const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
-        legend,
-        onSelect: (selectedValues) => {
-          this.filters[filterName] = selectedValues;
-          this.updateAll();
-          this.onFilterChange();
-        },
-      });
-      multiSelects.push({ filterName, onClear, removeOption });
-
-      this.filterWrapper.append(filterPanel);
-      this.filterWrapper.append(this.clearButton);
-      this.filterContainer.append(this.filterWrapper);
-      this.filterContainer.append(this.filterPill);
-      this.block.append(this.filterContainer);
-
-      return getAllPossibleFilterValues(filterName).then((filterValues) => {
-        const sortedLevels = filterValues.sort((a, b) => {
-          const levels = ['Beginner', 'Intermediate', 'Experienced'];
-          return levels.indexOf(a) - levels.indexOf(b);
+        // load filter options
+        const filterPanel = newShowHidePanel({
+          buttonLabel,
+          buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
+          hiddenPanelClass: 'playlist-browse-filter-hidden',
+          panelContent,
+          panelClass: 'playlist-browse-filter-panel',
+          expanded: false,
         });
-        sortedLevels.forEach((filterValue) => {
-          addOption({
-            label: filterValue,
-            value: filterValue,
-            checked: this.filters[filterName].includes(filterValue),
+        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'playlist-filter-dropdown');
+        const span = filterPanel.querySelector('span');
+        span.classList.add('button-span');
+
+        const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
+          legend,
+          onSelect: (selectedValues) => {
+            this.filters[filterName] = selectedValues;
+            this.updateAll();
+            this.onFilterChange();
+          },
+        });
+        multiSelects.push({ filterName, onClear, removeOption });
+
+        this.filterWrapper.append(filterPanel);
+        this.filterWrapper.append(this.clearButton);
+        this.filterContainer.append(this.filterWrapper);
+        this.filterContainer.append(this.filterPill);
+        this.block.append(this.filterContainer);
+        decoratePlaceholders(this.filterWrapper);
+
+        return getAllPossibleFilterValues(filterName).then((filterValues) => {
+          const sortedValues = filterValues.sort(sort);
+          sortedValues.forEach((filterValue) => {
+            const sortFilterValue = optionPlaceholders?.find(
+              (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
+            );
+            const filterValuePlaceholderKey = sortFilterValue?.placeholder;
+            const filterDescriptionPlaceholderKey = sortFilterValue?.description;
+
+            addOption({
+              label: filterValue,
+              description: filterDescriptionPlaceholderKey || '',
+              labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
+              value: filterValue,
+              checked: this.filters[filterName].includes(filterValue),
+            });
           });
+          panelContent.append(fieldset);
+          decorateIcons(fieldset);
         });
-        panelContent.append(fieldset);
-        decorateIcons(fieldset);
-      });
-    });
+      },
+    );
 
     Promise.allSettled(filterOptionsPromises).then(() => {
       this.updateAll();
@@ -349,6 +436,7 @@ class Filter {
       Object.keys(this.filters).forEach((key) => {
         this.filters[key] = [];
       });
+      clearButton.disabled = true;
       multiSelects.forEach(({ onClear }) => {
         onClear();
       });

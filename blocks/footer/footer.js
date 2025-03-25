@@ -1,15 +1,41 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
+import { getPathDetails, fetchFragment } from '../../scripts/scripts.js';
+import LanguageBlock from '../language/language.js';
 
-const languageModule = import('../../scripts/language.js');
+/**
+ * Links that have urls with JSON the hash, the JSON will be translated to attributes
+ * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
+ * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * @param {HTMLElement} block
+ */
+const decorateFooterLinks = (block) => {
+  const links = block.querySelectorAll('a');
+  links.forEach((link) => {
+    const decodedHref = decodeURIComponent(link.getAttribute('href'));
+    const firstCurlyIndex = decodedHref.indexOf('{');
+    const lastCurlyIndex = decodedHref.lastIndexOf('}');
+    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
+      // everything between curly braces is treated as JSON string.
+      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
+      const fixedJsonString = optionsJsonStr.replace(/'/g, '"'); // JSON.parse function expects JSON strings to be formatted with double quotes
+      const parsedJSON = JSON.parse(fixedJsonString);
+      Object.entries(parsedJSON).forEach(([key, value]) => {
+        link.setAttribute(key.trim(), value);
+      });
+      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
+      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
+      link.href = decodedHref.substring(0, endIndex);
+    }
+  });
+};
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();
   const childElements = footer.querySelectorAll('.footer-item');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-menu');
-  decorateLinks(footer);
+  decorateFooterLinks(footer);
   childElements.forEach((child) => {
     const h2Elements = Array.from(child.querySelectorAll('h2'));
     const ulElements = Array.from(child.querySelectorAll('ul'));
@@ -72,27 +98,21 @@ function extractDomain(domain) {
 }
 
 async function decorateSocial(footer) {
+  // create the divs to acomodate the social icons and the language selector
   const languageSelector = footer.querySelector('.language-selector');
-  const social = footer.querySelector('.social');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
-  // build language popover
-  const { buildLanguagePopover } = await languageModule;
-  const { popover } = await buildLanguagePopover('top', 'language-picker-popover-footer');
-
-  const langSelectorButton = languageSelector.firstElementChild;
-  langSelectorButton.classList.add('language-selector-button');
-  langSelectorButton.setAttribute('aria-haspopup', 'true');
-  langSelectorButton.setAttribute('aria-controls', 'language-picker-popover-footer');
-  const icon = document.createElement('span');
-  icon.classList.add('icon', 'icon-globegrid');
-  langSelectorButton.appendChild(icon);
-  languageSelector.appendChild(popover);
-
   groupDiv.appendChild(languageSelector);
+
+  // append languageBlock to footer
+  const footerLastRow = document.createElement('div');
+  footerLastRow.classList.add('footer-last-row');
+  footerLastRow.appendChild(groupDiv);
+  footer.appendChild(footerLastRow);
+
+  // create social media icons
+  const social = footer.querySelector('.social');
   groupDiv.appendChild(social);
-  const elem = footer.children[0];
-  elem.insertBefore(groupDiv, elem.children[2]);
   const socialParas = social.querySelectorAll('p');
   const socialFrag = document.createDocumentFragment();
   Array.from(socialParas).forEach((p) => {
@@ -108,6 +128,7 @@ async function decorateSocial(footer) {
   });
   social.innerHTML = '';
   social.appendChild(socialFrag);
+  decorateIcons(social);
 }
 
 function decorateBreadcrumb(footer) {
@@ -123,16 +144,13 @@ function decorateBreadcrumb(footer) {
   if (firstBreadcrumbAnchor) {
     firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
   }
+  decorateIcons(breadCrumb);
 }
 
-function decorateCopyrightsMenu() {
-  const footerLastRow = document.createElement('div');
-  footerLastRow.classList.add('footer-last-row');
-  const footerLangSocial = document.querySelector('.footer-lang-social');
+function decorateCopyrightsMenu(footer) {
+  const footerLastRow = footer.querySelector('.footer-last-row');
   const footerRights = document.querySelector('.footer-copyrights');
-  footerLastRow.appendChild(footerLangSocial);
   footerLastRow.appendChild(footerRights);
-  const footerMenu = document.querySelector('.footer-menu');
   const firstFooterAnchor = footerRights.querySelector('a');
   const copyRightWrapper = firstFooterAnchor.parentElement;
   Array.from(copyRightWrapper.querySelectorAll('a')).forEach((anchor) => {
@@ -153,8 +171,21 @@ function decorateCopyrightsMenu() {
       `<span class="footer-copyrights-text">${copyRightWrapper.firstChild.textContent}</span>`,
     );
   }
+
   copyRightWrapper.classList.add('footer-copyrights-element');
+  const footerMenu = document.querySelector('.footer-menu');
   footerMenu.parentElement.appendChild(footerLastRow);
+  const languageSelector = footer.querySelector('.language-selector');
+  const languageBlock = new LanguageBlock({
+    position: 'top',
+    popoverId: 'language-picker-popover-footer',
+    block: languageSelector,
+  });
+  languageSelector.appendChild(languageBlock);
+  const languageSelectorDiv = languageSelector.querySelector('div');
+  const languageBlockButton = languageBlock.querySelector('.language-selector-button');
+  languageBlockButton.appendChild(languageSelectorDiv);
+  decorateIcons(footerRights);
 }
 
 function handleSocialIconStyles(footer) {
@@ -200,13 +231,12 @@ export default async function decorate(block) {
     // decorate footer DOM
     const footer = document.createElement('div');
     footer.innerHTML = footerFragment;
+    block.append(footer);
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
     await decorateMenu(footer);
-    block.append(footer);
     handleSocialIconStyles(footer);
     handleLoginFunctionality(footer);
-    decorateCopyrightsMenu();
-    await decorateIcons(footer);
+    decorateCopyrightsMenu(footer);
   }
 }

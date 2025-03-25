@@ -1,37 +1,163 @@
+.profile-rail {
+  position: relative;
+  z-index: 9;
+}
+
+.profile-rail .profile-rail-links.jump-to-list {
+  display: none;
+}
+
+.profile-rail .profile-rail-heading {
+  display: none;
+}
+
+.profile-rail .profile-rail-links {
+  list-style-type: none;
+  margin: 0;
+}
+
+.profile-rail .profile-rail-links li {
+  margin: 0;
+}
+
+.profile-rail .profile-rail-overlay a {
+  display: flex;
+}
+
+.profile-rail .profile-rail-overlay a,
+.profile-rail .profile-rail-links li > a {
+  align-items: center;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-700);
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.profile-rail .profile-rail-links li > a {
+  display: none;
+}
+
+.profile-rail .profile-rail-overlay a:hover,
+.profile-rail .profile-rail-links li > a:hover {
+  background-color: var(--spectrum-gray-200);
+}
+
+.profile-rail .profile-rail-links li > a.active {
+  display: flex;
+  background-color: var(--background-color);
+  border: 1px solid var(--non-spectrum-article-light-gray);
+}
+
+.profile-rail .profile-rail-links a .icon,
+.profile-rail .profile-rail-overlay a .icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  margin-bottom: 2px;
+}
+
+.profile-rail .profile-rail-links a .icon-chevron-down {
+  margin-left: auto;
+  margin-top: 5px;
+}
+
+.profile-rail .profile-rail-links li > a.active.overlay-active .icon-chevron-down {
+  transform: rotate(180deg);
+}
+
+.profile-rail .profile-rail-overlay {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  background-color: var(--non-spectrum-grey-100);
+  z-index: 9;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%);
+  border: 1px solid var(--spectrum-gray-400);
+}
+
+.profile-rail .profile-rail-overlay.hidden {
+  display: none;
+}
+
 @media (min-width: 1024px) {
-    html {
-        scroll-behavior: smooth;
-        scroll-padding: 90px;
-    }
-    .profile-rail.block  {
-        margin-right: 16px;
-    }
-    .profile-rail.block > span {
-        font-size: 14px;
-        font-weight: 700;
-        margin-left: 12px;
-    }
-    .profile-rail.block ul {
-        margin-left: 0;
-    }
-    .profile-rail.block li {
-        margin: 4px 0;
-        list-style: none;
-        border-radius: 4px;
-        transition: .2s all ease-in-out; 
-    }
-    .profile-rail.block li.active {
-        background-color:#0000000F;
-    }
-    .profile-rail.block a {
-        display: block;
-        padding: 6px 12px;
-        margin: 0;
-        color: #222;
-        text-transform: capitalize;
-        font-size: 14px;
-    }
-    .profile-rail.block li:hover:not(.active) {
-        background-color:#0000000F;
-    }    
+  .profile-rail {
+    width: auto;
+    margin-left: 16px;
+  }
+
+  .profile-rail .profile-rail-links.jump-to-list {
+    display: block;
+  }
+
+  .profile-rail .profile-rail-heading.hidden,
+  .profile-rail .profile-rail-links.hidden {
+    display: none;
+  }
+
+  .profile-rail > div:first-child {
+    margin-left: auto;
+    max-width: 212px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .profile-rail .profile-rail-heading {
+    display: block;
+    font-size: var(--spectrum-font-size-75);
+    text-transform: uppercase;
+    font-weight: var(--font-weight-semi-bold);
+    color: var(--spectrum-gray-700);
+    margin-top: 32px;
+    letter-spacing: 0.72px;
+  }
+
+  .profile-rail .profile-rail-heading:first-child {
+    margin-top: 0;
+  }
+
+  .profile-rail .profile-rail-links {
+    padding: 0;
+  }
+
+  .profile-rail .profile-rail-links li {
+    margin: 8px 0;
+    display: flex;
+
+    /** To remove the visual rendering of inline non-breaking space (`&nbsp;`) characters that appear between child elements */
+    font-size: 0;
+  }
+
+  .profile-rail .profile-rail-links:last-child li:last-child {
+    margin-bottom: 20px;
+  }
+
+  .profile-rail .profile-rail-links li > a {
+    display: flex;
+    padding: 5px 12px;
+    flex: 1;
+  }
+
+  .profile-rail .profile-rail-links li > a.active {
+    background-color: var(--spectrum-gray-200);
+    border: none;
+  }
+
+  .profile-rail .profile-rail-links a .icon-chevron-down {
+    display: none;
+  }
+
+  .profile-rail .profile-rail-overlay {
+    display: none;
+  }
+}
+
+@media (min-width: 1400px) {
+  .profile-rail {
+    min-width: 212px;
+  }
 }

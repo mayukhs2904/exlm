@@ -1,0 +1,140 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+
+.recently-reviewed .recently-reviewed-header {
+  font-size: var(--spectrum-font-size-700);
+  line-height: 35px;
+  font-weight: bold;
+  color: var(--spectrum-gray-800);
+  margin-bottom: 16px;
+}
+
+.recently-reviewed .recently-reviewed-description {
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20px;
+  color: var(--spectrum-gray-800);
+  margin-bottom: 30px;
+}
+
+.recently-reviewed-description a {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+.recently-reviewed.block {
+  position: relative;
+}
+
+.recently-reviewed.block .browse-cards-block-content {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 4px;
+  gap: 24px;
+}
+
+.recently-reviewed .browse-cards-block-content .card-wrapper {
+  max-width: 552px;
+}
+
+.recently-reviewed .browse-cards-block-content:has(.browse-card-no-results) {
+  display: block;
+  min-height: auto;
+}
+
+.recently-reviewed .browse-cards-block-content > .browse-card-no-results {
+  margin-top: 0;
+  display: block;
+}
+
+.recently-viewed-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recently-viewed-nav-container > div:first-child {
+  max-width: 60%;
+}
+
+.recently-viewed-nav-section button {
+  height: 40px;
+  width: 40px;
+  margin: 0;
+  padding: 0;
+  border-radius: 4px;
+  background-color: var(--spectrum-gray-75);
+  border: 1px solid var(--spectrum-gray-400);
+  color: var(--spectrum-gray-800);
+  transform: rotate(90deg);
+}
+
+.recently-viewed-nav-section .next-nav {
+  transform: rotate(270deg);
+}
+
+.recently-viewed-nav-section button[disabled] {
+  background: #ffffff1a;
+  border-color: var(--spectrum-gray-300);
+  color: var(--spectrum-gray-400);
+  cursor: default;
+}
+
+.recently-reviewed-see-more-btn {
+  display: none;
+}
+
+.recently-reviewed.block .browse-cards-block-content.hide-see-more-row {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .recently-reviewed.block .browse-cards-block-content {
+    margin-top: 24px;
+  }
+
+  .recently-reviewed.block .browse-cards-block-content.fade-in {
+    animation: fade-in 0.5s forwards;
+  }
+
+  .recently-reviewed.block .browse-cards-block-content.fade-out {
+    animation: fade-out 0.5s forwards;
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+  }
+
+  .recently-reviewed-see-more-btn {
+    display: flex;
+    justify-content: center;
+  }
+
+  .recently-reviewed-see-more-btn button {
+    background: none;
+    border: 2px solid var(--spectrum-gray-300);
+    color: black;
+    padding: 10px 20px;
+    margin: 24px 0 0;
+  }
+}

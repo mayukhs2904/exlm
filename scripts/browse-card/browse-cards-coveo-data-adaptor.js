@@ -1,6 +1,7 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
+import { rewriteDocsPath } from '../utils/path-utils.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -110,7 +111,8 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
       description:
-        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY
+        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY ||
+        contentType?.toLowerCase() === CONTENT_TYPES.PLAYLIST.MAPPING_KEY
           ? raw?.exl_description || parentResult?.excerpt || ''
           : parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,

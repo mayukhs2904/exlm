@@ -52,7 +52,9 @@ const UserActions = (config) => {
   const addAction = ({ name, icons, label, onButtonReady, onButtonClick }) => {
     const iconSpans = icons.map(renderIcon).join('');
     const labelElement = label ? `<label>${label}</label>` : '';
-    const button = htmlToElement(`<button class="${name}">${iconSpans} ${labelElement}</button>`);
+    const button = htmlToElement(
+      `<button class="${name}" aria-label="${label || name}">${iconSpans} ${labelElement}</button>`,
+    );
     decorateIcons(button);
     if (onButtonReady) {
       onButtonReady(button);
@@ -102,6 +104,9 @@ const UserActions = (config) => {
               removeBookmarkToastText:
                 placeholders?.userActionRemoveBookmarkToastText ||
                 'Success! This is no longer bookmarked to your profile.',
+              profileNotUpdated:
+                placeholders?.profileNotUpdated ||
+                'An error occurred during profile update. Please try again at a later time.',
             },
           }),
       });

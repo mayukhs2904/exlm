@@ -1,5 +1,7 @@
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import { COVEO_DATE_OPTIONS } from './browse-cards-constants.js';
 import { getConfig } from '../scripts.js';
+import { getDateRange } from '../utils/date-utils.js';
 
 const domParser = new DOMParser();
 const { cdnOrigin } = getConfig();
@@ -61,7 +63,8 @@ export const getCardData = async (articlePath, placeholders) => {
   let fullURL = new URL(articlePath, window.location.origin).href;
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     if (fullURL.includes('/docs/')) {
-      fullURL = `${cdnOrigin}${articlePath.replace(`${window.hlx.codeBasePath}`, '')}`;
+      const pathWithoutCodeBase = articlePath.replace(`${window.hlx.codeBasePath}`, '');
+      fullURL = `${cdnOrigin}${pathWithoutCodeBase}`;
     } else {
       const nonDocPath = new URL(
         articlePath.replace(window.hlx.codeBasePath, window.hlx.aemRoot),
@@ -76,14 +79,12 @@ export const getCardData = async (articlePath, placeholders) => {
     type = getMetadata('type', doc);
   }
 
-  let solutions = getMetadata('solutions', doc)
+  const coveoSolution = getMetadata('coveo-solution', doc);
+  let solutions = getMetadata('solution', doc)
     .split(',')
     .map((s) => s.trim());
-
-  if (solutions.length < 2) {
-    solutions = getMetadata('coveo-solution', doc)
-      .split(';')
-      .map((s) => s.trim());
+  if (solutions.length < 2 && coveoSolution) {
+    solutions = coveoSolution.split(';').map((s) => s.trim());
   }
 
   return {
@@ -110,3 +111,94 @@ export const getCardData = async (articlePath, placeholders) => {
       : `View ${type}`,
   };
 };
+
+/**
+ * Extracts capabilities from a comma-separated string and populates relevant arrays.
+ * Existence of variables declared on top: capabilities, productKey, featureKey, products, versions, features.
+ */
+export const extractCapability = (capabilities) => {
+  const products = [];
+  const features = [];
+  const versions = [];
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+
+  const items = capabilities.split(',');
+  items.forEach((item) => {
+    const [type, productBase64, subsetBase64] = item.split('/');
+    if (productBase64) {
+      const decryptedProduct = atob(productBase64);
+      if (!products.includes(decryptedProduct)) {
+        products.push(decryptedProduct);
+      }
+    }
+    if (type === productKey) {
+      if (subsetBase64) versions.push(atob(subsetBase64));
+    } else if (type === featureKey) {
+      if (subsetBase64) features.push(atob(subsetBase64));
+    }
+  });
+
+  return { products, features, versions };
+};
+
+/**
+ * Removes duplicate items from an array of products/solutions (with sub-solutions)
+ * @returns {Array} - Array of unique products.
+ */
+export const removeProductDuplicates = (products) => {
+  const filteredProducts = [];
+  for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
+    const currentItem = products[outerIndex];
+    let isDuplicate = false;
+    for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
+      if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
+        isDuplicate = true;
+        break;
+      }
+    }
+    if (!isDuplicate) {
+      filteredProducts.push(products[outerIndex]);
+    }
+  }
+  return filteredProducts;
+};
+
+/**
+ * Constructs date criteria based on a list of date options.
+ * @returns {Array} Array of date criteria.
+ */
+export const createDateCriteria = (dateList) => {
+  const dateCriteria = [];
+  const dateOptions = {
+    [COVEO_DATE_OPTIONS.WITHIN_ONE_MONTH]: { monthsAgo: 1 },
+    [COVEO_DATE_OPTIONS.WITHIN_SIX_MONTHS]: { monthsAgo: 6 },
+    [COVEO_DATE_OPTIONS.WITHIN_ONE_YEAR]: { yearsAgo: 1 },
+    [COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO]: { yearsAgo: 50 }, // Assuming 50 years ago as the "more than one year ago" option
+  };
+  dateList.forEach((date) => {
+    if (dateOptions[date]) {
+      const { monthsAgo, yearsAgo } = dateOptions[date];
+      const currentDate = new Date();
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - (monthsAgo || 0));
+      startDate.setFullYear(startDate.getFullYear() - (yearsAgo || 0));
+      if (date === COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO) {
+        // For "MORE_THAN_ONE_YEAR_AGO", adjust startDate by adding one more year
+        currentDate.setFullYear(currentDate.getFullYear() - 1);
+      }
+      dateCriteria.push(getDateRange(startDate, currentDate));
+    }
+  });
+  return dateCriteria;
+};
+
+// Function to convert a string to title case
+export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
+// Function to convert headings to id format
+export const formatId = (text) =>
+  text
+    ?.toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\p{L}\p{N}-]/gu, '') || '';

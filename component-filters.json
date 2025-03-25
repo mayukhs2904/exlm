@@ -17,7 +17,7 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["section", "profile-section", "profile-bottom-section"]
   },
   {
     "id": "main-signup",
@@ -39,6 +39,8 @@
       "carousel",
       "sign-up",
       "video-embed",
+      "iframe-app",
+      "html-app",
       "secondary-search",
       "accordion-group",
       "media",
@@ -49,6 +51,8 @@
       "tabbed-cards",
       "tabs",
       "recommended-courses",
+      "recommended-content",
+      "recommendation-marquee",
       "block-quote",
       "callout",
       "featured-authors",
@@ -56,7 +60,53 @@
       "featured-content",
       "browse-filters",
       "topic-results",
-      "embed"
+      "announcement-ribbon",
+      "qualtrics",
+      "upcoming-event",
+      "notification-banner",
+      "code"
+    ]
+  },
+  {
+    "id": "profile-bottom-section",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "detailed-teaser",
+      "marquee",
+      "carousel",
+      "sign-up",
+      "video-embed",
+      "iframe-app",
+      "html-app",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs",
+      "recommended-courses",
+      "recommended-content",
+      "recommendation-marquee",
+      "block-quote",
+      "callout",
+      "featured-authors",
+      "inline-survey",
+      "featured-content",
+      "browse-filters",
+      "topic-results",
+      "announcement-ribbon",
+      "qualtrics",
+      "upcoming-event"
     ]
   },
   {
@@ -85,6 +135,8 @@
       "tabbed-cards",
       "tabs",
       "recommended-courses",
+      "recommended-content",
+      "recommendation-marquee",
       "block-quote",
       "callout",
       "featured-authors",
@@ -92,7 +144,9 @@
       "featured-content",
       "browse-filters",
       "topic-results",
-      "article-tags"
+      "article-tags",
+      "qualtrics",
+      "code"
     ]
   },
   {
@@ -139,8 +193,11 @@
       "tabbed-cards",
       "tabs",
       "recommended-courses",
+      "recommended-content",
+      "recommendation-marquee",
       "block-quote",
-      "callout"
+      "callout",
+      "qualtrics"
     ]
   },
   {
@@ -150,6 +207,19 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "section-header",
+    "components": [
+      "adobe-logo",
+      "brand",
+      "nav",
+      "search",
+      "language-selector",
+      "sign-in",
+      "profile-menu",
+      "product-grid"
+    ]
   },
   {
     "id": "profile-section",
@@ -167,7 +237,13 @@
       "product-experience-level",
       "bookmarks",
       "awards",
-      "profile-welcome-block"
+      "profile-welcome",
+      "recommended-content",
+      "recommendation-marquee",
+      "personalized-content-placeholder",
+      "announcement-ribbon",
+      "recently-reviewed",
+      "qualtrics"
     ]
   },
   {
@@ -212,7 +288,9 @@
       "featured-authors",
       "inline-survey",
       "featured-content",
-      "note"
+      "note",
+      "qualtrics",
+      "code"
     ]
   },
   {
@@ -272,5 +350,21 @@
   {
     "id": "topic-results",
     "components": []
+  },
+  {
+    "id": "rte-custom-options",
+    "components": [],
+    "rte": {
+      "format": ["bold", "italic", "underline"],
+      "alignment": [],
+      "indentation": [],
+      "sr_script": ["superscript", "subscript"],
+      "list": [],
+      "insert": ["link"],
+      "advanced": [],
+      "extensions": [],
+      "editor": ["removeformat"],
+      "blocks": []
+    }
   }
 ]

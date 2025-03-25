@@ -1,8 +1,7 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
@@ -10,6 +9,8 @@ import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 // eslint-disable-next-line import/no-cycle
 const ffetchModulePromise = import('../../scripts/ffetch.js');
+
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 let placeholders = {};
 try {
@@ -127,9 +128,8 @@ export default async function decorate(block) {
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 
-  headingElement.firstElementChild?.classList.add('h2');
-
   block.innerHTML = '';
+  block.classList.add('browse-cards-block');
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
@@ -161,8 +161,6 @@ export default async function decorate(block) {
     solutionsList,
   );
 
-  await decorateIcons(headerDiv);
-
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
@@ -185,7 +183,9 @@ export default async function decorate(block) {
       : '',
   );
   block.appendChild(contentDiv);
-  block.appendChild(linkDiv);
+  if (linkDiv) {
+    block.appendChild(linkDiv);
+  }
 
   if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
     param.role = [roleQueryParamValue];
@@ -279,9 +279,9 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    const buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
-    headerDiv.after(block.querySelector('.shimmer-placeholder'));
+    const buildCardsShimmer = new BrowseCardShimmer();
+    buildCardsShimmer.addShimmer(block);
+    headerDiv.after(block.querySelector('.browse-card-shimmer'));
 
     /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
     buildNoResultsContent(block, false);
@@ -292,7 +292,7 @@ export default async function decorate(block) {
       .then((data) => {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
 
         if (data?.length) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
@@ -303,14 +303,14 @@ export default async function decorate(block) {
           }
         } else {
           /* Add No Results Content and Remove Card Content View Info and Shimmer */
-          buildCardsShimmer.remove();
+          buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
           toggleCardInfo(true);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         /* Add No Results Content and Remove Card Content View Info and Shimmer */
         buildNoResultsContent(block, true);
         toggleCardInfo(true);

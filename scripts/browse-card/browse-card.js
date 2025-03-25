@@ -1,12 +1,10 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-
-loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
@@ -22,25 +20,6 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
-
-const { lang } = getPathDetails();
-
-/* User Info for Community Section - Will accomodate once we have KHOROS integration */
-// const generateContributorsMarkup = (contributor) => {
-//   const { name, thumbnail, level, date } = contributor;
-//   return htmlToElement(`
-//         <div class="browse-card-contributor-info">
-//             <img src="${thumbnail}">
-//             <div class="browse-card-name-plate">
-//             <span class="browse-card-contributor-name">${name}</span>
-//             <div class="browse-card-contributor-level">
-//                 <span>L</span>
-//                 <span>Level ${level}</span>
-//             </div>
-//             <span>${date}</span>
-//             </div>
-//         </div>`);
-// };
 
 // Function to parse a duration string and convert it to total hours
 const parseTotalDuration = (durationStr) => {
@@ -100,19 +79,52 @@ const getBookmarkId = ({ id, viewLink, contentType }) => {
   return viewLink ? new URL(viewLink).pathname : '';
 };
 
-function formatDateString(dateString) {
+const formatDate = (dateString) => {
+  if (!dateString) return null;
   const date = new Date(dateString);
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const optionsDate = { month: 'short', day: '2-digit' };
-  const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
+  const optionsTime = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: userTimeZone,
+  };
 
   const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
   const formattedTime = date.toLocaleTimeString(undefined, optionsTime);
 
-  const [time, period] = formattedTime.split(' ');
-  const formattedTimeWithoutZone = `${time} ${period}`;
-  // Return date and time without timezone
-  return `${formattedDate} | ${formattedTimeWithoutZone}`;
-}
+  // Get timezone abbreviation
+  const timeZoneAbbr = {
+    'America/Los_Angeles': 'PT',
+    'America/Denver': 'MT',
+    'America/Chicago': 'CT',
+    'America/New_York': 'ET',
+    'Pacific/Honolulu': 'HT',
+    'Australia/Sydney': 'AEST',
+    'Europe/London': 'BST',
+    'Europe/Paris': 'CET',
+    'Asia/Calcutta': 'IST',
+    'Asia/Kolkata': 'IST',
+    'Etc/GMT': 'GMT',
+  }[userTimeZone];
+
+  let finalTimeZone = timeZoneAbbr;
+
+  if (!timeZoneAbbr) {
+    const offsetMinutes = date.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const offsetMins = Math.abs(offsetMinutes) % 60;
+    const sign = offsetMinutes <= 0 ? '+' : '-';
+
+    const paddedHours = offsetHours.toString();
+    const paddedMinutes = offsetMins.toString().padStart(2, '0');
+
+    finalTimeZone = `UTC${sign}${paddedHours}:${paddedMinutes}`;
+  }
+
+  return `${formattedDate} | ${formattedTime} ${finalTimeZone}`;
+};
 
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
@@ -123,35 +135,26 @@ const buildTagsContent = (cardMeta, tags = []) => {
       anchor.textContent = text;
       anchor.appendChild(span);
       cardMeta.appendChild(anchor);
+      decorateIcons(anchor);
     }
   });
 };
 
-/* Default No Results Content from Placeholder */
-export const buildNoResultsContent = (block, show) => {
-  if (show) {
-    const noResultsInfo = htmlToElement(`
-    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
-  `);
-    block.appendChild(noResultsInfo);
-  } else {
-    const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
-    if (existingNoResultsInfo) {
-      block.removeChild(existingNoResultsInfo);
-    }
-  }
-};
-
-const buildEventContent = ({ event, cardContent, card }) => {
-  const { time } = event;
+const buildEventContent = ({ event, contentType, cardContent, card }) => {
+  const { time, date } = event;
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${formatDateString(time)}</h6>
+        ${
+          contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+            ? `<h6>${date} | ${time}</h6>`
+            : `<h6>${formatDate(time)}</h6>`
+        }
         </div>
     </div>
   `);
+  decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
 };
@@ -174,6 +177,7 @@ const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
 
 const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardContent }) => {
   const titleElement = createTag('p', { class: 'course-duration' });
+  const { lang } = getPathDetails();
   if (lang === 'en') {
     const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
     const timeleftLabel = placeholders?.recommendedCoursesTimeLeftLabel || 'You have $[TIME_LEFT] left in this course';
@@ -185,26 +189,26 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
+const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
-    let isLeftPlacement = false;
-    if (contentType?.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
-      icon = 'play-outline';
-      isLeftPlacement = false;
-    } else if (
+    const isLeftPlacement = false;
+    if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
-      icon = 'new-tab';
+      icon = 'new-tab-blue';
+    } else {
+      icon = 'chevron-right-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
-          <div class="browse-card-cta-element">
+          <div class="browse-card-cta-element" data-analytics-id="${viewLink}">
               ${isLeftPlacement ? `${iconMarkup} ${viewLinkText}` : `${viewLinkText} ${iconMarkup}`}
           </div>
       `);
+    decorateIcons(linkText);
     cardFooter.appendChild(linkText);
   }
 };
@@ -225,13 +229,15 @@ const buildCardContent = async (card, model) => {
     inProgressText,
     inProgressStatus = {},
     failedToLoad = false,
+    truncateDescription = false,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
   if (description) {
-    const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
+    const stringContent =
+      description.length > 100 && truncateDescription ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
@@ -257,18 +263,11 @@ const buildCardContent = async (card, model) => {
 
   cardContent.appendChild(cardMeta);
 
-  /* User Info for Community Section - Will accomodate once we have KHOROS integration */
-  // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
-  //   const contributorInfo = document.createElement('div');
-  //   contributorInfo.classList.add('browse-card-contributor-info');
-  //   const contributorElement = generateContributorsMarkup(contributor);
-  //   contributorInfo.appendChild(contributorElement);
-  //   buildTagsContent(cardMeta, tags);
-  //   cardContent.insertBefore(contributorInfo, cardMeta);
-  // }
-
-  if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
-    buildEventContent({ event, cardContent, card });
+  if (
+    contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+  ) {
+    buildEventContent({ event, contentType, cardContent, card });
   }
 
   if (contentType === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY) {
@@ -312,34 +311,50 @@ const buildCardContent = async (card, model) => {
   cardAction.decorate();
 
   cardFooter.appendChild(cardOptions);
-  buildCardCtaContent({ cardFooter, contentType, viewLinkText });
+  buildCardCtaContent({ cardFooter, contentType, viewLinkText, viewLink });
+};
+
+/* Default No Results Content from Placeholder */
+export const buildNoResultsContent = (block, show, placeholder = placeholders.noResultsText) => {
+  if (show) {
+    const noResultsInfo = htmlToElement(`
+    <div class="browse-card-no-results">${placeholder}</div>
+  `);
+    block.appendChild(noResultsInfo);
+  } else {
+    const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
+    if (existingNoResultsInfo) {
+      block.removeChild(existingNoResultsInfo);
+    }
+  }
 };
 
 /**
- * @typedef {Object} CardModel
- * @property {string} thumbnail
- * @property {string[]} product
- * @property {string} title
- * @property {string} contentType
- * @property {string} badgeTitle
- * @property {number} inProgressStatus
- */
-
-/**
+ * Builds a browse card element with various components based on the provided model data.
  *
- * @param {HTMLElement} container
- * @param {HTMLElement} element
- * @param {*} model
+ * @param {HTMLElement} container - The container element for the browse card.
+ * @param {HTMLElement} element - The element where the card will be appended.
+ * @param {Object} model - The data model containing information about the card.
+ * @param {string} model.thumbnail - URL for the card thumbnail image.
+ * @param {string} model.product - Product information to be displayed, which can include multiple solutions.
+ * @param {string} model.title - Title of the card.
+ * @param {string} model.contentType - Type of the content, used for CSS styling and analytics.
+ * @param {string} model.badgeTitle - Title of the badge, displayed as a banner.
+ * @param {string} model.inProgressStatus - Status information for progress-related content types.
+ * @param {boolean} [model.failedToLoad=false] - Indicates if the card failed to load, triggering specific styles.
+ * @param {string} [model.viewLink] - URL link to view more details about the card content.
+ * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
+ * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+
+  element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
-  const courseMappingKey = CONTENT_TYPES.PLAYLIST.MAPPING_KEY.toLowerCase();
-  const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
   if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
@@ -353,19 +368,23 @@ export async function buildCard(container, element, model) {
   }
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card ${failedToLoad ? 'load-fail-card' : ''}` },
+    { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
     `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (
-    (type === courseMappingKey ||
-      type === tutorialMappingKey ||
-      type === inProgressMappingKey ||
-      type === recommededMappingKey) &&
-    thumbnail
-  ) {
+  if (thumbnail) {
+    const laptopContainer = document.createElement('div');
+    laptopContainer.classList.add('laptop-container');
+    const laptopScreen = document.createElement('div');
+    const laptopKeyboard = document.createElement('div');
+    laptopContainer.append(laptopScreen, laptopKeyboard);
+
+    cardFigure.classList.add('img-custom-height');
+    card.classList.add('thumbnail-loaded');
+    cardFigure.appendChild(laptopContainer);
+
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -374,16 +393,38 @@ export async function buildCard(container, element, model) {
     img.height = 153;
     cardFigure.appendChild(img);
     img.addEventListener('error', () => {
+      cardFigure.classList.remove('img-custom-height');
+      card.classList.remove('thumbnail-loaded');
+      card.classList.add('thumbnail-not-loaded');
       img.style.display = 'none';
+      laptopContainer.style.display = 'none';
     });
-    img.addEventListener('load', () => {
-      cardFigure.classList.add('img-custom-height');
-    });
-  }
 
+    if (img.complete) {
+      img.classList.add('img-loaded');
+    }
+
+    img.addEventListener('load', () => {
+      img.classList.add('img-loaded');
+      if (
+        VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
+        type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
+        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+      ) {
+        const playButton = document.createElement('div');
+        playButton.classList.add('play-button');
+        playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+        cardFigure.appendChild(playButton);
+        decorateIcons(playButton);
+      }
+    });
+  } else {
+    card.classList.add('thumbnail-not-loaded');
+  }
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
+    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
     cardFigure.appendChild(bannerElement);
   }
 
@@ -416,9 +457,10 @@ export async function buildCard(container, element, model) {
 
   if (title) {
     const titleElement = createTag('h5', { class: 'browse-card-title-text' });
-    titleElement.textContent = title;
+    titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
@@ -449,5 +491,4 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
-  await decorateIcons(element);
 }
