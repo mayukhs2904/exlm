@@ -5971,7 +5971,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 4,
         "options": [
           {
             "name": "Theme",
