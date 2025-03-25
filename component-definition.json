@@ -355,8 +355,7 @@
                   "cta2_textColor": "white",
                   "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
-                  "classes": "light",
-                  "dismissalTime": "sessionStorage"
+                  "classes": "light"
                 }
               }
             }
@@ -1366,8 +1365,6 @@
                   "name": "Teaser",
                   "model": "teaser",
                   "fileReference": "/content/dam/default-teaser-banner.png",
-                  "variantType": "primary",
-                  "hideInlineBanner": "false",
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
@@ -1440,36 +1437,6 @@
                 "template": {
                   "name": "Video Embed",
                   "model": "video-embed"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Embed",
-          "id": "embed",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "embed",
-                  "model": "embed"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Profile Welcome Block",
-          "id": "profile-welcome-block",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Profile Welcome Block",
-                  "model": "profile-welcome-block"
                 }
               }
             }
