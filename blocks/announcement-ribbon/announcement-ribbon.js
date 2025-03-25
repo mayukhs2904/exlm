@@ -49,7 +49,7 @@ const ribbonStore = {
   }
 };
 
-async function decorateRibbon ({ block, image, heading, description, pagePath, ribbonId, hexcode, firstCta, secondCta }) {
+async function decorateRibbon ({ block, image, heading, description, pagePath, ribbonId, dismissable, hexcode, firstCta, secondCta }) {
   if (block.classList.contains('internal-banner')) {
     const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
     let displayBlock = false;
@@ -149,7 +149,7 @@ export default async function decorate(block) {
     block.remove(); // remove the banner section if it was dismissed
     // ribbonStore.remove();
   } else {
-    decorateRibbon({ block, image, heading, description, pagePath, ribbonId, bgColor, hexcode, firstCta, secondCta });
+    decorateRibbon({ block, image, heading, description, pagePath, ribbonId, dismissable, bgColor, hexcode, firstCta, secondCta });
   }
   
 }
