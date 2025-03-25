@@ -132,7 +132,7 @@ async function decorateRibbon ({ block, image, heading, description, pagePath, r
 }
 
 export default async function decorate(block) {
-  const [image, heading, description, idElem, bgColor, hexcode, firstCta, secondCta] = [...block.children].map(
+  const [image, heading, description, idElem, hexcode, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
   const { lang } = getPathDetails();
