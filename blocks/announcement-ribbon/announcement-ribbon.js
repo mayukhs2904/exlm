@@ -8,7 +8,7 @@ const STORAGE_KEY = 'hide-ribbon-block';
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, pagePath, ribbonId) {
   block.parentElement.remove();
-  // ribbonStore.remove();
+  ribbonStore.remove(pagePath, ribbonId);
   ribbonStore.set(pagePath, ribbonId, true);
 }
 
@@ -18,9 +18,15 @@ const ribbonStore = {
    * @param {string} pagePath
    * @param {string} id
    */
+  //new id banner-2
   remove: (pagePath, id) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = existingStore.filter(entry => !(entry.pagePath === pagePath && entry.id === id));
+    // const updatedStore = existingStore.filter(entry => !(entry.pagePath === pagePath && entry.id === id));
+    const updatedStore = existingStore.filter(entry => {
+      const entryIdPrefix = entry.id.split("-")[0]; // Get part before '-'
+      const targetIdPrefix = id.split("-")[0]; // Get part before '-'
+      return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
+    });  
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
@@ -135,24 +141,18 @@ export default async function decorate(block) {
   const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  console.log(image,"image");
-  console.log(heading,"heading");
-  console.log(description,"desc");
-  console.log(idElem,"id ele");
-  console.log(hexcode,"hex code")
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
   const parts = url.split("/");
   const langIndex = parts.indexOf(lang);
-  const pagePath = langIndex !== -1 ? parts.slice(langIndex + 1).join("/") : "";
+  const pagePath = langIndex !== -1 ? "/" + parts.slice(langIndex + 1).join("/") : "";
 
   const ribbonId = idElem?.textContent?.trim();
   const ribbonState = ribbonStore.get(pagePath, ribbonId);
 
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
-    // ribbonStore.remove();
   } else {
     decorateRibbon({ block, image, heading, description, pagePath, ribbonId, dismissable, hexcode, firstCta, secondCta });
   }
