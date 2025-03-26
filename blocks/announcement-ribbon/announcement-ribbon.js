@@ -164,8 +164,9 @@ export default async function decorate(block) {
   const langIndex = parts.indexOf(lang);
   const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
   const ribbonId = idElem?.textContent?.trim();
-  const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
-  const ribbonIndex = ribbons.indexOf(block);
+  // const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
+  // const ribbonIndex = ribbons.indexOf(block);
+  const ribbonIndex = parseInt(block.getAttribute('data-position'), 10);
   const ribbonState = ribbonStore.get(pagePath, ribbonIndex, ribbonId);
 
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
