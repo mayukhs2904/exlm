@@ -154,10 +154,10 @@ async function decorateRibbon({
 }
 
 export default async function decorate(block) {
+  setRibbonPositions();
   const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  setRibbonPositions();
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
@@ -167,6 +167,7 @@ export default async function decorate(block) {
   const ribbonId = idElem?.textContent?.trim();
   // const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
   // const ribbonIndex = ribbons.indexOf(block);
+  console.log((block.getAttribute('data-position'),10),"blockkkk");
   const ribbonIndex = parseInt(block.getAttribute('data-position'), 10);
   console.log(ribbonIndex,"index")
   const ribbonState = ribbonStore.get(pagePath, ribbonIndex, ribbonId);
