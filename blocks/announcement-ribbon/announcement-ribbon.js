@@ -166,7 +166,7 @@ export default async function decorate(block) {
   const ribbonId = idElem?.textContent?.trim();
   const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
   const ribbonIndex = ribbons.indexOf(block);
-  const ribbonState = ribbonStore.get(pagePath, ribbonId);
+  const ribbonState = ribbonStore.get(pagePath, ribbonIndex, ribbonId);
 
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
