@@ -157,6 +157,7 @@ export default async function decorate(block) {
   const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+  setRibbonPositions();
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
@@ -186,5 +187,4 @@ export default async function decorate(block) {
       secondCta,
     });
   }
-  setRibbonPositions();
 }
