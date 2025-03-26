@@ -8,48 +8,48 @@ const ribbonStore = {
   /**
    * Removes the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
-   * @param {string} id
+   * @param {string} index
    */
-  remove: (pagePath, id) => {
+  remove: (pagePath, index) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     const updatedStore = existingStore.filter((entry) => {
-      const entryIdPrefix = entry.id.split('-')[0];
-      const targetIdPrefix = id.split('-')[0];
-      return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
+      return !(entry.pagePath === pagePath && entry.index === index);
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * @param {string} pagePath
+   * @param {string} index
    * @param {string} id
    * @param {boolean} dismissed
    */
-  set: (pagePath, id, dismissed) => {
+  set: (pagePath, index, id, dismissed) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = [...existingStore, { pagePath, id, dismissed }];
+    const updatedStore = [...existingStore, { pagePath, index, id, dismissed }];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
+   * @param {string} index
    * @param {string} id
-   * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
+   * @returns {{pagePath: string, index: string, id: string, dismissed: boolean} | null}
    */
-  get: (pagePath, id) => {
+  get: (pagePath, index, id) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
-      return entries.find((entry) => entry.pagePath === pagePath && entry.id === id) || null;
+      return entries.find((entry) => entry.pagePath === pagePath && entry.index === index && entry.id === id) || null;
     }
     return null;
   },
 };
 
 // Function to hide a ribbon and update the key in the browser storage
-function hideRibbon(block, pagePath, ribbonId) {
+function hideRibbon(block, pagePath, ribbonIndex, ribbonId) {
   block.parentElement.remove();
-  ribbonStore.remove(pagePath, ribbonId);
-  ribbonStore.set(pagePath, ribbonId, true);
+  ribbonStore.remove(pagePath, ribbonIndex);
+  ribbonStore.set(pagePath, ribbonIndex, ribbonId, true);
 }
 
 function setRibbonPositions() {
@@ -65,6 +65,7 @@ async function decorateRibbon({
   heading,
   description,
   pagePath,
+  ribbonIndex,
   ribbonId,
   dismissable,
   hexcode,
@@ -147,7 +148,7 @@ async function decorateRibbon({
   ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
     const closeIcon = block.querySelector(selectedIcon);
     if (closeIcon && !window.location.href.includes('.html')) {
-      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
+      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonIndex, ribbonId));
     }
   });
 }
@@ -162,8 +163,9 @@ export default async function decorate(block) {
   const parts = url.split('/');
   const langIndex = parts.indexOf(lang);
   const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
-
   const ribbonId = idElem?.textContent?.trim();
+  const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
+  const ribbonIndex = ribbons.indexOf(block);
   const ribbonState = ribbonStore.get(pagePath, ribbonId);
 
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
@@ -175,6 +177,7 @@ export default async function decorate(block) {
       heading,
       description,
       pagePath,
+      ribbonIndex,
       ribbonId,
       dismissable,
       hexcode,
