@@ -4,29 +4,19 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { getPathDetails } from '../../scripts/scripts.js';
 
 const STORAGE_KEY = 'hide-ribbon-block';
-
-// Function to hide a ribbon and update the key in the browser storage
-function hideRibbon(block, pagePath, ribbonId) {
-  block.parentElement.remove();
-  ribbonStore.remove(pagePath, ribbonId);
-  ribbonStore.set(pagePath, ribbonId, true);
-}
-
 const ribbonStore = {
   /**
    * Removes the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
    * @param {string} id
    */
-  //new id banner-2
   remove: (pagePath, id) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    // const updatedStore = existingStore.filter(entry => !(entry.pagePath === pagePath && entry.id === id));
-    const updatedStore = existingStore.filter(entry => {
-      const entryIdPrefix = entry.id.split("-")[0]; // Get part before '-'
-      const targetIdPrefix = id.split("-")[0]; // Get part before '-'
+    const updatedStore = existingStore.filter((entry) => {
+      const entryIdPrefix = entry.id.split('-')[0];
+      const targetIdPrefix = id.split('-')[0];
       return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
-    });  
+    });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
@@ -49,13 +39,38 @@ const ribbonStore = {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
-      return entries.find(entry => entry.pagePath === pagePath && entry.id === id) || null;
+      return entries.find((entry) => entry.pagePath === pagePath && entry.id === id) || null;
     }
     return null;
-  }
+  },
 };
 
-async function decorateRibbon ({ block, image, heading, description, pagePath, ribbonId, dismissable, hexcode, firstCta, secondCta }) {
+// Function to hide a ribbon and update the key in the browser storage
+function hideRibbon(block, pagePath, ribbonId) {
+  block.parentElement.remove();
+  ribbonStore.remove(pagePath, ribbonId);
+  ribbonStore.set(pagePath, ribbonId, true);
+}
+
+function setRibbonPositions() {
+  const ribbons = document.querySelectorAll('.announcement-ribbon');
+  ribbons.forEach((ribbon, index) => {
+    ribbon.setAttribute('data-position', index);
+  });
+}
+
+async function decorateRibbon({
+  block,
+  image,
+  heading,
+  description,
+  pagePath,
+  ribbonId,
+  dismissable,
+  hexcode,
+  firstCta,
+  secondCta,
+}) {
   if (block.classList.contains('internal-banner')) {
     const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
     let displayBlock = false;
@@ -144,9 +159,9 @@ export default async function decorate(block) {
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
-  const parts = url.split("/");
+  const parts = url.split('/');
   const langIndex = parts.indexOf(lang);
-  const pagePath = langIndex !== -1 ? "/" + parts.slice(langIndex + 1).join("/") : "";
+  const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
 
   const ribbonId = idElem?.textContent?.trim();
   const ribbonState = ribbonStore.get(pagePath, ribbonId);
@@ -154,12 +169,18 @@ export default async function decorate(block) {
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
   } else {
-    decorateRibbon({ block, image, heading, description, pagePath, ribbonId, dismissable, hexcode, firstCta, secondCta });
+    decorateRibbon({
+      block,
+      image,
+      heading,
+      description,
+      pagePath,
+      ribbonId,
+      dismissable,
+      hexcode,
+      firstCta,
+      secondCta,
+    });
   }
-  
+  setRibbonPositions();
 }
-
-// [
-// {pagepath:"home",id":"banner-4","dismissed":true},
-// {pagepath:"/docs/home",id":"banner-4","dismissed":true}
-// ]
