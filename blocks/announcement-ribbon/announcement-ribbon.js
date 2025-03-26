@@ -157,7 +157,7 @@ export default async function decorate(block) {
   const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  // setRibbonPositions();
+  setRibbonPositions();
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
@@ -165,9 +165,10 @@ export default async function decorate(block) {
   const langIndex = parts.indexOf(lang);
   const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
   const ribbonId = idElem?.textContent?.trim();
-  const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
-  const ribbonIndex = ribbons.indexOf(block);
-  // const ribbonIndex = parseInt(block.getAttribute('data-position'), 10);
+  // const ribbons = [...document.querySelectorAll('.announcement-ribbon')];
+  // const ribbonIndex = ribbons.indexOf(block);
+  const ribbonIndex = parseInt(block.getAttribute('data-position'), 10);
+  console.log(ribbonIndex,"index")
   const ribbonState = ribbonStore.get(pagePath, ribbonIndex, ribbonId);
 
   if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
