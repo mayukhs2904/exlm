@@ -6067,6 +6067,31 @@
                 "value": "custom"
               }
             ]
+          },
+          {
+            "name": "Ribbon Position",
+            "children": [
+              {
+                "name": "One",
+                "value": "position-1"
+              },
+              {
+                "name": "Two",
+                "value": "position-2"
+              },
+              {
+                "name": "Three",
+                "value": "position-3"
+              },
+              {
+                "name": "Four",
+                "value": "position-4"
+              },
+              {
+                "name": "Five",
+                "value": "position-5"
+              }
+            ]
           }
         ]
       },

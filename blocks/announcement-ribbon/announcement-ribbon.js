@@ -8,48 +8,47 @@ const ribbonStore = {
   /**
    * Removes the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
-   * @param {string} id
+   * @param {string} position
    */
-  remove: (pagePath, id) => {
+  remove: (pagePath, position) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     const updatedStore = existingStore.filter((entry) => {
-      const entryIdPrefix = entry.id.split('-').slice(0, 2).join('-');
-      const targetIdPrefix = id.split('-').slice(0, 2).join('-');
-      return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
+      return !(entry.pagePath === pagePath && entry.position === position);
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * @param {string} pagePath
+   * @param {string} position
    * @param {string} id
    * @param {boolean} dismissed
    */
-  set: (pagePath, id, dismissed) => {
+  set: (pagePath, position, id, dismissed) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = [...existingStore, { pagePath, id, dismissed }];
+    const updatedStore = [...existingStore, { pagePath, position, id, dismissed }];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
+   * @param {string} position
    * @param {string} id
    * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
    */
-  get: (pagePath, id) => {
+  get: (pagePath, position, id) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
-      return entries.find((entry) => entry.pagePath === pagePath && entry.id === id) || null;
+      return entries.find((entry) => entry.pagePath === pagePath && entry.position === position && entry.id === id) || null;
     }
     return null;
   },
 };
 
 // Function to hide a ribbon and update the key in the browser storage
-function hideRibbon(block, pagePath, ribbonId) {
+function hideRibbon(block, pagePath, ribbonPosition, ribbonId) {
   block.parentElement.remove();
-  ribbonStore.remove(pagePath, ribbonId);
-  ribbonStore.set(pagePath, ribbonId, true);
+  ribbonStore.set(pagePath, ribbonPosition, ribbonId, true);
 }
 
 async function decorateRibbon({
@@ -58,6 +57,7 @@ async function decorateRibbon({
   heading,
   description,
   pagePath,
+  ribbonPosition,
   ribbonId,
   dismissable,
   hexcode,
@@ -140,7 +140,7 @@ async function decorateRibbon({
   ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
     const closeIcon = block.querySelector(selectedIcon);
     if (closeIcon && !window.location.href.includes('.html')) {
-      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
+      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonPosition, ribbonId));
     }
   });
 }
@@ -149,25 +149,32 @@ export default async function decorate(block) {
   const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+  const classes = block.classList;
+  const ribbonPositionClass = [...classes].find((cls) => cls.startsWith('position-'));
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
   const parts = url.split('/');
   const langIndex = parts.indexOf(lang);
   const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
-
+  const ribbonPosition = ribbonPositionClass.substr(9);
   const ribbonId = idElem?.textContent?.trim();
-  const ribbonState = ribbonStore.get(pagePath, ribbonId);
+  const ribbonState = ribbonStore.get(pagePath, ribbonPosition, ribbonId);
 
-  if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
+  if (dismissable && ribbonState && ribbonState.pagePath === pagePath && ribbonState.position === ribbonPosition && ribbonState.id === ribbonId && ribbonState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
-  } else {
+  } 
+  else if(dismissable && ribbonState && ribbonState.pagePath === pagePath && ribbonState.position === ribbonPosition && ribbonState.id !== ribbonId && ribbonState.dismissed) {
+    ribbonStore.remove(pagePath, ribbonPosition); //re-authoring case
+  }
+  else {
     decorateRibbon({
       block,
       image,
       heading,
       description,
       pagePath,
+      ribbonPosition,
       ribbonId,
       dismissable,
       hexcode,
