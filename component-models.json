@@ -5971,7 +5971,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 4,
+        "maxSize": 5,
         "options": [
           {
             "name": "Theme",
@@ -6112,7 +6112,7 @@
         "name": "bannerId",
         "value": "",
         "label": "Banner ID",
-        "description": "Each new banner should have a unique ID in the format banner-x-y, where x represents its position on the page (1 for the first, 2 for the second), and y changes with each re-authorization to ensure visibility even if a previous banner was dismissed."
+        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
       },
       {
         "component": "select",
