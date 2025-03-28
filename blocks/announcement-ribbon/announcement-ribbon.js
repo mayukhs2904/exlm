@@ -35,11 +35,11 @@ const ribbonStore = {
    * @param {string} id
    * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
    */
-  get: (pagePath, position, id) => {
+  get: (pagePath, position) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
-      return entries.find((entry) => entry.pagePath === pagePath && entry.position === position && entry.id === id) || null;
+      return entries.find((entry) => entry.pagePath === pagePath && entry.position === position) || null;
     }
     return null;
   },
@@ -154,20 +154,20 @@ export default async function decorate(block) {
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
-  const parts = url.split('/');
-  const langIndex = parts.indexOf(lang);
-  const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
+  const pagePath = url.includes(`/${lang}/`) 
+  ? `/${url.split(`/${lang}/`)[1]}` 
+  : '';
   const ribbonPosition = ribbonPositionClass.substr(9);
   const ribbonId = idElem?.textContent?.trim();
-  const ribbonState = ribbonStore.get(pagePath, ribbonPosition, ribbonId);
+  const ribbonState = ribbonStore.get(pagePath, ribbonPosition);
 
   if (dismissable && ribbonState && ribbonState.pagePath === pagePath && ribbonState.position === ribbonPosition && ribbonState.id === ribbonId && ribbonState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
   } 
-  else if(dismissable && ribbonState && ribbonState.pagePath === pagePath && ribbonState.position === ribbonPosition && ribbonState.id !== ribbonId && ribbonState.dismissed) {
-    ribbonStore.remove(pagePath, ribbonPosition); //re-authoring case
-  }
-  else {
+ else {
+    if(dismissable && ribbonState && ribbonState.pagePath === pagePath && ribbonState.position === ribbonPosition && ribbonState.id !== ribbonId && ribbonState.dismissed) {
+      ribbonStore.remove(pagePath, ribbonPosition); //re-authoring case
+    }
     decorateRibbon({
       block,
       image,
