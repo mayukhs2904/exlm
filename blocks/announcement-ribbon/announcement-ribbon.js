@@ -157,7 +157,7 @@ export default async function decorate(block) {
   const pagePath = url.includes(`/${lang}/`) 
   ? `/${url.split(`/${lang}/`)[1]}` 
   : '';
-  const ribbonPosition = ribbonPositionClass.substr(9);
+  const ribbonPosition = ribbonPositionClass?.substr(9);
   const ribbonId = idElem?.textContent?.trim();
   const ribbonState = ribbonStore.get(pagePath, ribbonPosition);
 
