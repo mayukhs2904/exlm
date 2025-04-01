@@ -5971,7 +5971,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 5,
+        "maxSize": 4,
         "options": [
           {
             "name": "Theme",
@@ -6067,31 +6067,6 @@
                 "value": "custom"
               }
             ]
-          },
-          {
-            "name": "Ribbon Position",
-            "children": [
-              {
-                "name": "One",
-                "value": "position-1"
-              },
-              {
-                "name": "Two",
-                "value": "position-2"
-              },
-              {
-                "name": "Three",
-                "value": "position-3"
-              },
-              {
-                "name": "Four",
-                "value": "position-4"
-              },
-              {
-                "name": "Five",
-                "value": "position-5"
-              }
-            ]
           }
         ]
       },
@@ -6105,14 +6080,6 @@
         "value": "",
         "label": "Custom Hexcode",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "bannerId",
-        "value": "",
-        "label": "Banner ID",
-        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
       },
       {
         "component": "select",
