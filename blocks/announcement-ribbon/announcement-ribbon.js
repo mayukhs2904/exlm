@@ -2,21 +2,11 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPathDetails } from '../../scripts/scripts.js';
+import { MD5 } from '../../scripts/crypto.js';
 
-const STORAGE_KEY = 'hide-ribbon-block';
+const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
-  /**
-   * Removes the entry matching the page path and ribbon id from the store.
-   * @param {string} pagePath
-   * @param {string} id
-   */
-  remove: (pagePath, ribbonId) => {
-    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = existingStore.filter((entry) => {
-      return !(entry.pagePath === pagePath && entry.id === ribbonId);
-    });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
-  },
+  // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
    * @param {string} pagePath
    * @param {string} id
@@ -46,6 +36,21 @@ const ribbonStore = {
 function hideRibbon(block, pagePath, ribbonId) {
   block.parentElement.remove();
   ribbonStore.set(pagePath, ribbonId, true);
+}
+
+function generateHash(content) {
+  if (typeof content !== 'string') return '';
+  return MD5(content);
+}
+
+function extractAnchorData(cta) {
+  const anchor = cta?.querySelector('p > a');
+  return anchor
+    ? {
+        href: anchor.getAttribute('href'),
+        text: anchor.textContent.trim(),
+      }
+    : { href: '', text: '' };
 }
 
 async function decorateRibbon({
@@ -118,27 +123,63 @@ async function decorateRibbon({
   block.append(ribbonDom);
   block.style.backgroundColor = bgColorVariable;
 
-  const icon = block.querySelector('.icon');
-  if (icon) {
-    if (block.classList.contains('dark')) {
-      // If dark class is present, change the icon to light
-      icon.classList.remove('icon-close-black');
-      icon.classList.add('icon-close-light');
-    } else {
-      // Otherwise default icon
-      icon.classList.remove('icon-close-light');
-      icon.classList.add('icon-close-black');
+  if (dismissable) {
+    const icon = block.querySelector('.icon');
+    if (icon) {
+      const isDark = block.classList.contains('dark');
+      icon.classList.toggle('icon-close-light', isDark);
+      icon.classList.toggle('icon-close-black', !isDark);
     }
+
+    // Add close button functionality
+    ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
+      const closeIcon = block.querySelector(selectedIcon);
+      if (closeIcon && !window.location.href.includes('.html')) {
+        closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
+      }
+    });
   }
   decorateIcons(block);
+}
 
-  // Add close button functionality
-  ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
-    const closeIcon = block.querySelector(selectedIcon);
-    if (closeIcon && !window.location.href.includes('.html')) {
-      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
-    }
-  });
+export default async function decorate(block) {
+  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const dismissable = block.classList.contains('dismissable');
+  let pagePath = '';
+  let ribbonId = '';
+  let isDismissed = false;
+  if (dismissable) {
+    const firstCtaData = extractAnchorData(firstCta);
+    const secondCtaData = extractAnchorData(secondCta);
+    const { lang } = getPathDetails();
+    const url = window.location.href;
+    pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
+    ribbonId = generateHash(
+      [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
+        .filter(Boolean)
+        .map((el) => el?.textContent?.trim() || el)
+        .join(' '),
+    );
+    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId && entry.dismissed);
+  }
+  if (dismissable && isDismissed) {
+    block.remove(); // remove the block section if any matching entry was dismissed
+  } else {
+    decorateRibbon({
+      block,
+      image,
+      heading,
+      description,
+      pagePath,
+      ribbonId,
+      dismissable,
+      hexcode,
+      firstCta,
+      secondCta,
+    });
+  }
 }
 
 export default async function decorate(block) {

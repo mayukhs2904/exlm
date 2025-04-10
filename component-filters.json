@@ -222,6 +222,10 @@
     ]
   },
   {
+    "id": "section-footer",
+    "components": ["footer-breadcrumb", "footer-item", "social", "footer-copyrights", "language-selector"]
+  },
+  {
     "id": "profile-section",
     "components": [
       "text",
