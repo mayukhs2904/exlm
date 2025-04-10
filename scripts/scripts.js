@@ -516,7 +516,7 @@ export function getLink(edsPath) {
 /** @param {HTMLMapElement} main */
 async function buildPreMain(main) {
   const { lang } = getPathDetails();
-  const fragmentUrl = getMetadata('site-wide-banner-fragment');
+  const fragmentUrl = getMetadata('fragment');
 
   if (!fragmentUrl) return;
 
@@ -581,6 +581,28 @@ async function loadEager(doc) {
   } catch (e) {
     // do nothing
   }
+}
+
+async function cleanUpLocalRibbonEntries() {
+  if(localStorage.getItem('hideRibbonBlock')) {
+    localStorage.removeItem('hideRibbonBlock');
+  }
+  const pagePath = window.location.pathname;
+  const storedData = localStorage.getItem('announcement-ribbon');
+  if (!storedData) return;
+
+  const storedEntries = JSON.parse(storedData);
+  if (!storedEntries.length) return;
+
+  const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
+    .map((block) => block.parentElement?.getAttribute('data-id'))
+    .filter(Boolean);
+
+  const newStore = storedEntries.filter((entry) => {
+    return entry.pagePath !== pagePath || domRibbonIds.includes(entry.id);
+  });
+
+  localStorage.setItem('announcement-ribbon', JSON.stringify(newStore));
 }
 
 /**
@@ -1255,6 +1277,7 @@ async function loadPage() {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
   }
+  await cleanUpLocalRibbonEntries();
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC

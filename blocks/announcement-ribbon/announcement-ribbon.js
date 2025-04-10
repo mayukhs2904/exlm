@@ -1,26 +1,23 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { getPathDetails } from '../../scripts/scripts.js';
 import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
-  // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
    * @param {string} pagePath
    * @param {string} id
-   * @param {boolean} dismissed
    */
-  set: (pagePath, id, dismissed) => {
+  set: (pagePath, id) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = [...existingStore, { pagePath, id, dismissed }];
+    const updatedStore = [...existingStore, { pagePath, id }];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
-   * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
+   * @returns {{pagePath: string, id: string} | null}
    */
   get: (pagePath) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
@@ -34,7 +31,7 @@ const ribbonStore = {
 
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, pagePath, ribbonId) {
-  block.parentElement.remove();
+  block.parentElement.style.display = 'none';
   ribbonStore.set(pagePath, ribbonId, true);
 }
 
@@ -153,19 +150,25 @@ export default async function decorate(block) {
   if (dismissable) {
     const firstCtaData = extractAnchorData(firstCta);
     const secondCtaData = extractAnchorData(secondCta);
-    const { lang } = getPathDetails();
-    const url = window.location.href;
-    pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
+    const url = new URL(window.location.href);
+    pagePath = url.pathname;
     ribbonId = generateHash(
       [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
-        .filter(Boolean)
-        .map((el) => el?.textContent?.trim() || el)
-        .join(' '),
+      .map((el) => {
+        if (typeof el === 'string') return el.trim();
+        if (el?.textContent?.trim()) return el.textContent.trim();
+        return '';
+      })
+      .filter(Boolean)
+      .join('|'),
     );
-    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId && entry.dismissed);
+    if (ribbonId) {
+      block.parentElement?.setAttribute('data-id', ribbonId);
+    }
+    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId);
   }
   if (dismissable && isDismissed) {
-    block.remove(); // remove the block section if any matching entry was dismissed
+    block.parentElement.style.display = 'none';
   } else {
     decorateRibbon({
       block,
@@ -179,54 +182,5 @@ export default async function decorate(block) {
       firstCta,
       secondCta,
     });
-  }
-}
-
-export default async function decorate(block) {
-  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
-  const { lang } = getPathDetails();
-  const dismissable = block.classList.contains('dismissable');
-  const url = window.location.href;
-  const pagePath = url.includes(`/${lang}/`) 
-  ? `/${url.split(`/${lang}/`)[1]}` 
-  : '';
-  const ribbonId = function generateHash(description) {
-    let hash = 0;
-    
-    if (description.length === 0) return hash.toString().padStart(6, "0");
-    
-    for (let i = 0; i < description.length; i++) {
-      const char = description.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash |= 0; // Convert to 32bit integer
-    }
-  
-    // Convert the hash to a positive string and take the last 6 characters
-    const hashString = Math.abs(hash).toString();
-    return hashString.padStart(6, "0").slice(-6);
-  };
-  const ribbonStates = ribbonStore.get(pagePath);
-    
-  // Check if the ribbon has been dismissed based on multiple entries
-  const isDismissed = ribbonStates?.some(entry => entry.id === ribbonId && entry.dismissed) || false;
-
-  if (dismissable && isDismissed) {
-    block.remove(); // remove the block section if any matching entry was dismissed
-  }
- else {
-  decorateRibbon({
-    block,
-    image,
-    heading,
-    description,
-    pagePath,
-    ribbonId,
-    dismissable,
-    hexcode,
-    firstCta,
-    secondCta,
-  });
   }
 }
